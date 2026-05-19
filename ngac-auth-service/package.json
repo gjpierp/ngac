@@ -1,0 +1,17 @@
+{
+  "name": "ngac-auth-service",
+  "version": "1.0.0",
+  "description": "Microservicio NGAC Auth para integración con Oracle y Eureka",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "eureka-js-client": "^4.0.0",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "oracledb": "^6.3.0"
+  }
+}

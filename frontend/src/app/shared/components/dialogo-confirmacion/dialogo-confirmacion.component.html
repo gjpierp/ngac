@@ -1,0 +1,27 @@
+<div class="p-0 overflow-hidden min-w-[320px] sm:min-w-[400px]">
+  <!-- Header del Modal -->
+  <div class="bg-slate-900 px-6 py-5 text-white relative">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+    <h2 mat-dialog-title class="!text-lg !font-black !tracking-tight !flex !items-center !gap-2 !relative !m-0 !p-0 !text-white !border-b-0">
+      <mat-icon class="text-rose-500 !text-xl">warning</mat-icon>
+      {{data.title || 'Confirmar Acción'}}
+    </h2>
+    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5 relative">
+      Se requiere confirmación para proceder
+    </p>
+  </div>
+
+  <mat-dialog-content class="!p-6 !m-0">
+    <p class="text-slate-650 text-xs font-semibold leading-relaxed">{{data.message}}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="!px-6 !pb-6 !pt-0 !m-0 gap-2">
+    <button mat-button type="button" (click)="dialogRef.close(false)" class="!rounded-lg !px-4 !text-slate-500 hover:!bg-slate-50 font-bold uppercase tracking-widest text-[9px]">
+      Cancelar
+    </button>
+    <button mat-raised-button color="warn" type="button" (click)="dialogRef.close(true)"
+            class="!rounded-lg !px-6 !bg-rose-600 hover:!bg-rose-700 shadow-md shadow-rose-200 font-bold uppercase tracking-widest text-[9px]">
+      <span>Confirmar</span>
+    </button>
+  </mat-dialog-actions>
+</div>

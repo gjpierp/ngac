@@ -1,0 +1,3038 @@
+{
+    "sujeto": {
+        "usuario_id": "13259698",
+        "roles": [
+            "ROL_DEV"
+        ],
+        "division": ""
+    },
+    "contexto": {
+        "politicas": [
+            "POLICY_MENU"
+        ]
+    },
+    "solicitud": {
+        "modulos": [
+            "ADMINISTRACION",
+            "CONCILIACION_CKS",
+            "CONTABILIDAD"
+        ],
+        "operaciones": [
+            "VER",
+            "EDITAR",
+            "CREAR",
+            "ELIMINAR"
+        ]
+    },
+    "claims": [
+        ""
+    ],
+    "menu": [
+        {
+            "id": 1756,
+            "codigo": "ADMINISTRACION",
+            "etiqueta": "Administración",
+            "slug": "administracion",
+            "icono": "settings",
+            "descripcion": "",
+            "ruta": "/administracion",
+            "orden": 15,
+            "activo": "S",
+            "hijos": [
+                {
+                    "id": 1757,
+                    "codigo": "DASHBOARD",
+                    "etiqueta": "Dashboard",
+                    "slug": "dashboard",
+                    "icono": "dashboard",
+                    "descripcion": "",
+                    "ruta": "/administracion/dashboard",
+                    "orden": 1,
+                    "activo": "S"
+                },
+                {
+                    "id": 1758,
+                    "codigo": "NODOS",
+                    "etiqueta": "Nodos",
+                    "slug": "nodos",
+                    "icono": "hub",
+                    "descripcion": "",
+                    "ruta": "/nodos",
+                    "orden": 2,
+                    "activo": "S"
+                },
+                {
+                    "id": 1763,
+                    "codigo": "ROLES",
+                    "etiqueta": "Roles",
+                    "slug": "roles",
+                    "icono": "groups",
+                    "descripcion": "",
+                    "ruta": "/roles",
+                    "orden": 3,
+                    "activo": "S"
+                },
+                {
+                    "id": 1760,
+                    "codigo": "JERARQUIAS",
+                    "etiqueta": "Jerarquías",
+                    "slug": "jerarquia",
+                    "icono": "account_tree",
+                    "descripcion": "",
+                    "ruta": "/jerarquia",
+                    "orden": 4,
+                    "activo": "S"
+                },
+                {
+                    "id": 1759,
+                    "codigo": "TIPOS_NODOS",
+                    "etiqueta": "Tipos de Nodos",
+                    "slug": "tipos-nodos",
+                    "icono": "category",
+                    "descripcion": "",
+                    "ruta": "/tipos-nodos",
+                    "orden": 5,
+                    "activo": "S"
+                },
+                {
+                    "id": 1762,
+                    "codigo": "OPERACIONES",
+                    "etiqueta": "Operaciones",
+                    "slug": "operaciones",
+                    "icono": "settings_suggest",
+                    "descripcion": "",
+                    "ruta": "/operaciones",
+                    "orden": 6,
+                    "activo": "S"
+                },
+                {
+                    "id": 1761,
+                    "codigo": "ROLES_PERMISOS",
+                    "etiqueta": "Roles & Permisos",
+                    "slug": "permisos",
+                    "icono": "admin_panel_settings",
+                    "descripcion": "",
+                    "ruta": "/permisos",
+                    "orden": 7,
+                    "activo": "S"
+                }
+            ]
+        },
+        {
+            "id": 556,
+            "codigo": "CONCILIACION_CKS",
+            "etiqueta": "Conciliación Cks",
+            "slug": "conciliacion-cks",
+            "icono": "price_check",
+            "descripcion": "",
+            "ruta": "/conciliacion-cks",
+            "orden": 1,
+            "activo": "S",
+            "hijos": [
+                {
+                    "id": 557,
+                    "codigo": "CONCILIACION_CKS_PARAMETROS",
+                    "etiqueta": "Parámetros",
+                    "slug": "parametros",
+                    "icono": "settings",
+                    "descripcion": "",
+                    "ruta": "/conciliacion-cks/parametros",
+                    "orden": 1,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 561,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_INGRESO_CHEQUERA",
+                            "etiqueta": "Ingreso Chequera",
+                            "slug": "ingreso-chequera",
+                            "icono": "menu_book",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/ingreso-chequera",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 562,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_ASIGNACION_CHEQUES",
+                            "etiqueta": "Asignacion De Cheques",
+                            "slug": "asignacion-de-cheques",
+                            "icono": "assignment",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/asignacion-cheques",
+                            "orden": 2,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 563,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_TIPOS_DOCUMENTOS",
+                            "etiqueta": "Tipos De Documentos",
+                            "slug": "tipos-de-documentos",
+                            "icono": "description",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/tipos-documentos",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 564,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_BANCOS",
+                            "etiqueta": "Bancos",
+                            "slug": "bancos",
+                            "icono": "account_balance",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/bancos",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 565,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_PIE_FIRMA",
+                            "etiqueta": "Pie De Firma",
+                            "slug": "pie-de-firma",
+                            "icono": "draw",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/pie-firma",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 566,
+                            "codigo": "CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA",
+                            "etiqueta": "Mantencion Entidad Bancaria",
+                            "slug": "mantencion-entidad-bancaria",
+                            "icono": "corporate_fare",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/parametros/mantencion-entidad-bancaria",
+                            "orden": 6,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 567,
+                                    "codigo": "CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_BANCO",
+                                    "etiqueta": "Banco",
+                                    "slug": "banco",
+                                    "icono": "account_balance",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/parametros/mantencion-entidad-bancaria/banco",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 568,
+                                    "codigo": "CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_SUCURSAL",
+                                    "etiqueta": "Sucursal",
+                                    "slug": "sucursal",
+                                    "icono": "store",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/parametros/mantencion-entidad-bancaria/sucursal",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 569,
+                                    "codigo": "CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_FORMAS_PAGO",
+                                    "etiqueta": "Formas De Pago",
+                                    "slug": "formas-de-pago",
+                                    "icono": "payments",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/parametros/mantencion-entidad-bancaria/formas-pago",
+                                    "orden": 3,
+                                    "activo": "S"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 558,
+                    "codigo": "CONCILIACION_CKS_PROCESOS",
+                    "etiqueta": "Procesos",
+                    "slug": "procesos",
+                    "icono": "account_tree",
+                    "descripcion": "",
+                    "ruta": "/conciliacion-cks/procesos",
+                    "orden": 2,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 570,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_FORMAS_PAGO",
+                            "etiqueta": "Formas De Pago",
+                            "slug": "formas-de-pago",
+                            "icono": "payments",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/formas-pago",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 571,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_PAGOS",
+                            "etiqueta": "Pagos",
+                            "slug": "pagos",
+                            "icono": "paid",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/pagos",
+                            "orden": 2,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 572,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_PAGOS_IMPRESION_CHEQUES",
+                                    "etiqueta": "Impresión De Cheques",
+                                    "slug": "impresion-de-cheques",
+                                    "icono": "print",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/pagos/impresion-cheques",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 573,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_PAGOS_NOMINA_TRANNSFERENCIA_ELECTRONICA",
+                                    "etiqueta": "Nomina Trannsferencia Electronica",
+                                    "slug": "nomina-trannsferencia-electronica",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/pagos/nomina-trannsferencia-electronica",
+                                    "orden": 2,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 574,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS",
+                            "etiqueta": "Ingreso Y Mantenimiento De Documentos",
+                            "slug": "ingreso-y-mantenimiento-de-documentos",
+                            "icono": "folder_open",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos",
+                            "orden": 3,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 575,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_INGRESO_DOCUMENTOS",
+                                    "etiqueta": "Ingreso De Documentos",
+                                    "slug": "ingreso-de-documentos",
+                                    "icono": "note_add",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/ingreso-documentos",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 576,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ALTAS_O_CADUCACION_CHEQUES",
+                                    "etiqueta": "Altas O Caducacion Cheques",
+                                    "slug": "altas-o-caducacion-cheques",
+                                    "icono": "timer_off",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/altas-o-caducacion-cheques",
+                                    "orden": 2,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 577,
+                                            "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ALTAS_O_CADUCACION_CHEQUES_TRANSFERENCIAS_ELECTRONICAS",
+                                            "etiqueta": "Transferencias Electronicas",
+                                            "slug": "transferencias-electronicas",
+                                            "icono": "swap_horiz",
+                                            "descripcion": "",
+                                            "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/altas-o-caducacion-cheques/transferencias-electronicas",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 578,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_MANTENIMIENTO_DOCUMENTO",
+                                    "etiqueta": "Mantenimiento De Documento",
+                                    "slug": "mantenimiento-de-documento",
+                                    "icono": "edit_document",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/mantenimiento-documento",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 579,
+                                    "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ANULACION_CHEQUES",
+                                    "etiqueta": "Anulacion De Cheques",
+                                    "slug": "anulacion-de-cheques",
+                                    "icono": "cancel_presentation",
+                                    "descripcion": "",
+                                    "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/anulacion-cheques",
+                                    "orden": 4,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 580,
+                                            "codigo": "CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ANULACION_CHEQUES_DEPOSITOS",
+                                            "etiqueta": "Depositos",
+                                            "slug": "depositos",
+                                            "icono": "savings",
+                                            "descripcion": "",
+                                            "ruta": "/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/anulacion-cheques/depositos",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 581,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_ENVIO_CHEQUES_CAJA",
+                            "etiqueta": "Envio De Cheques A Caja",
+                            "slug": "envio-de-cheques-a-caja",
+                            "icono": "send",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/envio-cheques-caja",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 582,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_CUADRATURA_CUENTA_CORRIENTE",
+                            "etiqueta": "Cuadratura Cuenta Corriente",
+                            "slug": "cuadratura-cuenta-corriente",
+                            "icono": "balance",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/cuadratura-cuenta-corriente",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 583,
+                            "codigo": "CONCILIACION_CKS_PROCESOS_PROCESO_DIR_REMUNERACIONES",
+                            "etiqueta": "Proceso D.I.R. (Remuneraciones)",
+                            "slug": "proceso-d-i-r-remuneraciones",
+                            "icono": "badge",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/procesos/proceso-dir-remuneraciones",
+                            "orden": 6,
+                            "activo": "S"
+                        }
+                    ]
+                },
+                {
+                    "id": 559,
+                    "codigo": "CONCILIACION_CKS_CONSULTAS",
+                    "etiqueta": "Consultas",
+                    "slug": "consultas",
+                    "icono": "manage_search",
+                    "descripcion": "",
+                    "ruta": "/conciliacion-cks/consultas",
+                    "orden": 3,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 584,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_DOCUMENTOS_POR_ESTADO",
+                            "etiqueta": "Documentos Por Estado",
+                            "slug": "documentos-por-estado",
+                            "icono": "fact_check",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/documentos-por-estado",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 585,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_DOCUMENTOS_POR_ESTADO_HISTORICO",
+                            "etiqueta": "Documentos Por Estado Historico",
+                            "slug": "documentos-por-estado-historico",
+                            "icono": "history",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/documentos-por-estado-historico",
+                            "orden": 2,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 586,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_RESUMEN_CONCILIACION",
+                            "etiqueta": "Resumen Conciliacion",
+                            "slug": "resumen-conciliacion",
+                            "icono": "summarize",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/resumen-conciliacion",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 587,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_RESUMEN_CONCILIACION_HISTORICA",
+                            "etiqueta": "Resumen Conciliacion Historica",
+                            "slug": "resumen-conciliacion-historica",
+                            "icono": "manage_history",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/resumen-conciliacion-historica",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 588,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_CARTOLA_DOCUMENTOS_CONCILIADOS",
+                            "etiqueta": "Cartola Documentos Conciliados",
+                            "slug": "cartola-documentos-conciliados",
+                            "icono": "receipt_long",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/cartola-documentos-conciliados",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 589,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_LIBRO_CHEQUES",
+                            "etiqueta": "Libro De Cheques",
+                            "slug": "libro-de-cheques",
+                            "icono": "menu_book",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/libro-cheques",
+                            "orden": 6,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 590,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_PAGOS_EFECTUADOS",
+                            "etiqueta": "Pagos Efectuados",
+                            "slug": "pagos-efectuados",
+                            "icono": "check_circle",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/pagos-efectuados",
+                            "orden": 7,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 591,
+                            "codigo": "CONCILIACION_CKS_CONSULTAS_DETALLE_PAGOS_TRANSFER",
+                            "etiqueta": "Detalle De Pagos Transfer",
+                            "slug": "detalle-de-pagos-transfer",
+                            "icono": "list_alt",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/consultas/detalle-pagos-transfer",
+                            "orden": 8,
+                            "activo": "S"
+                        }
+                    ]
+                },
+                {
+                    "id": 560,
+                    "codigo": "CONCILIACION_CKS_INFORMES",
+                    "etiqueta": "Informes",
+                    "slug": "informes",
+                    "icono": "assessment",
+                    "descripcion": "",
+                    "ruta": "/conciliacion-cks/informes",
+                    "orden": 4,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 592,
+                            "codigo": "CONCILIACION_CKS_INFORMES_DOCUMENTOS_POR_ESTADO",
+                            "etiqueta": "Documentos Por Estado",
+                            "slug": "documentos-por-estado",
+                            "icono": "pie_chart",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/documentos-por-estado",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 593,
+                            "codigo": "CONCILIACION_CKS_INFORMES_DOCUMENTOS_POR_ESTADO_HISTORICO",
+                            "etiqueta": "Documentos Por Estado Historico",
+                            "slug": "documentos-por-estado-historico",
+                            "icono": "history",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/documentos-por-estado-historico",
+                            "orden": 2,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 594,
+                            "codigo": "CONCILIACION_CKS_INFORMES_RESUMEN_CONCILIACION",
+                            "etiqueta": "Resumen Conciliacion",
+                            "slug": "resumen-conciliacion",
+                            "icono": "summarize",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/resumen-conciliacion",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 595,
+                            "codigo": "CONCILIACION_CKS_INFORMES_RESUMEN_CONCILIACION_HISTORICA",
+                            "etiqueta": "Resumen Conciliacion Historica",
+                            "slug": "resumen-conciliacion-historica",
+                            "icono": "manage_history",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/resumen-conciliacion-historica",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 596,
+                            "codigo": "CONCILIACION_CKS_INFORMES_CARTOLA_DOCUMENTOS_CONCILIADOS",
+                            "etiqueta": "Cartola Documentos Conciliados",
+                            "slug": "cartola-documentos-conciliados",
+                            "icono": "receipt_long",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/cartola-documentos-conciliados",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 597,
+                            "codigo": "CONCILIACION_CKS_INFORMES_LIBRO_CHEQUES",
+                            "etiqueta": "Libro De Cheques",
+                            "slug": "libro-de-cheques",
+                            "icono": "menu_book",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/libro-cheques",
+                            "orden": 6,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 598,
+                            "codigo": "CONCILIACION_CKS_INFORMES_REIMPRESION_CHEQUES",
+                            "etiqueta": "Reimpresion De Cheques",
+                            "slug": "reimpresion-de-cheques",
+                            "icono": "print",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/reimpresion-cheques",
+                            "orden": 7,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 599,
+                            "codigo": "CONCILIACION_CKS_INFORMES_PAGOS_EFECTUADOS",
+                            "etiqueta": "Pagos Efectuados",
+                            "slug": "pagos-efectuados",
+                            "icono": "task_alt",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/pagos-efectuados",
+                            "orden": 8,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 600,
+                            "codigo": "CONCILIACION_CKS_INFORMES_REIMPRESION_DOCUMENTOS_CHEQUES_CAJA",
+                            "etiqueta": "Reimpresion Documentos Cheques A Caja",
+                            "slug": "reimpresion-documentos-cheques-a-caja",
+                            "icono": "local_printshop",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/reimpresion-documentos-cheques-caja",
+                            "orden": 9,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 601,
+                            "codigo": "CONCILIACION_CKS_INFORMES_DOCUMENTOS_MES",
+                            "etiqueta": "Documentos Del Mes",
+                            "slug": "documentos-del-mes",
+                            "icono": "calendar_month",
+                            "descripcion": "",
+                            "ruta": "/conciliacion-cks/informes/documentos-mes",
+                            "orden": 10,
+                            "activo": "S"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 49,
+            "codigo": "CONTABILIDAD",
+            "etiqueta": "Contabilidad",
+            "slug": "contabilidad",
+            "icono": "account_balance",
+            "descripcion": "",
+            "ruta": "/contabilidad",
+            "orden": 1,
+            "activo": "S",
+            "hijos": [
+                {
+                    "id": 50,
+                    "codigo": "CONTABILIDAD_PARAMETROS",
+                    "etiqueta": "Parámetros",
+                    "slug": "parametros",
+                    "icono": "settings",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/parametros",
+                    "orden": 1,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 56,
+                            "codigo": "CONTABILIDAD_PARAMETROS_ENTIDADES_CONSOLIDADORAS",
+                            "etiqueta": "Entidades Consolidadoras",
+                            "slug": "entidades-consolidadoras",
+                            "icono": "corporate_fare",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/entidades-consolidadoras",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 57,
+                            "codigo": "CONTABILIDAD_PARAMETROS_UNIDAD",
+                            "etiqueta": "Unidad",
+                            "slug": "unidad",
+                            "icono": "domain",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/unidad",
+                            "orden": 2,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 58,
+                            "codigo": "CONTABILIDAD_PARAMETROS_UNIDADES_INTERNAS",
+                            "etiqueta": "Unidades Internas",
+                            "slug": "unidades-internas",
+                            "icono": "business",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/unidades-internas",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 59,
+                            "codigo": "CONTABILIDAD_PARAMETROS_BLOQUEO_CUADRATURA_CENTRAL",
+                            "etiqueta": "Bloqueo Cuadratura Central",
+                            "slug": "bloqueo-cuadratura-central",
+                            "icono": "lock",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/bloqueo-cuadratura-central",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 60,
+                            "codigo": "CONTABILIDAD_PARAMETROS_ZONA",
+                            "etiqueta": "Zona",
+                            "slug": "zona",
+                            "icono": "map",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/zona",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 61,
+                            "codigo": "CONTABILIDAD_PARAMETROS_ALTA_REPARTICION",
+                            "etiqueta": "Alta Repartición",
+                            "slug": "alta-reparticion",
+                            "icono": "account_balance",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/alta-reparticion",
+                            "orden": 6,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 62,
+                            "codigo": "CONTABILIDAD_PARAMETROS_DEPENDENCIA",
+                            "etiqueta": "Dependencia",
+                            "slug": "dependencia",
+                            "icono": "lan",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/dependencia",
+                            "orden": 7,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 63,
+                            "codigo": "CONTABILIDAD_PARAMETROS_ORGANICA",
+                            "etiqueta": "Organica",
+                            "slug": "organica",
+                            "icono": "schema",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/organica",
+                            "orden": 8,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 64,
+                            "codigo": "CONTABILIDAD_PARAMETROS_PLAN_CUENTAS_POR_ENTIDAD",
+                            "etiqueta": "Plan De Cuentas Por Entidad",
+                            "slug": "plan-de-cuentas-por-entidad",
+                            "icono": "list_alt",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/plan-cuentas-por-entidad",
+                            "orden": 9,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 65,
+                            "codigo": "CONTABILIDAD_PARAMETROS_CUENTAS_POR_TIPO_DOCUMENTOS_CAJA",
+                            "etiqueta": "Cuentas Por Tipo De Documentos Caja",
+                            "slug": "cuentas-por-tipo-de-documentos-caja",
+                            "icono": "receipt",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/cuentas-por-tipo-documentos-caja",
+                            "orden": 10,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 66,
+                            "codigo": "CONTABILIDAD_PARAMETROS_CONTRATOS_UNIDADES",
+                            "etiqueta": "Contratos Unidades",
+                            "slug": "contratos-unidades",
+                            "icono": "history_edu",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/contratos-unidades",
+                            "orden": 11,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 67,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENCION_CODIGO_DIARIO",
+                            "etiqueta": "Mantención Código Diario",
+                            "slug": "mantencion-codigo-diario",
+                            "icono": "tag",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantencion-codigo-diario",
+                            "orden": 12,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 68,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENCION_NUMERO_CONTROL",
+                            "etiqueta": "Mantención Numero Control",
+                            "slug": "mantencion-numero-control",
+                            "icono": "format_list_numbered",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantencion-numero-control",
+                            "orden": 13,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 69,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENCION_TIPO_ASIENTO",
+                            "etiqueta": "Mantención Tipo Asiento",
+                            "slug": "mantencion-tipo-asiento",
+                            "icono": "category",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantencion-tipo-asiento",
+                            "orden": 14,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 70,
+                            "codigo": "CONTABILIDAD_PARAMETROS_HOMOLOGADOS",
+                            "etiqueta": "Homologados",
+                            "slug": "homologados",
+                            "icono": "compare_arrows",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/homologados",
+                            "orden": 15,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 71,
+                                    "codigo": "CONTABILIDAD_PARAMETROS_HOMOLOGADOS_TIPO_COMPROMISOS",
+                                    "etiqueta": "Tipo Compromisos",
+                                    "slug": "tipo-compromisos",
+                                    "icono": "handshake",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/parametros/homologados/tipo-compromisos",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 72,
+                                    "codigo": "CONTABILIDAD_PARAMETROS_HOMOLOGADOS_TIPO_DEVENGO_EFECTIVO",
+                                    "etiqueta": "Tipo Devengo Efectivo",
+                                    "slug": "tipo-devengo-efectivo",
+                                    "icono": "payments",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/parametros/homologados/tipo-devengo-efectivo",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 73,
+                                    "codigo": "CONTABILIDAD_PARAMETROS_HOMOLOGADOS_CARTERA_CONTABLE",
+                                    "etiqueta": "Cartera Contable",
+                                    "slug": "cartera-contable",
+                                    "icono": "work",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/parametros/homologados/cartera-contable",
+                                    "orden": 3,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 74,
+                            "codigo": "CONTABILIDAD_PARAMETROS_CUENTAS_CONTABLES_LICENCIAS",
+                            "etiqueta": "Cuentas Contables Licencias",
+                            "slug": "cuentas-contables-licencias",
+                            "icono": "verified",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/cuentas-contables-licencias",
+                            "orden": 16,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 75,
+                            "codigo": "CONTABILIDAD_PARAMETROS_GRUPO_ANALITICOS",
+                            "etiqueta": "Grupo De Analiticos",
+                            "slug": "grupo-de-analiticos",
+                            "icono": "pie_chart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/grupo-analiticos",
+                            "orden": 17,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 76,
+                            "codigo": "CONTABILIDAD_PARAMETROS_TIPOS_CUENTAS",
+                            "etiqueta": "Tipos De Cuentas",
+                            "slug": "tipos-de-cuentas",
+                            "icono": "account_box",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/tipos-cuentas",
+                            "orden": 18,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 77,
+                            "codigo": "CONTABILIDAD_PARAMETROS_TIPOS_BIENES",
+                            "etiqueta": "Tipos De Bienes",
+                            "slug": "tipos-de-bienes",
+                            "icono": "inventory_2",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/tipos-bienes",
+                            "orden": 19,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 78,
+                            "codigo": "CONTABILIDAD_PARAMETROS_CUENTAS_BIENES",
+                            "etiqueta": "Cuentas De Bienes",
+                            "slug": "cuentas-de-bienes",
+                            "icono": "category",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/cuentas-bienes",
+                            "orden": 20,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 79,
+                            "codigo": "CONTABILIDAD_PARAMETROS_VALOR_MONEDA_CAJA",
+                            "etiqueta": "Valor Moneda (Caja)",
+                            "slug": "valor-moneda-caja",
+                            "icono": "currency_exchange",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/valor-moneda-caja",
+                            "orden": 21,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 80,
+                            "codigo": "CONTABILIDAD_PARAMETROS_UNIDAD_FOMENTO",
+                            "etiqueta": "Unidad De Fomento",
+                            "slug": "unidad-de-fomento",
+                            "icono": "trending_up",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/unidad-fomento",
+                            "orden": 22,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 81,
+                            "codigo": "CONTABILIDAD_PARAMETROS_INDICE_PRECIO_AL_CONSUMIDOR",
+                            "etiqueta": "Indice Precio Al Consumidor",
+                            "slug": "indice-precio-al-consumidor",
+                            "icono": "price_change",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/indice-precio-al-consumidor",
+                            "orden": 23,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 82,
+                            "codigo": "CONTABILIDAD_PARAMETROS_UNIDAD_TRIBUTARIA_MENSUAL",
+                            "etiqueta": "Unidad Tributaria Mensual",
+                            "slug": "unidad-tributaria-mensual",
+                            "icono": "request_quote",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/unidad-tributaria-mensual",
+                            "orden": 24,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 83,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENIMIENTO_EVENTOS_CONTABLES",
+                            "etiqueta": "Mantenimiento Eventos Contables",
+                            "slug": "mantenimiento-eventos-contables",
+                            "icono": "event",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantenimiento-eventos-contables",
+                            "orden": 25,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 84,
+                            "codigo": "CONTABILIDAD_PARAMETROS_TIPOS_IMPUESTOS",
+                            "etiqueta": "Tipos De Impuestos",
+                            "slug": "tipos-de-impuestos",
+                            "icono": "receipt_long",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/tipos-impuestos",
+                            "orden": 26,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 85,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MONEDA",
+                            "etiqueta": "Moneda",
+                            "slug": "moneda",
+                            "icono": "paid",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/moneda",
+                            "orden": 27,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 86,
+                            "codigo": "CONTABILIDAD_PARAMETROS_PLANTILLA_RESOUCION_PAGO_EXENTA",
+                            "etiqueta": "Plantilla Resoución De Pago Exenta",
+                            "slug": "plantilla-resoucion-de-pago-exenta",
+                            "icono": "description",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/plantilla-resoucion-pago-exenta",
+                            "orden": 28,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 87,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENCION_PROVEEDORES",
+                            "etiqueta": "Mantencion De Proveedores",
+                            "slug": "mantencion-de-proveedores",
+                            "icono": "local_shipping",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantencion-proveedores",
+                            "orden": 29,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 88,
+                            "codigo": "CONTABILIDAD_PARAMETROS_MANTENCION_FINANCIADORES",
+                            "etiqueta": "Mantencion De Financiadores",
+                            "slug": "mantencion-de-financiadores",
+                            "icono": "savings",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/mantencion-financiadores",
+                            "orden": 30,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 89,
+                            "codigo": "CONTABILIDAD_PARAMETROS_IDENTIFICACION_LOS_MODULOS",
+                            "etiqueta": "Identificacion De Los Módulos",
+                            "slug": "identificacion-de-los-modulos",
+                            "icono": "view_module",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/parametros/identificacion-los-modulos",
+                            "orden": 31,
+                            "activo": "S"
+                        }
+                    ]
+                },
+                {
+                    "id": 51,
+                    "codigo": "CONTABILIDAD_PROCESOS",
+                    "etiqueta": "Procesos",
+                    "slug": "procesos",
+                    "icono": "account_tree",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/procesos",
+                    "orden": 2,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 90,
+                            "codigo": "CONTABILIDAD_PROCESOS_ENTRADA_ASIENTOS_CONTABLES",
+                            "etiqueta": "Entrada De Asientos Contables",
+                            "slug": "entrada-de-asientos-contables",
+                            "icono": "input",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/entrada-asientos-contables",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 91,
+                            "codigo": "CONTABILIDAD_PROCESOS_ACTUALIZACION_ASIENTOS_CONTABLES",
+                            "etiqueta": "Actualización De Asientos Contables",
+                            "slug": "actualizacion-de-asientos-contables",
+                            "icono": "update",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/actualizacion-asientos-contables",
+                            "orden": 2,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 92,
+                            "codigo": "CONTABILIDAD_PROCESOS_TRASPASA_ASIENTOS_EFECTIVOS_ILIAS",
+                            "etiqueta": "Traspasa Asientos Efectivos Ilias",
+                            "slug": "traspasa-asientos-efectivos-ilias",
+                            "icono": "swap_horiz",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/traspasa-asientos-efectivos-ilias",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 93,
+                            "codigo": "CONTABILIDAD_PROCESOS_ENTRADA_Y_MANTENIMIENTO_ANALITICOS",
+                            "etiqueta": "Entrada Y Mantenimiento De Análiticos",
+                            "slug": "entrada-y-mantenimiento-de-analiticos",
+                            "icono": "analytics",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/entrada-y-mantenimiento-analiticos",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 94,
+                            "codigo": "CONTABILIDAD_PROCESOS_FACTURACION_HOSPITAL",
+                            "etiqueta": "Facturación Hospital",
+                            "slug": "facturacion-hospital",
+                            "icono": "local_hospital",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/facturacion-hospital",
+                            "orden": 5,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 95,
+                                    "codigo": "CONTABILIDAD_PROCESOS_FACTURACION_HOSPITAL_VALIDA_ESCTRUCTURA_ARCHIVO_PLANO",
+                                    "etiqueta": "Valida Esctructura Archivo Plano",
+                                    "slug": "valida-esctructura-archivo-plano",
+                                    "icono": "rule",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/facturacion-hospital/valida-esctructura-archivo-plano",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 96,
+                                    "codigo": "CONTABILIDAD_PROCESOS_FACTURACION_HOSPITAL_PROCESA_ARCHIVO_PLANO",
+                                    "etiqueta": "Procesa Archivo Plano",
+                                    "slug": "procesa-archivo-plano",
+                                    "icono": "memory",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/facturacion-hospital/procesa-archivo-plano",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 97,
+                                    "codigo": "CONTABILIDAD_PROCESOS_FACTURACION_HOSPITAL_GENERA_ARCHIVO_PLANO_FACTURACION",
+                                    "etiqueta": "Genera Archivo Plano De Facturación",
+                                    "slug": "genera-archivo-plano-de-facturacion",
+                                    "icono": "file_download",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/facturacion-hospital/genera-archivo-plano-facturacion",
+                                    "orden": 3,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 98,
+                            "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES",
+                            "etiqueta": "Inversiones Y Colocaciones",
+                            "slug": "inversiones-y-colocaciones",
+                            "icono": "show_chart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/procesos/inversiones-y-colocaciones",
+                            "orden": 6,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 99,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_TOMA_COLOCACION",
+                                    "etiqueta": "Toma De Colocacion",
+                                    "slug": "toma-de-colocacion",
+                                    "icono": "add_circle_outline",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/toma-colocacion",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 100,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_CONFIRMA_BANCO",
+                                    "etiqueta": "Confirma Banco",
+                                    "slug": "confirma-banco",
+                                    "icono": "verified",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/confirma-banco",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 101,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_ANULA_COLOCACION",
+                                    "etiqueta": "Anula Colocacion",
+                                    "slug": "anula-colocacion",
+                                    "icono": "cancel",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/anula-colocacion",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 102,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_RESCATA_Y_LIQUIDA_COLOCACION",
+                                    "etiqueta": "Rescata Y Liquida Colocación",
+                                    "slug": "rescata-y-liquida-colocacion",
+                                    "icono": "price_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/rescata-y-liquida-colocacion",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 103,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_RESCATA_INTERESES_Y_RENUEVA_COLOCACION",
+                                    "etiqueta": "Rescata Intereses Y Renueva Colocación",
+                                    "slug": "rescata-intereses-y-renueva-colocacion",
+                                    "icono": "autorenew",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/rescata-intereses-y-renueva-colocacion",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 104,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_RENUEVA_COLOCACIONES_CON_INTERESES",
+                                    "etiqueta": "Renueva Colocaciones Con Intereses",
+                                    "slug": "renueva-colocaciones-con-intereses",
+                                    "icono": "loop",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/renueva-colocaciones-con-intereses",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 105,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_RESCATA_PARCIAL_CON_DEPOSITO",
+                                    "etiqueta": "Rescata Parcial Con Deposito",
+                                    "slug": "rescata-parcial-con-deposito",
+                                    "icono": "savings",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/rescata-parcial-con-deposito",
+                                    "orden": 7,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 106,
+                                    "codigo": "CONTABILIDAD_PROCESOS_INVERSIONES_Y_COLOCACIONES_RESCATA_PARCIAL_PARA_PAGO",
+                                    "etiqueta": "Rescata Parcial Para Pago",
+                                    "slug": "rescata-parcial-para-pago",
+                                    "icono": "payments",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/procesos/inversiones-y-colocaciones/rescata-parcial-para-pago",
+                                    "orden": 8,
+                                    "activo": "S"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 52,
+                    "codigo": "CONTABILIDAD_CONSULTAS",
+                    "etiqueta": "Consultas",
+                    "slug": "consultas",
+                    "icono": "manage_search",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/consultas",
+                    "orden": 3,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 107,
+                            "codigo": "CONTABILIDAD_CONSULTAS_CUADRATURA_SIGFE_POR_ENTIDAD",
+                            "etiqueta": "Cuadratura Sigfe Por Entidad",
+                            "slug": "cuadratura-sigfe-por-entidad",
+                            "icono": "balance",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/cuadratura-sigfe-por-entidad",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 108,
+                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD",
+                            "etiqueta": "Por Unidad",
+                            "slug": "por-unidad",
+                            "icono": "domain",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/por-unidad",
+                            "orden": 2,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 109,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_SALDO_INICIAL_CAJA",
+                                    "etiqueta": "Saldo Inicial De Caja",
+                                    "slug": "saldo-inicial-de-caja",
+                                    "icono": "account_balance_wallet",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/saldo-inicial-caja",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 110,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_CUADRARTURA_MOVIMIENTO_FONDOS",
+                                    "etiqueta": "Cuadrartura Movimiento De Fondos",
+                                    "slug": "cuadrartura-movimiento-de-fondos",
+                                    "icono": "compare_arrows",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/cuadrartura-movimiento-fondos",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 111,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_BALANCE_COMPROBACION_Y_SALDOS_MES",
+                                    "etiqueta": "Balance Comprobación Y Saldos Del Mes",
+                                    "slug": "balance-comprobacion-y-saldos-del-mes",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/balance-comprobacion-y-saldos-mes",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 112,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_LIBRO_MAYOR_MES",
+                                    "etiqueta": "Libro Mayor Del Mes",
+                                    "slug": "libro-mayor-del-mes",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/libro-mayor-mes",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 113,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_CUENTAS_COMPLEMENTARIAS_MES",
+                                    "etiqueta": "Cuentas Complementarias Del Mes",
+                                    "slug": "cuentas-complementarias-del-mes",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/cuentas-complementarias-mes",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 114,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_MOVIMIENTOS_FONDOS_MES",
+                                    "etiqueta": "Movimientos De Fondos Del Mes",
+                                    "slug": "movimientos-de-fondos-del-mes",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/movimientos-fondos-mes",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 115,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_SALDOS_CUENTAS",
+                                    "etiqueta": "Saldos De Cuentas",
+                                    "slug": "saldos-de-cuentas",
+                                    "icono": "request_quote",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/saldos-cuentas",
+                                    "orden": 7,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 116,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_CUADRATURA_UNIDAD_CUENTAS_GASTO",
+                                    "etiqueta": "Cuadratura Unidad / Cuentas De Gasto",
+                                    "slug": "cuadratura-unidad-cuentas-de-gasto",
+                                    "icono": "money_off",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/cuadratura-unidad-cuentas-gasto",
+                                    "orden": 8,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 117,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_CUADRATURA_UNIDAD_CUENTAS_INGRESOS",
+                                    "etiqueta": "Cuadratura Unidad / Cuentas De Ingresos",
+                                    "slug": "cuadratura-unidad-cuentas-de-ingresos",
+                                    "icono": "attach_money",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/cuadratura-unidad-cuentas-ingresos",
+                                    "orden": 9,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 118,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_COMPROMISOS_POR_UNIDAD",
+                                    "etiqueta": "Compromisos Por Unidad",
+                                    "slug": "compromisos-por-unidad",
+                                    "icono": "handshake",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/compromisos-por-unidad",
+                                    "orden": 10,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 119,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_COMPROMISOS_POR_UNIDAD_DE_INGRESOS_POR_CUENTA",
+                                            "etiqueta": "De Ingresos Por Cuenta",
+                                            "slug": "de-ingresos-por-cuenta",
+                                            "icono": "login",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/compromisos-por-unidad/de-ingresos-por-cuenta",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 120,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_COMPROMISOS_POR_UNIDAD_DE_GASTOS_POR_CUENTA",
+                                            "etiqueta": "De Gastos Por Cuenta",
+                                            "slug": "de-gastos-por-cuenta",
+                                            "icono": "logout",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/compromisos-por-unidad/de-gastos-por-cuenta",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 121,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_SALDOS_POR_FECHAS",
+                                    "etiqueta": "Saldos Por Fechas",
+                                    "slug": "saldos-por-fechas",
+                                    "icono": "date_range",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/saldos-por-fechas",
+                                    "orden": 11,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 122,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_DE_MOVIMIENTOS",
+                                    "etiqueta": "De Movimientos",
+                                    "slug": "de-movimientos",
+                                    "icono": "swap_vert",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/de-movimientos",
+                                    "orden": 12,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 123,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_MOVIMIENTOS_POR_NRO_CONTROL_PAGOS_EFECTUADOS_POR_RUT",
+                                    "etiqueta": "Movimientos Por Nro Control Pagos Efectuados Por Rut",
+                                    "slug": "movimientos-por-nro-control-pagos-efectuados-por-rut",
+                                    "icono": "badge",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/movimientos-por-nro-control-pagos-efectuados-por-rut",
+                                    "orden": 13,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 124,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_PLAN_CUENTAS_POR_ENTIDAD",
+                                    "etiqueta": "Plan De Cuentas Por Entidad",
+                                    "slug": "plan-de-cuentas-por-entidad",
+                                    "icono": "list_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/plan-cuentas-por-entidad",
+                                    "orden": 14,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 131,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_PLAN_CUENTAS_POR_ENTIDAD_2015",
+                                            "etiqueta": "2015",
+                                            "slug": "2015",
+                                            "icono": "history",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/plan-cuentas-por-entidad/2015",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 125,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ASIENTOS",
+                                    "etiqueta": "Asientos",
+                                    "slug": "asientos",
+                                    "icono": "receipt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/asientos",
+                                    "orden": 15,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 126,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ASIENTOS_ACTUALIZADOS_MES_PROCESO",
+                                            "etiqueta": "Actualizados Del Mes En Proceso",
+                                            "slug": "actualizados-del-mes-en-proceso",
+                                            "icono": "update",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/asientos/actualizados-mes-proceso",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 127,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ASIENTOS_ASIENTO_CONTABLE",
+                                            "etiqueta": "Asiento Contable",
+                                            "slug": "asiento-contable",
+                                            "icono": "description",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/asientos/asiento-contable",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 128,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ANALITICOS",
+                                    "etiqueta": "Analiticos",
+                                    "slug": "analiticos",
+                                    "icono": "analytics",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad/analiticos",
+                                    "orden": 16,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 129,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ANALITICOS_ANALITICOS_CUENTAS",
+                                            "etiqueta": "Analiticos De Cuentas",
+                                            "slug": "analiticos-de-cuentas",
+                                            "icono": "pie_chart",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/analiticos/analiticos-cuentas",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 130,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_ANALITICOS_ANALITICOS_DETALLE_ANALITICOS",
+                                            "etiqueta": "Analiticos Detalle De Analiticos",
+                                            "slug": "analiticos-detalle-de-analiticos",
+                                            "icono": "insights",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad/analiticos/analiticos-detalle-analiticos",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 132,
+                            "codigo": "CONTABILIDAD_CONSULTAS_DESVIACION_CAJA",
+                            "etiqueta": "Desviación Caja",
+                            "slug": "desviacion-caja",
+                            "icono": "call_split",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/desviacion-caja",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 133,
+                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA",
+                            "etiqueta": "Por Unidad Interna",
+                            "slug": "por-unidad-interna",
+                            "icono": "business",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/por-unidad-interna",
+                            "orden": 4,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 134,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_CUADRATURA_MOVIMIENTO_FONDOS_MES",
+                                    "etiqueta": "Cuadratura Movimiento De Fondos Del Mes",
+                                    "slug": "cuadratura-movimiento-de-fondos-del-mes",
+                                    "icono": "compare_arrows",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/cuadratura-movimiento-fondos-mes",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 135,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_BALANCE_COMPROBACION_Y_SALDOS_MES",
+                                    "etiqueta": "Balance Comprobación Y Saldos Del Mes",
+                                    "slug": "balance-comprobacion-y-saldos-del-mes",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/balance-comprobacion-y-saldos-mes",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 136,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_LIBRO_MAYOR_MES",
+                                    "etiqueta": "Libro Mayor Del Mes",
+                                    "slug": "libro-mayor-del-mes",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/libro-mayor-mes",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 137,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_CUENTAS_COMPLEMENTARIAS_MES",
+                                    "etiqueta": "Cuentas Complementarias Del Mes",
+                                    "slug": "cuentas-complementarias-del-mes",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/cuentas-complementarias-mes",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 138,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_MOVIMIENTOS_FONDOS_MES",
+                                    "etiqueta": "Movimientos De Fondos Del Mes",
+                                    "slug": "movimientos-de-fondos-del-mes",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/movimientos-fondos-mes",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 139,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_SALDOS_CUENTAS_MES",
+                                    "etiqueta": "Saldos De Cuentas Del Mes",
+                                    "slug": "saldos-de-cuentas-del-mes",
+                                    "icono": "request_quote",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/saldos-cuentas-mes",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 140,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_CUADRATURA_UNIDAD_INTERNA_CUENTAS_GASTOS_MES",
+                                    "etiqueta": "Cuadratura Unidad Interna / Cuentas De Gastos Del Mes",
+                                    "slug": "cuadratura-unidad-interna-cuentas-de-gastos-del-mes",
+                                    "icono": "money_off",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/cuadratura-unidad-interna-cuentas-gastos-mes",
+                                    "orden": 7,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 141,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_CUADRATURA_UNIDAD_INTERNA_CUENTAS_INGRESOS_MES",
+                                    "etiqueta": "Cuadratura Unidad Interna / Cuentas De Ingresos Del Mes",
+                                    "slug": "cuadratura-unidad-interna-cuentas-de-ingresos-del-mes",
+                                    "icono": "attach_money",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/cuadratura-unidad-interna-cuentas-ingresos-mes",
+                                    "orden": 8,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 142,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_COMPROMISOS_POR_UNIDAD_INTERNA_INGRESOS_POR_UUII_CUENTA",
+                                    "etiqueta": "Compromisos Por Unidad Interna / De Ingresos Por Uu.Ii / Cuenta",
+                                    "slug": "compromisos-por-unidad-interna-de-ingresos-por-uu-ii-cuenta",
+                                    "icono": "login",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/compromisos-por-unidad-interna-ingresos-por-uuii-cuenta",
+                                    "orden": 9,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 143,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_COMPROMISOS_POR_UNIDAD_INTERNA_GASTOS_POR_UUII_CUENTA",
+                                    "etiqueta": "Compromisos Por Unidad Interna / De Gastos Por Uu.Ii / Cuenta",
+                                    "slug": "compromisos-por-unidad-interna-de-gastos-por-uu-ii-cuenta",
+                                    "icono": "logout",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/compromisos-por-unidad-interna-gastos-por-uuii-cuenta",
+                                    "orden": 10,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 144,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_ANALITICOS",
+                                    "etiqueta": "Analiticos",
+                                    "slug": "analiticos",
+                                    "icono": "analytics",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/por-unidad-interna/analiticos",
+                                    "orden": 11,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 145,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_ANALITICOS_ANALITICOS_CUENTAS_POR_UUII",
+                                            "etiqueta": "Analiticos De Cuentas Por Uu.Ii",
+                                            "slug": "analiticos-de-cuentas-por-uu-ii",
+                                            "icono": "pie_chart",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad-interna/analiticos/analiticos-cuentas-por-uuii",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 146,
+                                            "codigo": "CONTABILIDAD_CONSULTAS_POR_UNIDAD_INTERNA_ANALITICOS_DETALLE_ANALITICOS_POR_UUII",
+                                            "etiqueta": "Detalle De Analiticos Por Uu.Ii",
+                                            "slug": "detalle-de-analiticos-por-uu-ii",
+                                            "icono": "insights",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/consultas/por-unidad-interna/analiticos/detalle-analiticos-por-uuii",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 147,
+                            "codigo": "CONTABILIDAD_CONSULTAS_FACTURACION_HOSPITAL",
+                            "etiqueta": "Facturación Hospital",
+                            "slug": "facturacion-hospital",
+                            "icono": "local_hospital",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/facturacion-hospital",
+                            "orden": 5,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 148,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_FACTURACION_HOSPITAL_FINANCIEROS",
+                                    "etiqueta": "Financieros",
+                                    "slug": "financieros",
+                                    "icono": "monetization_on",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/facturacion-hospital/financieros",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 149,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_FACTURACION_HOSPITAL_FACTURAS_POR_FECHAS",
+                                    "etiqueta": "Facturas Por Fechas",
+                                    "slug": "facturas-por-fechas",
+                                    "icono": "calendar_month",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/facturacion-hospital/facturas-por-fechas",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 150,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_FACTURACION_HOSPITAL_FACTURAS_POR_FINANCIADORES",
+                                    "etiqueta": "Facturas Por Financiadores",
+                                    "slug": "facturas-por-financiadores",
+                                    "icono": "assured_workload",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/facturacion-hospital/facturas-por-financiadores",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 151,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_FACTURACION_HOSPITAL_RESUMEN_FACTURAS_POR_FECHA",
+                                    "etiqueta": "Resumen Facturas Por Fecha",
+                                    "slug": "resumen-facturas-por-fecha",
+                                    "icono": "summarize",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/facturacion-hospital/resumen-facturas-por-fecha",
+                                    "orden": 4,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 152,
+                            "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO_",
+                            "etiqueta": "Control En Linea Consolidado",
+                            "slug": "control-en-linea-consolidado",
+                            "icono": "query_stats",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/control-linea-consolidado-",
+                            "orden": 6,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 153,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO__LICOPE_GASTOS_NEGATIVO",
+                                    "etiqueta": "Licope Gastos Negativo",
+                                    "slug": "licope-gastos-negativo",
+                                    "icono": "trending_down",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-consolidado-/licope-gastos-negativo",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 154,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO__LICOPE_INGRESOS_NEGATIVO",
+                                    "etiqueta": "Licope Ingresos Negativo",
+                                    "slug": "licope-ingresos-negativo",
+                                    "icono": "money_off",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-consolidado-/licope-ingresos-negativo",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 155,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO__EJECUCION_PRESUPUESTARIA_GASTOS",
+                                    "etiqueta": "Ejecución Presupuestaria De Gastos",
+                                    "slug": "ejecucion-presupuestaria-de-gastos",
+                                    "icono": "payments",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-consolidado-/ejecucion-presupuestaria-gastos",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 156,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO__EJECUCION_PRESUPUESTARIA_INGRESOS",
+                                    "etiqueta": "Ejecución Presupuestaria De Ingresos",
+                                    "slug": "ejecucion-presupuestaria-de-ingresos",
+                                    "icono": "attach_money",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-consolidado-/ejecucion-presupuestaria-ingresos",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 157,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_CONSOLIDADO__SALDOS_CUENTAS",
+                                    "etiqueta": "Saldos De Cuentas",
+                                    "slug": "saldos-de-cuentas",
+                                    "icono": "account_balance_wallet",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-consolidado-/saldos-cuentas",
+                                    "orden": 5,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 158,
+                            "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD",
+                            "etiqueta": "Control En Linea Unidad",
+                            "slug": "control-en-linea-unidad",
+                            "icono": "monitor_heart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/control-linea-unidad",
+                            "orden": 7,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 159,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD_LICOPE_GASTOS_NEGATIVO",
+                                    "etiqueta": "Licope Gastos Negativo",
+                                    "slug": "licope-gastos-negativo",
+                                    "icono": "trending_down",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-unidad/licope-gastos-negativo",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 160,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD_LICOPE_INGRESOS_NEGATIVO",
+                                    "etiqueta": "Licope Ingresos Negativo",
+                                    "slug": "licope-ingresos-negativo",
+                                    "icono": "money_off",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-unidad/licope-ingresos-negativo",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 161,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD_EJECUCION_PRESUPUESTARIA_GASTOS",
+                                    "etiqueta": "Ejecución Presupuestaria De Gastos",
+                                    "slug": "ejecucion-presupuestaria-de-gastos",
+                                    "icono": "payments",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-unidad/ejecucion-presupuestaria-gastos",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 162,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD_EJECUCION_PRESUPUESTARIA_INGRESOS",
+                                    "etiqueta": "Ejecución Presupuestaria De Ingresos",
+                                    "slug": "ejecucion-presupuestaria-de-ingresos",
+                                    "icono": "attach_money",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-unidad/ejecucion-presupuestaria-ingresos",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 163,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_CONTROL_LINEA_UNIDAD_SALDOS_CUENTAS",
+                                    "etiqueta": "Saldos De Cuentas",
+                                    "slug": "saldos-de-cuentas",
+                                    "icono": "account_balance_wallet",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/control-linea-unidad/saldos-cuentas",
+                                    "orden": 5,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 164,
+                            "codigo": "CONTABILIDAD_CONSULTAS_INVERSIONES_Y_COLOCACIONES_",
+                            "etiqueta": "Inversiones Y Colocaciones",
+                            "slug": "inversiones-y-colocaciones",
+                            "icono": "candlestick_chart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/consultas/inversiones-y-colocaciones-",
+                            "orden": 8,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 165,
+                                    "codigo": "CONTABILIDAD_CONSULTAS_INVERSIONES_Y_COLOCACIONES__COLOCACION_ESPECIFICA",
+                                    "etiqueta": "Colocacion Especifica",
+                                    "slug": "colocacion-especifica",
+                                    "icono": "track_changes",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/consultas/inversiones-y-colocaciones-/colocacion-especifica",
+                                    "orden": 1,
+                                    "activo": "S"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 53,
+                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO",
+                    "etiqueta": "Mercado Público",
+                    "slug": "mercado-publico",
+                    "icono": "storefront",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/mercado-publico",
+                    "orden": 4,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 166,
+                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_PROCESOS",
+                            "etiqueta": "Procesos",
+                            "slug": "procesos",
+                            "icono": "shopping_cart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/mercado-publico/procesos",
+                            "orden": 1,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 167,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_PROCESOS_VALIDAR_INFORMACION",
+                                    "etiqueta": "Validar Informacion",
+                                    "slug": "validar-informacion",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/procesos/validar-informacion",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 168,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_PROCESOS_ANULACION_O_C",
+                                    "etiqueta": "Anulación O/C",
+                                    "slug": "anulacion-o-c",
+                                    "icono": "remove_shopping_cart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/procesos/anulacion-o-c",
+                                    "orden": 2,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 169,
+                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS",
+                            "etiqueta": "Consultas",
+                            "slug": "consultas",
+                            "icono": "manage_search",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/mercado-publico/consultas",
+                            "orden": 2,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 170,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS",
+                                    "etiqueta": "Ordenes De Compras",
+                                    "slug": "ordenes-de-compras",
+                                    "icono": "receipt_long",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras",
+                                    "orden": 1,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 171,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_RECHAZADAS_POR_FINANZAS",
+                                            "etiqueta": "Rechazadas Por Finanzas",
+                                            "slug": "rechazadas-por-finanzas",
+                                            "icono": "money_off",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/rechazadas-por-finanzas",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 172,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_RECHAZADAS_POR_MERCADO_PUBLICO",
+                                            "etiqueta": "Rechazadas Por Mercado Publico",
+                                            "slug": "rechazadas-por-mercado-publico",
+                                            "icono": "block",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/rechazadas-por-mercado-publico",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 173,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_FINALIZADAS_POR_MERCADO_PUBLICO",
+                                            "etiqueta": "Finalizadas Por Mercado Publico",
+                                            "slug": "finalizadas-por-mercado-publico",
+                                            "icono": "check_circle",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/finalizadas-por-mercado-publico",
+                                            "orden": 3,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 174,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_POR_PERIODO_FECHAS",
+                                            "etiqueta": "Por Periodo De Fechas",
+                                            "slug": "por-periodo-de-fechas",
+                                            "icono": "date_range",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/por-periodo-fechas",
+                                            "orden": 4,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 175,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_POR_UNIDAD_INTERNA",
+                                            "etiqueta": "Por Unidad Interna",
+                                            "slug": "por-unidad-interna",
+                                            "icono": "business",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/por-unidad-interna",
+                                            "orden": 5,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 176,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_ORDENES_COMPRAS_RESUMEN_O_C_REALIZADAS_POR_MES",
+                                            "etiqueta": "Resumen O/C Realizadas Por Mes",
+                                            "slug": "resumen-o-c-realizadas-por-mes",
+                                            "icono": "calendar_view_month",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/consultas/ordenes-compras/resumen-o-c-realizadas-por-mes",
+                                            "orden": 6,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 177,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_CONSULTAS_CATALOGO_ARTICULOS",
+                                    "etiqueta": "Catalogo De Articulos",
+                                    "slug": "catalogo-de-articulos",
+                                    "icono": "category",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/consultas/catalogo-articulos",
+                                    "orden": 2,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 178,
+                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES",
+                            "etiqueta": "Informes",
+                            "slug": "informes",
+                            "icono": "assessment",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/mercado-publico/informes",
+                            "orden": 3,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 179,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_ORDENES_COMPRAS",
+                                    "etiqueta": "Ordenes De Compras",
+                                    "slug": "ordenes-de-compras",
+                                    "icono": "receipt_long",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/informes/ordenes-compras",
+                                    "orden": 1,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 180,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_ORDENES_COMPRAS_AUTORIZADAS_POR_FINANZAS",
+                                            "etiqueta": "Autorizadas Por Finanzas",
+                                            "slug": "autorizadas-por-finanzas",
+                                            "icono": "verified",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/informes/ordenes-compras/autorizadas-por-finanzas",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 181,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_ORDENES_COMPRAS_RECHAZADAS_POR_FINANZAS",
+                                            "etiqueta": "Rechazadas Por Finanzas",
+                                            "slug": "rechazadas-por-finanzas",
+                                            "icono": "money_off",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/informes/ordenes-compras/rechazadas-por-finanzas",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 182,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_ORDENES_COMPRAS_RECHAZADAS_POR_MERCADO_PUBLICO",
+                                            "etiqueta": "Rechazadas Por Mercado Publico",
+                                            "slug": "rechazadas-por-mercado-publico",
+                                            "icono": "block",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/informes/ordenes-compras/rechazadas-por-mercado-publico",
+                                            "orden": 3,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 183,
+                                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_ORDENES_COMPRAS_FINALIZADAS_POR_MERCADO_PUBLICO",
+                                            "etiqueta": "Finalizadas Por Mercado Publico",
+                                            "slug": "finalizadas-por-mercado-publico",
+                                            "icono": "check_circle",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/mercado-publico/informes/ordenes-compras/finalizadas-por-mercado-publico",
+                                            "orden": 4,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 184,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_REIMPRESION_CERTIFICADOS",
+                                    "etiqueta": "Reimpresion Certificados",
+                                    "slug": "reimpresion-certificados",
+                                    "icono": "print",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/informes/reimpresion-certificados",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 185,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_INFORMES_CATALOGO_ARTICULOS",
+                                    "etiqueta": "Catalogo De Articulos",
+                                    "slug": "catalogo-de-articulos",
+                                    "icono": "category",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/informes/catalogo-articulos",
+                                    "orden": 3,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 186,
+                            "codigo": "CONTABILIDAD_MERCADO_PUBLICO_MANTENCION",
+                            "etiqueta": "Mantencion",
+                            "slug": "mantencion",
+                            "icono": "build",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/mercado-publico/mantencion",
+                            "orden": 4,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 187,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_MANTENCION_AUTORIZADORES",
+                                    "etiqueta": "Autorizadores",
+                                    "slug": "autorizadores",
+                                    "icono": "admin_panel_settings",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/mantencion/autorizadores",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 188,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_MANTENCION_MANTENCION_CORREOS",
+                                    "etiqueta": "Mantencion Correos",
+                                    "slug": "mantencion-correos",
+                                    "icono": "mail",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/mantencion/mantencion-correos",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 189,
+                                    "codigo": "CONTABILIDAD_MERCADO_PUBLICO_MANTENCION_CORREO_ELECTRONICOS_UNIDAD_INTERNA",
+                                    "etiqueta": "Correo Electronicos Unidad Interna",
+                                    "slug": "correo-electronicos-unidad-interna",
+                                    "icono": "contact_mail",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/mercado-publico/mantencion/correo-electronicos-unidad-interna",
+                                    "orden": 3,
+                                    "activo": "S"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 54,
+                    "codigo": "CONTABILIDAD_INFORMES",
+                    "etiqueta": "Informes",
+                    "slug": "informes",
+                    "icono": "assessment",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/informes",
+                    "orden": 5,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 190,
+                            "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS_",
+                            "etiqueta": "Consolidados (Entidad Org Externos)",
+                            "slug": "consolidados-entidad-org-externos",
+                            "icono": "domain_verification",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-",
+                            "orden": 1,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 191,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__BALANCE_GENERAL",
+                                    "etiqueta": "Balance General",
+                                    "slug": "balance-general",
+                                    "icono": "balance",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/balance-general",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 192,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__ESTADO_RESULTADO",
+                                    "etiqueta": "Estado Resultado",
+                                    "slug": "estado-resultado",
+                                    "icono": "show_chart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/estado-resultado",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 193,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__MOVIMIENTO_FONDOS",
+                                    "etiqueta": "Movimiento De Fondos",
+                                    "slug": "movimiento-de-fondos",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/movimiento-fondos",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 194,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__CUENTAS_COMPLEMENTARIAS",
+                                    "etiqueta": "Cuentas Complementarias",
+                                    "slug": "cuentas-complementarias",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/cuentas-complementarias",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 195,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__BALANCE_COMPROBACION_Y_SALDOS",
+                                    "etiqueta": "Balance Comprobación Y Saldos",
+                                    "slug": "balance-comprobacion-y-saldos",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/balance-comprobacion-y-saldos",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 196,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__BALANCE_COMPROACION_CONTRALORIA",
+                                    "etiqueta": "Balance Comproación Contraloria",
+                                    "slug": "balance-comproacion-contraloria",
+                                    "icono": "gavel",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/balance-comproacion-contraloria",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 197,
+                                    "codigo": "CONTABILIDAD_INFORMES_CONSOLIDADOS_ENTIDAD_ORG_EXTERNOS__CAPITULO_V",
+                                    "etiqueta": "Capitulo V",
+                                    "slug": "capitulo-v",
+                                    "icono": "article",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/consolidados-entidad-org-externos-/capitulo-v",
+                                    "orden": 7,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 198,
+                            "codigo": "CONTABILIDAD_INFORMES_INFORMES_CAIGG",
+                            "etiqueta": "Informes A C.A.I.G.G",
+                            "slug": "informes-a-c-a-i-g-g",
+                            "icono": "summarize",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/informes-caigg",
+                            "orden": 2,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 199,
+                                    "codigo": "CONTABILIDAD_INFORMES_INFORMES_CAIGG_EMISION__INFROMES_CAIGG",
+                                    "etiqueta": "Emision  De Infromes A C.A.I.G.G",
+                                    "slug": "emision-de-infromes-a-c-a-i-g-g",
+                                    "icono": "publish",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/informes-caigg/emision--infromes-caigg",
+                                    "orden": 1,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 200,
+                                            "codigo": "CONTABILIDAD_INFORMES_INFORMES_CAIGG_EMISION__INFROMES_CAIGG_DETALLE__INFROMES_CAIGG",
+                                            "etiqueta": "Detalle  De Infromes C.A.I.G.G",
+                                            "slug": "detalle-de-infromes-c-a-i-g-g",
+                                            "icono": "toc",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/informes-caigg/emision--infromes-caigg/detalle--infromes-caigg",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 201,
+                                            "codigo": "CONTABILIDAD_INFORMES_INFORMES_CAIGG_EMISION__INFROMES_CAIGG_EMISION_GASTO_CAIGG",
+                                            "etiqueta": "Emision Gasto A C.A.I.G.G",
+                                            "slug": "emision-gasto-a-c-a-i-g-g",
+                                            "icono": "money_off",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/informes-caigg/emision--infromes-caigg/emision-gasto-caigg",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 202,
+                            "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD",
+                            "etiqueta": "Por Unidad",
+                            "slug": "por-unidad",
+                            "icono": "domain",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/por-unidad",
+                            "orden": 3,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 203,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_BALANCE_GENERAL",
+                                    "etiqueta": "Balance General",
+                                    "slug": "balance-general",
+                                    "icono": "balance",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/balance-general",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 204,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_ESTADO_RESULTADO",
+                                    "etiqueta": "Estado Resultado",
+                                    "slug": "estado-resultado",
+                                    "icono": "show_chart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/estado-resultado",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 205,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_LIBRO_DIARIO",
+                                    "etiqueta": "Libro Diario",
+                                    "slug": "libro-diario",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/libro-diario",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 206,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_MOVIMIENTO_FONDOS",
+                                    "etiqueta": "Movimiento De Fondos",
+                                    "slug": "movimiento-de-fondos",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/movimiento-fondos",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 207,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_CUENTAS_COMPLEMENTARIAS",
+                                    "etiqueta": "Cuentas Complementarias",
+                                    "slug": "cuentas-complementarias",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/cuentas-complementarias",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 208,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_BALANCE_COMPROBACION_Y_SALDOS",
+                                    "etiqueta": "Balance De Comprobacion Y De Saldos",
+                                    "slug": "balance-de-comprobacion-y-de-saldos",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/balance-comprobacion-y-saldos",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 209,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_LIBRO_MAYOR",
+                                    "etiqueta": "Libro Mayor",
+                                    "slug": "libro-mayor",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/libro-mayor",
+                                    "orden": 7,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 210,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_PLAN_CUENTAS_POR_ENTIDAD",
+                                    "etiqueta": "Plan De Cuentas Por Entidad",
+                                    "slug": "plan-de-cuentas-por-entidad",
+                                    "icono": "list_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/plan-cuentas-por-entidad",
+                                    "orden": 8,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 211,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_RESOLUCION_PAGO",
+                                    "etiqueta": "Resolución De Pago",
+                                    "slug": "resolucion-de-pago",
+                                    "icono": "request_quote",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/resolucion-pago",
+                                    "orden": 9,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 212,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_PAGO_PROVEEDORES",
+                                    "etiqueta": "Pago A Proveedores",
+                                    "slug": "pago-a-proveedores",
+                                    "icono": "local_shipping",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/pago-proveedores",
+                                    "orden": 10,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 213,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_ANALITICOS",
+                                    "etiqueta": "Analiticos",
+                                    "slug": "analiticos",
+                                    "icono": "analytics",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/analiticos",
+                                    "orden": 11,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 214,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_ANALITICOS_CUENTAS",
+                                    "etiqueta": "Analiticos De Cuentas",
+                                    "slug": "analiticos-de-cuentas",
+                                    "icono": "pie_chart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/analiticos-cuentas",
+                                    "orden": 12,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 215,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_DETALLE_ANALITICOS",
+                                    "etiqueta": "Detalle De Analiticos",
+                                    "slug": "detalle-de-analiticos",
+                                    "icono": "insights",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/detalle-analiticos",
+                                    "orden": 13,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 216,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_DETALLE_DEUDORES_Y_ACREEDORES_PRESUPUESTARIOS",
+                                    "etiqueta": "Detalle Deudores Y Acreedores Presupuestarios.",
+                                    "slug": "detalle-deudores-y-acreedores-presupuestarios",
+                                    "icono": "group",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/detalle-deudores-y-acreedores-presupuestarios",
+                                    "orden": 14,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 217,
+                                            "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_DETALLE_DEUDORES_Y_ACREEDORES_PRESUPUESTARIOS_2015",
+                                            "etiqueta": "2015",
+                                            "slug": "2015",
+                                            "icono": "history",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/por-unidad/detalle-deudores-y-acreedores-presupuestarios/2015",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 218,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_COMPROBANTE_EGRESO",
+                                    "etiqueta": "Comprobante De Egreso",
+                                    "slug": "comprobante-de-egreso",
+                                    "icono": "outbox",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/comprobante-egreso",
+                                    "orden": 15,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 219,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_RESUMEN_COMPROBANTE_EGRESO",
+                                    "etiqueta": "Resumen Comprobante De Egreso",
+                                    "slug": "resumen-comprobante-de-egreso",
+                                    "icono": "summarize",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/resumen-comprobante-egreso",
+                                    "orden": 16,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 220,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_DESVIACION_CAJA",
+                                    "etiqueta": "Desviacion Caja",
+                                    "slug": "desviacion-caja",
+                                    "icono": "call_split",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad/desviacion-caja",
+                                    "orden": 17,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 221,
+                            "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA",
+                            "etiqueta": "Por Unidad Interna",
+                            "slug": "por-unidad-interna",
+                            "icono": "business",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/por-unidad-interna",
+                            "orden": 4,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 222,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_BALANCE_GENERAL",
+                                    "etiqueta": "Balance General",
+                                    "slug": "balance-general",
+                                    "icono": "balance",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/balance-general",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 223,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_ESTADO_RESULTADO",
+                                    "etiqueta": "Estado Resultado",
+                                    "slug": "estado-resultado",
+                                    "icono": "show_chart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/estado-resultado",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 224,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_LIBRO_DIARIO",
+                                    "etiqueta": "Libro Diario",
+                                    "slug": "libro-diario",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/libro-diario",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 225,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_MOVIMIENTO_FONDOS",
+                                    "etiqueta": "Movimiento De Fondos",
+                                    "slug": "movimiento-de-fondos",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/movimiento-fondos",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 226,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_CUENTAS_COMPLEMENTARIAS",
+                                    "etiqueta": "Cuentas Complementarias",
+                                    "slug": "cuentas-complementarias",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/cuentas-complementarias",
+                                    "orden": 5,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 227,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_BALANCE_COMPROBACION_Y_SALDOS",
+                                    "etiqueta": "Balance Comprobacion Y Saldos",
+                                    "slug": "balance-comprobacion-y-saldos",
+                                    "icono": "fact_check",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/balance-comprobacion-y-saldos",
+                                    "orden": 6,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 228,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_LIBRO_MAYOR",
+                                    "etiqueta": "Libro Mayor",
+                                    "slug": "libro-mayor",
+                                    "icono": "menu_book",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/libro-mayor",
+                                    "orden": 7,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 229,
+                                    "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_ANALITICOS",
+                                    "etiqueta": "Analiticos",
+                                    "slug": "analiticos",
+                                    "icono": "analytics",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/por-unidad-interna/analiticos",
+                                    "orden": 8,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 230,
+                                            "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_ANALITICOS_ANALITICOS_CUENTAS_POR_UUII",
+                                            "etiqueta": "Analiticos De Cuentas Por Uu.Ii",
+                                            "slug": "analiticos-de-cuentas-por-uu-ii",
+                                            "icono": "pie_chart",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/por-unidad-interna/analiticos/analiticos-cuentas-por-uuii",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 231,
+                                            "codigo": "CONTABILIDAD_INFORMES_POR_UNIDAD_INTERNA_ANALITICOS_DETALLE_CUENTAS_POR_UUII",
+                                            "etiqueta": "Detalle De Cuentas Por Uu.Ii",
+                                            "slug": "detalle-de-cuentas-por-uu-ii",
+                                            "icono": "insights",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/por-unidad-interna/analiticos/detalle-cuentas-por-uuii",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 232,
+                            "codigo": "CONTABILIDAD_INFORMES_INFORMES_CONSOLIDADOS_POR_UNIDAD_INTERNA_CEAFOSS",
+                            "etiqueta": "Informes Consolidados Por Unidad Interna Ceafoss",
+                            "slug": "informes-consolidados-por-unidad-interna-ceafoss",
+                            "icono": "corporate_fare",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/informes-consolidados-por-unidad-interna-ceafoss",
+                            "orden": 5,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 233,
+                                    "codigo": "CONTABILIDAD_INFORMES_INFORMES_CONSOLIDADOS_POR_UNIDAD_INTERNA_CEAFOSS_BALANCE_GENERAL",
+                                    "etiqueta": "Balance General",
+                                    "slug": "balance-general",
+                                    "icono": "balance",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/informes-consolidados-por-unidad-interna-ceafoss/balance-general",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 234,
+                                    "codigo": "CONTABILIDAD_INFORMES_INFORMES_CONSOLIDADOS_POR_UNIDAD_INTERNA_CEAFOSS_ESTADO_RENDIMIENTO_ECONOMICOS",
+                                    "etiqueta": "Estado De Rendimiento Economicos",
+                                    "slug": "estado-de-rendimiento-economicos",
+                                    "icono": "trending_up",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/informes-consolidados-por-unidad-interna-ceafoss/estado-rendimiento-economicos",
+                                    "orden": 2,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 235,
+                                    "codigo": "CONTABILIDAD_INFORMES_INFORMES_CONSOLIDADOS_POR_UNIDAD_INTERNA_CEAFOSS_MOVIMIENTO_FONDOS",
+                                    "etiqueta": "Movimiento De Fondos",
+                                    "slug": "movimiento-de-fondos",
+                                    "icono": "sync_alt",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/informes-consolidados-por-unidad-interna-ceafoss/movimiento-fondos",
+                                    "orden": 3,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 236,
+                                    "codigo": "CONTABILIDAD_INFORMES_INFORMES_CONSOLIDADOS_POR_UNIDAD_INTERNA_CEAFOSS_CUENTAS_COMPLEMENTARIAS",
+                                    "etiqueta": "Cuentas Complementarias",
+                                    "slug": "cuentas-complementarias",
+                                    "icono": "library_books",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/informes-consolidados-por-unidad-interna-ceafoss/cuentas-complementarias",
+                                    "orden": 4,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 237,
+                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES",
+                            "etiqueta": "Inversiones Y Colocaciones",
+                            "slug": "inversiones-y-colocaciones",
+                            "icono": "candlestick_chart",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones",
+                            "orden": 6,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 238,
+                                    "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_EN_CARTERA_NIVEL_CONSOLIDADO",
+                                    "etiqueta": "En Cartera Nivel Consolidado",
+                                    "slug": "en-cartera-nivel-consolidado",
+                                    "icono": "work",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/inversiones-y-colocaciones/en-cartera-nivel-consolidado",
+                                    "orden": 1,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 239,
+                                    "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_CONSOLIDADO",
+                                    "etiqueta": "Consolidado",
+                                    "slug": "consolidado",
+                                    "icono": "inventory",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/inversiones-y-colocaciones/consolidado",
+                                    "orden": 2,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 240,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_CONSOLIDADO_RESUMEN_COLOCACIONES",
+                                            "etiqueta": "Resumen De Colocaciones",
+                                            "slug": "resumen-de-colocaciones",
+                                            "icono": "summarize",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/consolidado/resumen-colocaciones",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 241,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_CONSOLIDADO_RELACION_COLOCACIONES",
+                                            "etiqueta": "Relacion De Colocaciones",
+                                            "slug": "relacion-de-colocaciones",
+                                            "icono": "format_list_numbered",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/consolidado/relacion-colocaciones",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 242,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_CONSOLIDADO_DETALLE_COLOCACIONES",
+                                            "etiqueta": "Detalle De Colocaciones",
+                                            "slug": "detalle-de-colocaciones",
+                                            "icono": "view_list",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/consolidado/detalle-colocaciones",
+                                            "orden": 3,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 243,
+                                    "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_INVERSIONES",
+                                    "etiqueta": "Inversiones",
+                                    "slug": "inversiones",
+                                    "icono": "show_chart",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/inversiones-y-colocaciones/inversiones",
+                                    "orden": 3,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 244,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_INVERSIONES_COMPROBANTE_INGRESO",
+                                            "etiqueta": "Comprobante De Ingreso",
+                                            "slug": "comprobante-de-ingreso",
+                                            "icono": "receipt",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/inversiones/comprobante-ingreso",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 245,
+                                    "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_EN_CARTERA_NIVEL_UNIDAD",
+                                    "etiqueta": "En Cartera Nivel Unidad",
+                                    "slug": "en-cartera-nivel-unidad",
+                                    "icono": "folder_shared",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/inversiones-y-colocaciones/en-cartera-nivel-unidad",
+                                    "orden": 4,
+                                    "activo": "S"
+                                },
+                                {
+                                    "id": 246,
+                                    "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD",
+                                    "etiqueta": "Unidad",
+                                    "slug": "unidad",
+                                    "icono": "domain",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad",
+                                    "orden": 5,
+                                    "activo": "S",
+                                    "hijos": [
+                                        {
+                                            "id": 247,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD_RESUMEN_CONSOLIDADO",
+                                            "etiqueta": "Resumen Consolidado",
+                                            "slug": "resumen-consolidado",
+                                            "icono": "dashboard",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad/resumen-consolidado",
+                                            "orden": 1,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 248,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD_RESUMEN_COLOCACIONES",
+                                            "etiqueta": "Resumen De Colocaciones",
+                                            "slug": "resumen-de-colocaciones",
+                                            "icono": "summarize",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad/resumen-colocaciones",
+                                            "orden": 2,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 249,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD_RELACION_COLOCACIONES",
+                                            "etiqueta": "Relacion De Colocaciones",
+                                            "slug": "relacion-de-colocaciones",
+                                            "icono": "format_list_numbered",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad/relacion-colocaciones",
+                                            "orden": 3,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 250,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD_DETALLE_OPERACIONES_CAMBIO",
+                                            "etiqueta": "Detalle De Operaciones De Cambio",
+                                            "slug": "detalle-de-operaciones-de-cambio",
+                                            "icono": "currency_exchange",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad/detalle-operaciones-cambio",
+                                            "orden": 4,
+                                            "activo": "S"
+                                        },
+                                        {
+                                            "id": 251,
+                                            "codigo": "CONTABILIDAD_INFORMES_INVERSIONES_Y_COLOCACIONES_UNIDAD_DETALLE_COLOCACIONES",
+                                            "etiqueta": "Detalle De Colocaciones",
+                                            "slug": "detalle-de-colocaciones",
+                                            "icono": "view_list",
+                                            "descripcion": "",
+                                            "ruta": "/contabilidad/informes/inversiones-y-colocaciones/unidad/detalle-colocaciones",
+                                            "orden": 5,
+                                            "activo": "S"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 55,
+                    "codigo": "CONTABILIDAD_CIERRES",
+                    "etiqueta": "Cierres",
+                    "slug": "cierres",
+                    "icono": "lock_clock",
+                    "descripcion": "",
+                    "ruta": "/contabilidad/cierres",
+                    "orden": 6,
+                    "activo": "S",
+                    "hijos": [
+                        {
+                            "id": 252,
+                            "codigo": "CONTABILIDAD_CIERRES_INFORMA_UNIDAD",
+                            "etiqueta": "Informa Unidad",
+                            "slug": "informa-unidad",
+                            "icono": "send",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/informa-unidad",
+                            "orden": 1,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 253,
+                            "codigo": "CONTABILIDAD_CIERRES_CONSOLIDADO",
+                            "etiqueta": "Consolidado",
+                            "slug": "consolidado",
+                            "icono": "inventory_2",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/consolidado",
+                            "orden": 2,
+                            "activo": "S",
+                            "hijos": [
+                                {
+                                    "id": 254,
+                                    "codigo": "CONTABILIDAD_CIERRES_CONSOLIDADO_NIVEL_CENTRAL",
+                                    "etiqueta": "Nivel Central",
+                                    "slug": "nivel-central",
+                                    "icono": "account_balance",
+                                    "descripcion": "",
+                                    "ruta": "/contabilidad/cierres/consolidado/nivel-central",
+                                    "orden": 1,
+                                    "activo": "S"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 255,
+                            "codigo": "CONTABILIDAD_CIERRES_CIERRE_MENSUAL",
+                            "etiqueta": "Cierre Mensual",
+                            "slug": "cierre-mensual",
+                            "icono": "calendar_month",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/cierre-mensual",
+                            "orden": 3,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 256,
+                            "codigo": "CONTABILIDAD_CIERRES_CIERRE_ANUAL",
+                            "etiqueta": "Cierre Anual",
+                            "slug": "cierre-anual",
+                            "icono": "event_repeat",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/cierre-anual",
+                            "orden": 4,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 257,
+                            "codigo": "CONTABILIDAD_CIERRES_ASIENTOS_CIERRE",
+                            "etiqueta": "Asientos De Cierre",
+                            "slug": "asientos-de-cierre",
+                            "icono": "lock",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/asientos-cierre",
+                            "orden": 5,
+                            "activo": "S"
+                        },
+                        {
+                            "id": 258,
+                            "codigo": "CONTABILIDAD_CIERRES_ASIENTOS_APERTURA",
+                            "etiqueta": "Asientos De Apertura",
+                            "slug": "asientos-de-apertura",
+                            "icono": "lock_open",
+                            "descripcion": "",
+                            "ruta": "/contabilidad/cierres/asientos-apertura",
+                            "orden": 6,
+                            "activo": "S"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

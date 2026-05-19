@@ -1,0 +1,70 @@
+<div class="p-0 overflow-hidden">
+  <!-- Header del Modal -->
+  <div class="bg-slate-900 px-6 py-5 text-white relative">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+    <h2 mat-dialog-title class="!text-lg !font-black !tracking-tight !flex !items-center !gap-2 !relative !m-0 !p-0 !text-white !border-b-0">
+      <mat-icon class="text-indigo-400 !text-xl">{{isEdit ? 'edit_note' : 'person_add'}}</mat-icon>
+      {{isEdit ? 'Modificar Información' : 'Crear Nuevo Usuario'}}
+    </h2>
+    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5 relative">
+      {{isEdit ? 'Ajusta los parámetros técnicos del usuario' : 'Define un nuevo usuario en el sistema'}}
+    </p>
+  </div>
+  
+  <mat-dialog-content class="!p-6 !m-0">
+    <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+      <!-- RUT (Solo creación) -->
+      <mat-form-field appearance="outline" *ngIf="!isEdit" class="w-full">
+        <mat-label>RUT</mat-label>
+        <input matInput formControlName="rut" placeholder="Ej: 12.345.678-9">
+        <mat-icon matPrefix class="mr-2 text-gray-400">badge</mat-icon>
+        <mat-error *ngIf="form.get('rut')?.hasError('required')">RUT es obligatorio.</mat-error>
+        <mat-error *ngIf="form.get('rut')?.hasError('invalidRut')">RUT no es válido.</mat-error>
+      </mat-form-field>
+
+      <!-- Nombres -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nombres</mat-label>
+        <input matInput formControlName="nombres" placeholder="Ej: John">
+        <mat-icon matPrefix class="mr-2 text-gray-400">person</mat-icon>
+        <mat-error>Nombres son obligatorios.</mat-error>
+      </mat-form-field>
+
+      <!-- Apellidos -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Apellidos</mat-label>
+        <input matInput formControlName="apellidos" placeholder="Ej: Doe">
+        <mat-icon matPrefix class="mr-2 text-gray-400">person</mat-icon>
+        <mat-error>Apellidos son obligatorios.</mat-error>
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="w-full" [class.col-span-2]="isEdit">
+        <mat-label>Email Corporativo</mat-label>
+        <input matInput formControlName="email" placeholder="Ej: jdoe@empresa.cl">
+        <mat-icon matPrefix class="mr-2 text-gray-400">email</mat-icon>
+        <mat-error>Email válido obligatorio.</mat-error>
+      </mat-form-field>
+
+      <!-- Estado (Solo edición) -->
+      <mat-form-field appearance="outline" *ngIf="isEdit" class="w-full col-span-2">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="estado">
+          <mat-option [value]="1">Activo</mat-option>
+          <mat-option [value]="0">Inactivo</mat-option>
+        </mat-select>
+        <mat-icon matPrefix class="mr-2 text-gray-400">toggle_on</mat-icon>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="!px-6 !pb-6 !pt-0 !m-0 gap-2">
+    <button mat-button type="button" (click)="onCancel()" class="!rounded-lg !px-4 !text-slate-500 hover:!bg-slate-50 font-bold uppercase tracking-widest text-[9px]">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" type="button" [disabled]="form.invalid" (click)="onSave()"
+            class="!rounded-lg !px-6 !bg-indigo-600 shadow-md shadow-indigo-200 font-bold uppercase tracking-widest text-[9px]">
+      <span>{{isEdit ? 'Actualizar' : 'Registrar'}}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

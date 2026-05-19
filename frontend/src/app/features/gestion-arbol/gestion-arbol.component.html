@@ -1,0 +1,21 @@
+<div class="tree-manager p-4">
+  <cdk-tree [dataSource]="nodes" [childrenAccessor]="childrenAccessor">
+    <ng-template cdkTreeNodeDef let-node>
+      <div class="flex items-center gap-2 p-2 rounded hover:bg-slate-100 group">
+        <mat-icon *ngIf="node.icon">{{ node.icon }}</mat-icon>
+        <span>{{ node.label }}</span>
+        <button
+          mat-icon-button
+          (click)="onEdit(node)"
+          class="ml-auto opacity-0 group-hover:opacity-100"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="onCreate(node)" class="opacity-0 group-hover:opacity-100">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <!-- Aquí podrías renderizar hijos recursivamente si lo deseas -->
+    </ng-template>
+  </cdk-tree>
+</div>

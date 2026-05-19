@@ -1,0 +1,274 @@
+<div *ngIf="nodo" class="flex flex-col h-full animate-in slide-in-from-right-4 duration-500">
+  <!-- Cabecera del Hub -->
+  <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm relative overflow-hidden mb-3">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-40 blur-2xl"></div>
+    
+    <div class="relative flex justify-between items-start">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-1.5">
+          <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-[9px] font-black uppercase tracking-widest">{{ nodo.tipo_nodo }}</span>
+          <span [class.bg-emerald-50]="nodo.activo === 'S'" [class.text-emerald-700]="nodo.activo === 'S'"
+                [class.bg-rose-50]="nodo.activo === 'N'" [class.text-rose-700]="nodo.activo === 'N'"
+                class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest">
+            {{ nodo.activo === 'S' ? 'Activo' : 'Inhabilitado' }}
+          </span>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-none">{{ nodo.etiqueta }}</h2>
+        <p class="text-slate-400 font-mono text-[9px] uppercase tracking-widest font-bold">{{ nodo.codigo_tecnico }}</p>
+      </div>
+      
+      <div class="flex gap-2">
+        <button (click)="onEdit()" class="btn-action btn-action-edit" matTooltip="Editar Atributos del Nodo">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button (click)="onAddChild()" class="btn-action btn-action-create" matTooltip="Crear y Vincular Nuevo Hijo">
+          <mat-icon>add_box</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Vinculación Rápida (Bidireccional) -->
+  <div class="bg-slate-900 rounded-2xl p-4 text-white flex items-center gap-4 mb-4 shadow-xl shadow-slate-200 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12"></div>
+    <div class="flex-1">
+      <h4 class="text-xs font-black uppercase tracking-tight flex items-center gap-2">
+        <mat-icon class="!text-sm text-indigo-400">sync_alt</mat-icon> Vincular Recurso Existente
+      </h4>
+      <div class="flex items-center gap-2 mt-1">
+        <button (click)="linkMode.set('hijo')" 
+                [class.bg-indigo-600]="linkMode() === 'hijo'"
+                [class.text-white]="linkMode() === 'hijo'"
+                class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/10 transition-all">
+          Como Hijo
+        </button>
+        <button (click)="linkMode.set('padre')" 
+                [class.bg-amber-600]="linkMode() === 'padre'"
+                [class.text-white]="linkMode() === 'padre'"
+                class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/10 transition-all">
+          Como Padre
+        </button>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <p class="text-[8px] font-black text-indigo-300 uppercase tracking-widest">
+          {{ linkMode() === 'hijo' ? 'Será hijo de ' : 'Será padre de ' }}
+        </p>
+        <p class="text-[9px] font-bold text-white truncate max-w-[120px]">{{ nodo.etiqueta }}</p>
+      </div>
+
+      <mat-form-field appearance="fill" class="!h-[42px] custom-white-field-mini min-w-[240px]">
+        <mat-select [formControl]="searchHijoCtrl" placeholder="Seleccionar recurso..." class="!text-[10px] font-bold">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="searchFilterCtrl" placeholderLabel="Filtrar por nombre..."></ngx-mat-select-search>
+          </mat-option>
+          <mat-option *ngFor="let n of allNodes" [value]="n.codigo_tecnico">
+            <span class="text-[10px] font-bold text-slate-700">{{ n.etiqueta }}</span>
+            <span class="text-[8px] text-slate-400 font-mono ml-2">[{{ n.codigo_tecnico }}]</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <button (click)="onLink()" class="btn-action btn-action-link" matTooltip="Ejecutar Vinculación">
+        <mat-icon>add_link</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs de Gestión -->
+  <mat-tab-group class="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden custom-hub-tabs">
+    <!-- Pestaña 1: Estructura Jerárquica -->
+    <mat-tab label="Estructura y Jerarquía">
+      <div class="h-full overflow-y-auto custom-scrollbar">
+        <div class="p-4 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Panel de Padres -->
+            <div class="bg-slate-50/50 rounded-xl p-3 border border-slate-100">
+              <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <mat-icon class="!text-[10px] text-amber-500">north</mat-icon> Dependencias Superiores (Padres)
+              </h3>
+              <div class="space-y-1.5">
+                <div *ngFor="let p of parents" class="flex items-center justify-between p-2 bg-white rounded-lg group hover:bg-amber-50 transition-all border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="text-amber-600 !text-xs">folder</mat-icon>
+                    <span class="text-[11px] font-bold text-slate-700">{{ p.etiqueta || p.codigo_tecnico }}</span>
+                  </div>
+                  <button (click)="onRemoveLink(p.codigo_tecnico, nodo.codigo_tecnico)" class="btn-action btn-action-delete btn-action-sm opacity-0 group-hover:opacity-100" matTooltip="Quitar Dependencia">
+                    <mat-icon>link_off</mat-icon>
+                  </button>
+                </div>
+                <div *ngIf="parents.length === 0" class="py-8 text-center border border-dashed border-slate-200 rounded-lg">
+                  <mat-icon class="text-slate-200 !text-2xl mb-1">upgrade</mat-icon>
+                  <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Nodo Raíz del Sistema</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel de Hijos -->
+            <div class="bg-slate-50/50 rounded-xl p-3 border border-slate-100">
+              <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <mat-icon class="!text-[10px] text-indigo-500">south</mat-icon> Composición Interna (Hijos)
+              </h3>
+              <div class="space-y-1.5">
+                <div *ngFor="let h of nodo.children" class="flex items-center justify-between p-2 bg-white rounded-lg group hover:bg-indigo-50 transition-all border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <mat-icon class="text-indigo-600 !text-xs">{{ h.children?.length ? 'folder' : 'insert_drive_file' }}</mat-icon>
+                    <span class="text-[11px] font-bold text-slate-700">{{ h.etiqueta || h.codigo_tecnico }}</span>
+                  </div>
+                  <button (click)="onRemoveLink(nodo.codigo_tecnico, h.codigo_tecnico)" class="btn-action btn-action-delete btn-action-sm opacity-0 group-hover:opacity-100" matTooltip="Quitar Vinculo con Hijo">
+                    <mat-icon>link_off</mat-icon>
+                  </button>
+                </div>
+                <div *ngIf="!nodo.children?.length" class="py-8 text-center border border-dashed border-slate-200 rounded-lg">
+                  <mat-icon class="text-slate-200 !text-2xl mb-1">token</mat-icon>
+                  <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Sin Hijos definidos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Pestaña 2: Control de Acceso (Roles) -->
+    <mat-tab label="Seguridad y Roles">
+      <div class="h-full overflow-y-auto custom-scrollbar">
+        <ng-container *ngIf="!isRootFolder(); else rootFolderMsg">
+          <div class="p-4 space-y-6">
+             <!-- SECCIÓN 1: NUEVA ASIGNACIÓN DE ACCESO (ROLES DISPONIBLES) -->
+            <div class="animate-in slide-in-from-top-4 duration-500">
+              <div class="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden border-l-4 border-l-emerald-500">
+                <div class="bg-slate-50/80 px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                   <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-100">
+                      <mat-icon class="!text-[12px]">add_moderator</mat-icon>
+                    </div>
+                    <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-tight">Roles Disponibles (Sin Acceso)</h4>
+                  </div>
+                  <span class="px-2 py-0.5 bg-white text-[7px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-50 rounded-md shadow-sm">
+                    {{ availableRoles().length }} Libres
+                  </span>
+                </div>
+                <div class="p-3">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                    <div *ngFor="let rol of availableRoles()" 
+                         (click)="quickAssign(rol)"
+                         class="group p-4 bg-slate-50 border border-slate-100 rounded-[20px] hover:bg-emerald-50 hover:border-emerald-200 transition-all cursor-pointer flex items-center justify-between shadow-sm">
+                      <div class="flex items-center gap-3 overflow-hidden">
+                        <h4 class="text-[9px] font-black text-slate-600 group-hover:text-emerald-700 uppercase tracking-tight truncate">{{ rol.nombre }}</h4>
+                      </div>
+                      <mat-icon class="!text-[14px] text-slate-200 group-hover:text-emerald-400">add_circle</mat-icon>
+                    </div>
+                    <div *ngIf="availableRoles().length === 0" class="col-span-full py-8 text-center border border-dashed border-slate-200 rounded-xl">
+                      <p class="text-[8px] text-slate-300 font-bold uppercase tracking-widest italic">Todos los roles tienen acceso</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+ 
+            <!-- SECCIÓN 2: ROLES CON ACCESO AUTORIZADO -->
+            <div class="animate-in slide-in-from-top-4 duration-700">
+              <div class="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden border-l-4 border-l-amber-500">
+                <div class="bg-slate-50/80 px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-100">
+                      <mat-icon class="!text-[12px]">group_work</mat-icon>
+                    </div>
+                    <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-tight">Roles con Accesos Autorizados</h4>
+                  </div>
+                  <span class="px-2 py-0.5 bg-white text-[7px] font-black text-amber-600 uppercase tracking-widest border border-amber-50 rounded-md shadow-sm">
+                    {{ rolesConAcceso().length }} Roles
+                  </span>
+                </div>
+                <div class="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  <div *ngFor="let rol of rolesConAcceso()" 
+                       (click)="selectRolForAudit(rol.codigo)"
+                       [ngClass]="selectedAuditRol() === rol.codigo ? 'border-indigo-500 bg-indigo-50/30 shadow-md ring-2 ring-indigo-500/10' : 'bg-white border-slate-100 shadow-sm'"
+                       class="group p-4 rounded-[20px] hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer flex items-center justify-between border-2">
+                    <div class="flex items-center gap-3 overflow-hidden pr-2">
+                      <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-tight leading-tight">{{ rol.nombre }}</h4>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button (click)="quickUnassign(rol.codigo, $event)" 
+                              class="text-slate-300 hover:text-rose-600 transition-all p-1 flex items-center justify-center shrink-0"
+                              matTooltip="Eliminar Rol de este Recurso">
+                        <mat-icon class="!text-[18px]">delete_sweep</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="rolesConAcceso().length === 0" class="col-span-full py-6 text-center bg-slate-50/30 rounded-xl border border-dashed border-slate-200">
+                    <p class="text-[8px] text-slate-300 font-bold uppercase tracking-widest italic">No hay roles asignados</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- SECCIÓN 3: MATRIZ DE PERMISOS -->
+            <div class="animate-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white rounded-[20px] border border-slate-100 shadow-sm overflow-hidden border-l-4"
+                   [ngClass]="selectedAuditRol() ? 'border-l-indigo-500' : 'border-l-slate-300'">
+                <div class="bg-slate-50/80 px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
+                      <mat-icon class="!text-[12px]">verified_user</mat-icon>
+                    </div>
+                    <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-tight">Detalle de Permisos</h4>
+                  </div>
+                  <span *ngIf="selectedAuditRol()" class="px-2 py-0.5 bg-white text-[7px] font-black text-indigo-600 uppercase tracking-widest border border-indigo-50 rounded-md shadow-sm">
+                    {{ permisosDelRol().length }} / {{ allOperations().length }} Ops
+                  </span>
+                </div>
+                <div class="p-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                  <div *ngFor="let p of permissionsMatrix()" 
+                       (click)="selectedAuditRol() ? togglePermission(p.nombre, p.assigned) : (rolCtrl.value ? togglePermission(p.nombre, p.assigned) : null)"
+                       [ngClass]="[
+                         p.assigned ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50/30 border-slate-100 text-slate-400',
+                         (selectedAuditRol() || rolCtrl.value) ? 'hover:scale-[1.02] cursor-pointer active:scale-95' : 'opacity-60 cursor-default'
+                       ]"
+                       class="group flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all">
+                    <mat-icon [ngClass]="p.assigned ? 'text-indigo-600' : 'text-slate-200'" class="!text-lg mb-1 transition-colors">
+                      {{ p.assigned ? 'verified_user' : 'add_moderator' }}
+                    </mat-icon>
+                    <span class="text-[8px] font-black uppercase tracking-tight text-center">{{ p.nombre }}</span>
+                    <div [ngClass]="p.assigned ? 'bg-indigo-600' : 'bg-slate-200'" class="mt-2 w-4 h-0.5 rounded-full transition-colors"></div>
+                  </div>
+                  <div *ngIf="allOperations().length === 0" class="p-4 text-center bg-slate-50/30 col-span-full">
+                    <p class="text-[8px] text-slate-300 font-bold uppercase tracking-widest italic">Cargando catálogo...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </ng-container>
+
+        <!-- Template para Carpeta Raíz -->
+        <ng-template #rootFolderMsg>
+          <div class="flex-1 flex flex-col items-center justify-center p-8 text-center h-[400px]">
+            <div class="w-20 h-20 rounded-[32px] bg-amber-50 text-amber-500 flex items-center justify-center mb-6 shadow-xl shadow-amber-100/50 animate-bounce duration-[4000ms]">
+              <mat-icon class="!text-3xl">folder_special</mat-icon>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 tracking-tight mb-2">Seguridad Restringida</h3>
+            <p class="text-slate-400 max-w-sm mx-auto text-[9px] font-bold uppercase tracking-widest leading-relaxed">
+              Nodo estructural de nivel superior.
+              <span class="block mt-4 text-indigo-500 font-black">Gestione permisos en niveles inferiores.</span>
+            </p>
+          </div>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<!-- Estado Vacío -->
+<div *ngIf="!nodo" class="flex-1 flex flex-col items-center justify-center bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100 p-12 text-center group">
+  <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+    <mat-icon class="!text-4xl text-slate-200">alt_route</mat-icon>
+  </div>
+  <h3 class="text-lg font-black text-slate-300 uppercase tracking-tighter">Hub de Gestión</h3>
+  <p class="text-slate-300 max-w-xs mx-auto mt-2 font-medium text-[10px] leading-relaxed">Selecciona un elemento de la jerarquía para abrir el Hub administrativo y gestionar sus relaciones y permisos.</p>
+</div>

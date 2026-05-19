@@ -1,0 +1,73 @@
+<div class="flex h-screen overflow-hidden bg-gray-50 font-sans">
+  <!-- Sidebar Modular -->
+  <app-barra-lateral [collapsed]="collapsed()" (onToggle)="collapsed.set($event)"> </app-barra-lateral>
+
+  <!-- Contenido Principal Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Header -->
+    <header
+      class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shadow-sm shrink-0 z-10"
+    >
+      <div class="flex items-center gap-4">
+        <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
+        <h2 class="text-gray-800 font-black text-xl tracking-tight">
+          Motor de Seguridad <span class="text-blue-600">NGAC</span>
+        </h2>
+      </div>
+
+      <!-- Dropdown de Cambio de Contexto (Policy Class / Active Context) -->
+      <div class="flex items-center gap-3 bg-slate-50 border border-slate-200/80 rounded-2xl px-4 py-2 shadow-sm transition-all hover:border-blue-400">
+        <mat-icon class="text-blue-600 text-lg leading-none">swap_horiz</mat-icon>
+        <div class="flex flex-col">
+          <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 leading-none mb-1">Contexto Activo</span>
+          <select 
+            [ngModel]="selectedContextIndex" 
+            (ngModelChange)="onContextChange($event)"
+            class="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer pr-4 font-sans border-none select-none appearance-none"
+          >
+            <option *ngFor="let ctx of contexts; let i = index" [value]="i">
+              {{ ctx.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <div class="hidden sm:flex flex-col text-right">
+          <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest"
+            >Versión de Sistema</span
+          >
+          <span class="text-xs font-bold text-gray-700">v1.2.0-stable</span>
+        </div>
+        <button mat-icon-button class="text-gray-400 hover:text-blue-600 transition-colors">
+          <mat-icon class="material-icons text-2xl">notifications_none</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-10 lg:p-14 custom-scrollbar">
+      <div class="max-w-[1600px] mx-auto">
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center text-xs text-gray-400 font-bold mb-6" aria-label="Breadcrumb">
+          <ng-container *ngIf="breadcrumbs.length; else noBreadcrumbs">
+            <ng-container *ngFor="let bc of breadcrumbs; let last = last">
+              <a
+                *ngIf="!last"
+                [routerLink]="bc.url"
+                class="hover:text-blue-600 transition-colors"
+                >{{ bc.label }}</a
+              >
+              <span *ngIf="!last" class="mx-2">/</span>
+              <span *ngIf="last" class="text-blue-600">{{ bc.label }}</span>
+            </ng-container>
+          </ng-container>
+          <ng-template #noBreadcrumbs>
+            <span>Inicio</span>
+          </ng-template>
+        </nav>
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>

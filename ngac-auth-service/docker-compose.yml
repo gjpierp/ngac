@@ -1,0 +1,153 @@
+version: '3.8'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SAFI-NGAC — Ecosistema completo
+#
+# Carpetas del proyecto:
+#   auth-service/   → Motor de menú NGAC (este archivo vive aquí)
+#   backend/        → Admin CRUD + jerarquía
+#   frontend/       → Angular + Nginx
+#   gateway/        → API Gateway
+#
+# Servicios Docker:
+#   ngac-db           → Oracle XE 21c           (interno :1521)
+#   ngac-eureka       → Eureka SERVER            (dashboard :8761)
+#                       ↑ imagen oficial, sin código propio.
+#                         Los demás servicios tienen un CLIENTE Eureka
+#                         embebido que se registra en este servidor.
+#   ngac-auth-service → Motor de menú NGAC       (interno :3100)
+#   ngac-backend      → Admin CRUD / jerarquía   (interno :3200)
+#   ngac-frontend     → Angular + Nginx          (interno :80)
+#   ngac-gateway      → API Gateway (entry-point) (expuesto :8080)
+#
+# Punto de entrada único: http://localhost:8080
+#   /api/v1/menu   → ngac-auth-service
+#   /api/v1/admin  → ngac-backend
+#   /*             → ngac-frontend
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── 1. Base de Datos Oracle ────────────────────────────────────────────────
+  ngac-db:
+    image: gvenzl/oracle-xe:21.3.0-slim
+    container_name: ngac-db
+    ports:
+      - "1521:1521"         # Expuesto para desarrollo local / SQL*Plus
+    environment:
+      ORACLE_PASSWORD:      G3rC4t_01
+      APP_USER:             ngac_user
+      APP_USER_PASSWORD:    G3rC4t_01
+    healthcheck:
+      test: ["CMD-SHELL", "echo exit | sqlplus -S ngac_user/G3rC4t_01@localhost/XEPDB1"]
+      interval: 30s
+      timeout: 10s
+      retries: 12
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./script:/scripts
+    restart: unless-stopped
+
+  # ── 2. Eureka Service Registry ─────────────────────────────────────────────
+  eureka:
+    image: steeltoeoss/eureka-server
+    container_name: ngac-eureka
+    ports:
+      - "9090:8761"         # Dashboard: http://localhost:9090
+    environment:
+      EUREKA_SERVER_ENABLE_SELF_PRESERVATION: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+    restart: unless-stopped
+
+  # ── 3. Auth Service (Motor de menú NGAC) ──────────────────────────────────
+  ngac-auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ngac-auth-service
+    env_file: .env
+    environment:
+      - DB_USER=ngac_user
+      - DB_PASSWORD=G3rC4t_01
+      - DB_CONNECTION_STRING=ngac-db:1521/XEPDB1
+      - EUREKA_HOST=ngac-eureka
+      - EUREKA_PORT=8761
+    expose:
+      - "3100"              # Sólo interno — el gateway lo expone
+    depends_on:
+      ngac-db:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── 4. Admin Backend (CRUD + Jerarquía) ───────────────────────────────────
+  ngac-backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: ngac-backend
+    environment:
+      - PORT=3200
+      - DB_USER=ngac_user
+      - DB_PASSWORD=G3rC4t_01
+      - DB_CONNECTION_STRING=ngac-db:1521/XEPDB1
+      - EUREKA_HOST=ngac-eureka
+      - EUREKA_PORT=8761
+    expose:
+      - "3200"              # Sólo interno
+    ports:
+      - "3205:3200"
+    volumes:
+      - ../backend/src:/usr/src/app/src
+    command: npm run dev
+    depends_on:
+      ngac-db:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── 5. Frontend (Angular build → Nginx) ────────────────────────────────────
+  ngac-frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: ngac-frontend
+    expose:
+      - "80"
+    depends_on:
+      - ngac-auth-service
+      - ngac-backend
+    restart: unless-stopped
+
+  # ── 6. API Gateway (único punto de entrada) ────────────────────────────────
+  ngac-gateway:
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile
+    container_name: ngac-gateway
+    ports:
+      - "3200:8080"         # ← ÚNICO puerto expuesto al host (Cambio a 3200)
+    environment:
+      - PORT=8080
+      - EUREKA_HOST=ngac-eureka
+      - EUREKA_PORT=8761
+      - AUTH_SERVICE_URL=http://ngac-auth-service:3100
+      - BACKEND_SERVICE_URL=http://ngac-backend:3200
+      - FRONTEND_SERVICE_URL=http://ngac-frontend:80
+    depends_on:
+      - eureka
+      - ngac-auth-service
+      - ngac-backend
+      - ngac-frontend
+    restart: unless-stopped
+
+# ── Volúmenes persistentes ─────────────────────────────────────────────────────
+volumes:
+  oracle-data:
+    driver: local

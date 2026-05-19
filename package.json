@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "ngx-mat-select-search": "^8.0.5"
+  }
+}

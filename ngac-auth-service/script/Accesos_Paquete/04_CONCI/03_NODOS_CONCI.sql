@@ -1,0 +1,52 @@
+BEGIN
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS', 'Conciliación Cks', 'OBJETO', '/conciliacion-cks', 'conciliacion-cks', 'price_check', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS', 'Parámetros', 'OBJETO', '/conciliacion-cks/parametros', 'parametros', 'settings', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS', 'Procesos', 'OBJETO', '/conciliacion-cks/procesos', 'procesos', 'account_tree', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS', 'Consultas', 'OBJETO', '/conciliacion-cks/consultas', 'consultas', 'manage_search', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES', 'Informes', 'OBJETO', '/conciliacion-cks/informes', 'informes', 'assessment', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_INGRESO_CHEQUERA', 'Ingreso Chequera', 'OBJETO', '/conciliacion-cks/parametros/ingreso-chequera', 'ingreso-chequera', 'menu_book', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_ASIGNACION_CHEQUES', 'Asignacion De Cheques', 'OBJETO', '/conciliacion-cks/parametros/asignacion-cheques', 'asignacion-de-cheques', 'assignment', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_TIPOS_DOCUMENTOS', 'Tipos De Documentos', 'OBJETO', '/conciliacion-cks/parametros/tipos-documentos', 'tipos-de-documentos', 'description', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_BANCOS', 'Bancos', 'OBJETO', '/conciliacion-cks/parametros/bancos', 'bancos', 'account_balance', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_PIE_FIRMA', 'Pie De Firma', 'OBJETO', '/conciliacion-cks/parametros/pie-firma', 'pie-de-firma', 'draw', 5);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA', 'Mantencion Entidad Bancaria', 'OBJETO', '/conciliacion-cks/parametros/mantencion-entidad-bancaria', 'mantencion-entidad-bancaria', 'corporate_fare', 6);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_BANCO', 'Banco', 'OBJETO', '/conciliacion-cks/parametros/mantencion-entidad-bancaria/banco', 'banco', 'account_balance', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_SUCURSAL', 'Sucursal', 'OBJETO', '/conciliacion-cks/parametros/mantencion-entidad-bancaria/sucursal', 'sucursal', 'store', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PARAMETROS_MANTENCION_ENTIDAD_BANCARIA_FORMAS_PAGO', 'Formas De Pago', 'OBJETO', '/conciliacion-cks/parametros/mantencion-entidad-bancaria/formas-pago', 'formas-de-pago', 'payments', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_FORMAS_PAGO', 'Formas De Pago', 'OBJETO', '/conciliacion-cks/procesos/formas-pago', 'formas-de-pago', 'payments', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_PAGOS', 'Pagos', 'OBJETO', '/conciliacion-cks/procesos/pagos', 'pagos', 'paid', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_PAGOS_IMPRESION_CHEQUES', 'Impresión De Cheques', 'OBJETO', '/conciliacion-cks/procesos/pagos/impresion-cheques', 'impresion-de-cheques', 'print', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_PAGOS_NOMINA_TRANNSFERENCIA_ELECTRONICA', 'Nomina Trannsferencia Electronica', 'OBJETO', '/conciliacion-cks/procesos/pagos/nomina-trannsferencia-electronica', 'nomina-trannsferencia-electronica', 'sync_alt', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS', 'Ingreso Y Mantenimiento De Documentos', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos', 'ingreso-y-mantenimiento-de-documentos', 'folder_open', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_INGRESO_DOCUMENTOS', 'Ingreso De Documentos', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/ingreso-documentos', 'ingreso-de-documentos', 'note_add', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ALTAS_O_CADUCACION_CHEQUES', 'Altas O Caducacion Cheques', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/altas-o-caducacion-cheques', 'altas-o-caducacion-cheques', 'timer_off', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ALTAS_O_CADUCACION_CHEQUES_TRANSFERENCIAS_ELECTRONICAS', 'Transferencias Electronicas', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/altas-o-caducacion-cheques/transferencias-electronicas', 'transferencias-electronicas', 'swap_horiz', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_MANTENIMIENTO_DOCUMENTO', 'Mantenimiento De Documento', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/mantenimiento-documento', 'mantenimiento-de-documento', 'edit_document', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ANULACION_CHEQUES', 'Anulacion De Cheques', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/anulacion-cheques', 'anulacion-de-cheques', 'cancel_presentation', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_INGRESO_Y_MANTENIMIENTO_DOCUMENTOS_ANULACION_CHEQUES_DEPOSITOS', 'Depositos', 'OBJETO', '/conciliacion-cks/procesos/ingreso-y-mantenimiento-documentos/anulacion-cheques/depositos', 'depositos', 'savings', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_ENVIO_CHEQUES_CAJA', 'Envio De Cheques A Caja', 'OBJETO', '/conciliacion-cks/procesos/envio-cheques-caja', 'envio-de-cheques-a-caja', 'send', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_CUADRATURA_CUENTA_CORRIENTE', 'Cuadratura Cuenta Corriente', 'OBJETO', '/conciliacion-cks/procesos/cuadratura-cuenta-corriente', 'cuadratura-cuenta-corriente', 'balance', 5);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_PROCESOS_PROCESO_DIR_REMUNERACIONES', 'Proceso D.I.R. (Remuneraciones)', 'OBJETO', '/conciliacion-cks/procesos/proceso-dir-remuneraciones', 'proceso-d-i-r-remuneraciones', 'badge', 6);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_DOCUMENTOS_POR_ESTADO', 'Documentos Por Estado', 'OBJETO', '/conciliacion-cks/consultas/documentos-por-estado', 'documentos-por-estado', 'fact_check', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_DOCUMENTOS_POR_ESTADO_HISTORICO', 'Documentos Por Estado Historico', 'OBJETO', '/conciliacion-cks/consultas/documentos-por-estado-historico', 'documentos-por-estado-historico', 'history', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_RESUMEN_CONCILIACION', 'Resumen Conciliacion', 'OBJETO', '/conciliacion-cks/consultas/resumen-conciliacion', 'resumen-conciliacion', 'summarize', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_RESUMEN_CONCILIACION_HISTORICA', 'Resumen Conciliacion Historica', 'OBJETO', '/conciliacion-cks/consultas/resumen-conciliacion-historica', 'resumen-conciliacion-historica', 'manage_history', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_CARTOLA_DOCUMENTOS_CONCILIADOS', 'Cartola Documentos Conciliados', 'OBJETO', '/conciliacion-cks/consultas/cartola-documentos-conciliados', 'cartola-documentos-conciliados', 'receipt_long', 5);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_LIBRO_CHEQUES', 'Libro De Cheques', 'OBJETO', '/conciliacion-cks/consultas/libro-cheques', 'libro-de-cheques', 'menu_book', 6);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_PAGOS_EFECTUADOS', 'Pagos Efectuados', 'OBJETO', '/conciliacion-cks/consultas/pagos-efectuados', 'pagos-efectuados', 'check_circle', 7);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_CONSULTAS_DETALLE_PAGOS_TRANSFER', 'Detalle De Pagos Transfer', 'OBJETO', '/conciliacion-cks/consultas/detalle-pagos-transfer', 'detalle-de-pagos-transfer', 'list_alt', 8);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_DOCUMENTOS_POR_ESTADO', 'Documentos Por Estado', 'OBJETO', '/conciliacion-cks/informes/documentos-por-estado', 'documentos-por-estado', 'pie_chart', 1);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_DOCUMENTOS_POR_ESTADO_HISTORICO', 'Documentos Por Estado Historico', 'OBJETO', '/conciliacion-cks/informes/documentos-por-estado-historico', 'documentos-por-estado-historico', 'history', 2);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_RESUMEN_CONCILIACION', 'Resumen Conciliacion', 'OBJETO', '/conciliacion-cks/informes/resumen-conciliacion', 'resumen-conciliacion', 'summarize', 3);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_RESUMEN_CONCILIACION_HISTORICA', 'Resumen Conciliacion Historica', 'OBJETO', '/conciliacion-cks/informes/resumen-conciliacion-historica', 'resumen-conciliacion-historica', 'manage_history', 4);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_CARTOLA_DOCUMENTOS_CONCILIADOS', 'Cartola Documentos Conciliados', 'OBJETO', '/conciliacion-cks/informes/cartola-documentos-conciliados', 'cartola-documentos-conciliados', 'receipt_long', 5);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_LIBRO_CHEQUES', 'Libro De Cheques', 'OBJETO', '/conciliacion-cks/informes/libro-cheques', 'libro-de-cheques', 'menu_book', 6);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_REIMPRESION_CHEQUES', 'Reimpresion De Cheques', 'OBJETO', '/conciliacion-cks/informes/reimpresion-cheques', 'reimpresion-de-cheques', 'print', 7);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_PAGOS_EFECTUADOS', 'Pagos Efectuados', 'OBJETO', '/conciliacion-cks/informes/pagos-efectuados', 'pagos-efectuados', 'task_alt', 8);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_REIMPRESION_DOCUMENTOS_CHEQUES_CAJA', 'Reimpresion Documentos Cheques A Caja', 'OBJETO', '/conciliacion-cks/informes/reimpresion-documentos-cheques-caja', 'reimpresion-documentos-cheques-a-caja', 'local_printshop', 9);
+    pkg_seguridad_admin.p_upsert_nodo('CONCILIACION_CKS_INFORMES_DOCUMENTOS_MES', 'Documentos Del Mes', 'OBJETO', '/conciliacion-cks/informes/documentos-mes', 'documentos-del-mes', 'calendar_month', 10);
+    COMMIT;
+END;
+
+
+/

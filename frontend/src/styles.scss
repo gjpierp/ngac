@@ -1,0 +1,188 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+// @import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos base para iconos si fallan los selectores de Material */
+.material-icons, .material-symbols-outlined {
+  font-display: block;
+}
+
+// Tema Material cargado vía prebuilt (indigo-pink)
+
+// Variables globales
+:root {
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  --bg-app: #f1f5f9;
+  --bg-sidebar: #1e293b;
+  --text-sidebar: #cbd5e1;
+  --text-sidebar-active: #ffffff;
+  --accent-sidebar: #3b82f6;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: var(--bg-app);
+}
+
+// Barra de scroll personalizada
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+
+// Utilidades adicionales
+.page-header {
+  @apply flex items-center justify-between mb-3;
+  h1 { @apply text-2xl font-bold text-gray-800; }
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100 p-4;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  &-blue  { background: #dbeafe; color: #1e40af; }
+  &-green { background: #dcfce7; color: #166534; }
+  &-red   { background: #fee2e2; color: #991b1b; }
+  &-gray  { background: #f3f4f6; color: #374151; }
+}
+
+// PREMIUM DESIGN TOKENS
+.premium-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.premium-shadow {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+}
+
+.premium-border {
+  border: 1px solid #f1f5f9;
+}
+
+.text-gradient-indigo {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// MODERN SCROLLBAR (MEJORADO PARA VISIBILIDAD)
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 1px solid #f8fafc; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+// HUB LAYOUT UTILS
+.hub-container {
+  @apply grid grid-cols-12 gap-6 h-[calc(100vh-180px)];
+}
+
+.explorer-pane {
+  @apply col-span-4 bg-white rounded-[24px] border border-slate-100 shadow-sm flex flex-col overflow-hidden;
+}
+
+.content-pane {
+  @apply col-span-8 flex flex-col overflow-hidden;
+}
+
+.node-item {
+  @apply flex items-center gap-3 py-2 px-4 hover:bg-slate-50 transition-all cursor-pointer border-b border-slate-50/50 relative;
+  &.active {
+    @apply bg-indigo-50/50 border-l-4 border-l-indigo-600;
+  }
+}
+
+// ACTION BUTTONS STANDARDIZATION
+.btn-action {
+  @apply flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 border-none cursor-pointer;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  
+  mat-icon { font-size: 20px !important; }
+  
+  &-edit    { @apply bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white shadow-blue-500/10; }
+  &-create  { @apply bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white shadow-emerald-500/10; }
+  &-delete  { @apply bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white shadow-rose-500/10; }
+  &-link    { @apply bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white shadow-indigo-500/10; }
+  &-reload  { @apply bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white shadow-amber-500/10; }
+  &-info    { @apply bg-slate-50 text-slate-600 hover:bg-slate-600 hover:text-white shadow-slate-500/10; }
+  
+  // Variantes pequeñas
+  &-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    mat-icon { font-size: 16px !important; }
+  }
+}
+
+/* ==========================================
+   CDK DRAG & DROP CUSTOM PREMIUM STYLES
+   ========================================== */
+.cdk-drag-preview {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  background-color: white;
+  opacity: 0.95;
+  border: 1px dashed rgba(79, 70, 229, 0.4);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3 !important;
+  background-color: #f8fafc !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 16px;
+  min-height: 64px;
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// PREMIUM MODAL GLOBAL OVERRIDES
+.premium-modal {
+  --mdc-dialog-container-shape: 24px !important;
+  
+  .mdc-dialog__surface {
+    border-radius: 24px !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  }
+  
+  .mat-mdc-dialog-content {
+    padding: 24px !important;
+    margin: 0 !important;
+    max-height: 75vh !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  .mat-mdc-dialog-actions {
+    padding: 0 24px 24px 24px !important;
+    margin: 0 !important;
+  }
+  
+  .mat-mdc-dialog-title {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}

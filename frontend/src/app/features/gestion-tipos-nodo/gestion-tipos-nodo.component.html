@@ -1,0 +1,41 @@
+<div class="animate-in fade-in duration-1000 flex flex-col h-full">
+  <!-- Modern Header -->
+  <header class="flex items-end justify-between mb-8">
+    <div class="space-y-1">
+      <h1 class="text-4xl font-black tracking-tighter text-slate-900 leading-none flex items-center gap-3">
+        <span>Tipos de <span class="text-gradient-indigo">Nodo</span></span>
+        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-black tracking-widest">{{ tipos().length }} Totales</span>
+      </h1>
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Administración del catálogo de tipos de nodo para NGAC</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button (click)="loadTipos()" class="btn-action btn-action-reload" matTooltip="Recargar Lista">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button (click)="crearTipo()" class="btn-action btn-action-create" matTooltip="Crear Nuevo Tipo de Nodo">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Table Section -->
+  <div class="bg-white rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+    <div class="p-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-bold text-slate-700 flex items-center gap-2">
+        <mat-icon class="text-slate-400">list_alt</mat-icon>
+        Tipos Registrados
+      </h3>
+    </div>
+    <app-tabla-generica
+      [data]="tipos()"
+      [columns]="columns"
+      (onEdit)="editTipo($event)"
+      (onDelete)="deleteTipo($event)"
+    >
+    </app-tabla-generica>
+  </div>
+</div>

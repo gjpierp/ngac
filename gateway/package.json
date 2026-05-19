@@ -1,0 +1,19 @@
+{
+  "name": "ngac-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway para el ecosistema SAFI-NGAC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "eureka-js-client": "^4.5.0",
+    "express": "^4.22.2",
+    "express-http-proxy": "^2.1.2",
+    "http-proxy-middleware": "^3.0.2",
+    "morgan": "^1.10.0"
+  }
+}

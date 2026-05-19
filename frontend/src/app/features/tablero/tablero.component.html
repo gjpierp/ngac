@@ -1,0 +1,166 @@
+<div>
+  <div class="mb-10 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-gray-800 tracking-tight">Panel de Control NGAC</h1>
+      <p class="text-gray-500 mt-1 font-medium">Estado administrativo del motor de autorización SAFI.</p>
+    </div>
+    <div class="hidden md:flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
+      <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+      <span class="text-sm font-bold text-gray-700">Motor Activo</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <div *ngFor="let card of stats()"
+         class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-all duration-300">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-inner"
+           [ngClass]="card.bgClass">
+        <mat-icon class="material-icons !w-7 !h-7 text-2xl" [ngClass]="card.colorClass">{{card.icon}}</mat-icon>
+      </div>
+      <div>
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{card.title}}</p>
+        <p class="text-3xl font-black text-gray-800 leading-none mt-1">{{card.value}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Tree Preview -->
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col min-h-[600px]">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" class="dashboard-tabs flex-1">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="mr-2">widgets</mat-icon> Módulos
+            </ng-template>
+            <div class="p-6">
+              <div *ngIf="treeLoading()" class="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span>Sincronizando con base de datos...</span>
+              </div>
+              <div *ngIf="!treeLoading() && modules().length === 0" class="text-center text-gray-400 py-12">
+                <p>No hay módulos raíz definidos.</p>
+              </div>
+              <div class="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <ng-container *ngTemplateOutlet="nodeTemplate; context: { nodes: modules(), type: 'blue' }"></ng-container>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="mr-2">security</mat-icon> Roles
+            </ng-template>
+            <div class="p-6">
+              <div *ngIf="treeLoading()" class="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+                <span>Cargando roles...</span>
+              </div>
+              <div *ngIf="!treeLoading() && roles().length === 0" class="text-center text-gray-400 py-12">
+                <p>No hay atributos de usuario definidos.</p>
+              </div>
+              <div class="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <ng-container *ngTemplateOutlet="nodeTemplate; context: { nodes: roles(), type: 'amber' }"></ng-container>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="mr-2">policy</mat-icon> Políticas
+            </ng-template>
+            <div class="p-6">
+              <div *ngIf="treeLoading()" class="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                <span>Cargando políticas...</span>
+              </div>
+              <div *ngIf="!treeLoading() && policies().length === 0" class="text-center text-gray-400 py-12">
+                <p>No hay políticas raíz definidas.</p>
+              </div>
+              <div class="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <ng-container *ngTemplateOutlet="nodeTemplate; context: { nodes: policies(), type: 'emerald' }"></ng-container>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+    </div>
+
+    <!-- Template Recursivo para el Dashboard -->
+    <ng-template #nodeTemplate let-nodes="nodes" let-type="type" let-level="level">
+      <div class="space-y-2" [style.padding-left.px]="(level || 0) > 0 ? 16 : 0">
+        <div *ngFor="let nodo of nodes" class="flex flex-col">
+          <div (click)="nodo.children?.length ? toggleNode(nodo.id_nodo) : null"
+               class="group flex items-center gap-3 p-3 rounded-xl border border-gray-50 hover:border-{{type}}-100 hover:bg-{{type}}-50/30 transition-all duration-200 cursor-pointer">
+            
+            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-{{type}}-600 shadow-sm transition-colors">
+              <mat-icon class="!text-lg">
+                {{nodo.children?.length ? (isExpanded(nodo.id_nodo) ? 'expand_more' : 'chevron_right') : (nodo.icono || 'radio_button_unchecked')}}
+              </mat-icon>
+            </div>
+
+            <div class="flex-1">
+              <h3 class="font-bold text-gray-800 group-hover:text-{{type}}-700 text-sm">{{nodo.etiqueta}}</h3>
+              <p *ngIf="nodo.children?.length" class="text-[9px] text-gray-400 font-bold uppercase tracking-tight">
+                {{nodo.children.length}} Subnodos
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-[9px] font-bold px-1.5 py-0.5 bg-{{type}}-100 text-{{type}}-600 rounded uppercase">
+                {{nodo.tipo_nodo}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Renderizado recursivo si está expandido -->
+          <div *ngIf="nodo.children?.length && isExpanded(nodo.id_nodo)" 
+               class="ml-4 border-l-2 border-gray-100 mt-1 pl-2">
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { nodes: nodo.children, type: type, level: (level || 0) + 1 }"></ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- System Status -->
+    <div class="space-y-6">
+      <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl">
+        <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-4">Información de Seguridad</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-400 text-sm">Política Base</span>
+            <span class="font-mono text-xs text-blue-200">POLICY_MENU</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-400 text-sm">Motor NGAC</span>
+            <span class="text-green-400 text-xs flex items-center gap-1 font-bold">
+              <span class="w-2 h-2 rounded-full bg-green-400"></span>
+              ACTIVO
+            </span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-gray-400 text-sm">Última Sincronización</span>
+            <span class="text-xs text-gray-300">{{lastSync() | date:'shortTime'}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <mat-icon class="material-icons text-indigo-500 text-sm">analytics</mat-icon>
+          Distribución de Nodos
+        </h3>
+        <div class="space-y-6">
+          <div *ngFor="let type of typeStats()" class="space-y-2">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-gray-500 uppercase tracking-tight">{{type.label}}</span>
+              <span class="text-gray-900 bg-gray-50 px-2 py-0.5 rounded">{{type.count}}</span>
+            </div>
+            <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 transition-all duration-1000 ease-out" 
+                   [style.width.%]="type.percent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

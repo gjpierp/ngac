@@ -1,0 +1,41 @@
+<div class="p-0 overflow-hidden min-w-[320px] sm:min-w-[400px]">
+  <!-- Header del Modal -->
+  <div class="bg-slate-900 px-6 py-5 text-white relative">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+    <h2 mat-dialog-title class="!text-lg !font-black !tracking-tight !flex !items-center !gap-2 !relative !m-0 !p-0 !text-white !border-b-0">
+      <mat-icon class="text-indigo-400 !text-xl">{{ isEdit ? 'edit_note' : 'add_circle' }}</mat-icon>
+      {{ isEdit ? 'Modificar Operación' : 'Crear Operación' }}
+    </h2>
+    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5 relative">
+      {{ isEdit ? 'Ajusta los parámetros técnicos de la operación' : 'Define una nueva operación de seguridad' }}
+    </p>
+  </div>
+
+  <mat-dialog-content class="!p-6 !m-0">
+    <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre de Operación</mat-label>
+        <input matInput formControlName="nombre_op" placeholder="EJ: VER_DETALLE" />
+        <mat-hint>Solo letras mayúsculas, números y guiones bajos</mat-hint>
+        <mat-error *ngIf="form.get('nombre_op')?.hasError('required')">Requerido</mat-error>
+        <mat-error *ngIf="form.get('nombre_op')?.hasError('pattern')">Formato inválido (MAYÚSCULAS_Y_NÚMEROS)</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="3" placeholder="Describe el propósito de esta operación"></textarea>
+        <mat-error *ngIf="form.get('descripcion')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="!px-6 !pb-6 !pt-0 !m-0 gap-2">
+    <button mat-button type="button" (click)="onCancel()" class="!rounded-lg !px-4 !text-slate-500 hover:!bg-slate-50 font-bold uppercase tracking-widest text-[9px]">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" type="button" [disabled]="form.invalid" (click)="onSave()"
+            class="!rounded-lg !px-6 !bg-indigo-600 shadow-md shadow-indigo-200 font-bold uppercase tracking-widest text-[9px]">
+      <span>{{ isEdit ? 'Actualizar' : 'Registrar' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

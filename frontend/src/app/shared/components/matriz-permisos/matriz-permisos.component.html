@@ -1,0 +1,63 @@
+<div class="permission-matrix p-4">
+  <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+    <mat-form-field appearance="outline" class="w-full sm:w-1/3">
+      <mat-label>Rol</mat-label>
+      <mat-select [ngModel]="selectedRole" (ngModelChange)="onRoleChange($event)">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let rol of roles" [value]="rol.id_rol || rol.codigo_tecnico || rol.codigo || rol">
+          {{ rol.etiqueta || rol.nombre || rol }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline" class="w-full sm:w-1/3">
+      <mat-label>Política</mat-label>
+      <mat-select [ngModel]="selectedPolicy" (ngModelChange)="onPolicyChange($event)">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let pol of politicas" [value]="pol.id_nodo || pol.codigo_tecnico || pol.codigo || pol">
+          {{ pol.etiqueta || pol.nombre || pol }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full sm:w-1/3">
+      <mat-label>Buscar Recurso</mat-label>
+      <input matInput [(ngModel)]="searchTerm" placeholder="Ej: Creación de Versiones...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+    <span>Calculando matriz de permisos...</span>
+  </div>
+
+  <div *ngIf="!loading">
+    <table mat-table [dataSource]="filteredRows" class="w-full">
+      <ng-container matColumnDef="recurso">
+        <th mat-header-cell *matHeaderCellDef class="font-bold text-gray-700">Recurso / Objeto</th>
+        <td mat-cell *matCellDef="let row" class="font-medium text-gray-800">
+          {{ row.label }}
+        </td>
+      </ng-container>
+
+      <ng-container *ngFor="let col of columns; let colIndex = index" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef class="text-center">{{ col }}</th>
+        <td mat-cell *matCellDef="let row" class="text-center">
+          <button
+            mat-icon-button
+            [disabled]="!row.cells[colIndex].editable"
+            (click)="onCellToggle(row, colIndex)"
+          >
+            <mat-icon [color]="row.cells[colIndex].value ? 'primary' : 'warn'">
+              {{ row.cells[colIndex].value ? 'check_box' : 'check_box_outline_blank' }}
+            </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="allColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: allColumns"></tr>
+    </table>
+  </div>
+</div>

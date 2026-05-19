@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep .custom-hub-tabs {
+  .mat-mdc-tab-header {
+    border-bottom: 1px solid #f1f5f9;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .mat-mdc-tab-labels {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .mat-mdc-tab {
+    height: 36px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .mdc-tab__text-label {
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #94a3b8 !important;
+  }
+  .mdc-tab--active .mdc-tab__text-label {
+    color: #4f46e5 !important;
+  }
+  .mat-mdc-tab-group-indicator {
+    height: 2px !important;
+    background-color: #4f46e5 !important;
+  }
+}

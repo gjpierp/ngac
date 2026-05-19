@@ -1,0 +1,54 @@
+<div class="p-0 overflow-hidden min-w-[320px] sm:min-w-[450px]">
+  <!-- Header del Modal -->
+  <div class="bg-slate-900 px-6 py-5 text-white relative">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+    <h2 mat-dialog-title class="!text-lg !font-black !tracking-tight !flex !items-center !gap-2 !relative !m-0 !p-0 !text-white !border-b-0">
+      <mat-icon class="text-indigo-400 !text-xl">{{ isEdit ? 'edit_note' : 'domain_add' }}</mat-icon>
+      {{ isEdit ? 'Modificar Entidad SAFI' : 'Crear Entidad SAFI' }}
+    </h2>
+    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5 relative">
+      {{ isEdit ? 'Ajusta los parámetros técnicos de la entidad' : 'Define una nueva entidad en el sistema' }}
+    </p>
+  </div>
+
+  <mat-dialog-content class="!p-6 !m-0">
+    <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nombre de la Entidad</mat-label>
+        <input matInput formControlName="nombre_entidad" placeholder="ej. Entidad de Finanzas Corporativas" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">business</mat-icon>
+        <mat-error *ngIf="form.get('nombre_entidad')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Código Técnico / Slug</mat-label>
+        <input matInput formControlName="slug_entidad" placeholder="ej. ENT_FINANZAS" [readonly]="isEdit" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">terminal</mat-icon>
+        <mat-hint *ngIf="!isEdit">Letras, números y guiones únicamente</mat-hint>
+        <mat-error *ngIf="form.get('slug_entidad')?.hasError('required')">Requerido</mat-error>
+        <mat-error *ngIf="form.get('slug_entidad')?.hasError('pattern')">Formato inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Tipo Entidad / Categoría</mat-label>
+        <mat-select formControlName="tipo_entidad">
+          <mat-option value="ENTIDAD">Entidad Principal</mat-option>
+          <mat-option value="FILIAL">Filial / Subsidiaria</mat-option>
+          <mat-option value="PARTNER">Socio de Negocios</mat-option>
+        </mat-select>
+        <mat-icon matPrefix class="mr-2 text-gray-400">category</mat-icon>
+        <mat-error *ngIf="form.get('tipo_entidad')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="!px-6 !pb-6 !pt-0 !m-0 gap-2">
+    <button mat-button type="button" (click)="onCancel()" class="!rounded-lg !px-4 !text-slate-500 hover:!bg-slate-50 font-bold uppercase tracking-widest text-[9px]">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" type="button" [disabled]="form.invalid" (click)="onSave()"
+            class="!rounded-lg !px-6 !bg-indigo-600 shadow-md shadow-indigo-200 font-bold uppercase tracking-widest text-[9px]">
+      <span>{{ isEdit ? 'Actualizar' : 'Registrar' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,60 @@
+<div class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- CABECERA PRINCIPAL PREMIUM -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">
+          Gestión de <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Permisos</span>
+        </h1>
+      </div>
+      <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+        Consulta, otorga, revoca y edita condiciones ABAC sobre los permisos del sistema de seguridad
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white p-8 rounded-[32px] shadow-xl shadow-slate-100/50 border border-slate-100 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+    <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
+      <mat-icon class="text-indigo-500">vpn_key</mat-icon>
+      {{ editMode() ? 'Editar' : 'Otorgar' }} Permiso de Acceso
+    </h2>
+    <form [formGroup]="form" (ngSubmit)="save()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Rol</mat-label>
+        <input matInput formControlName="rol" placeholder="Ej: ADMIN" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">person</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nodo</mat-label>
+        <input matInput formControlName="nodo" placeholder="Ej: MENU_FINANZAS" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">account_tree</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Operación</mat-label>
+        <input matInput formControlName="operacion" placeholder="Ej: CONSULTAR" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">build</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Condición ABAC</mat-label>
+        <input matInput formControlName="condicion" placeholder="Ej: usuario.division == 'FIN'" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">rule</mat-icon>
+      </mat-form-field>
+      <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+        <button type="button" mat-stroked-button class="!rounded-xl" (click)="cancel()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          mat-flat-button
+          color="primary"
+          [disabled]="form.invalid"
+          class="!rounded-xl px-8 shadow-md shadow-indigo-100"
+        >
+          <mat-icon>save</mat-icon> Guardar Permiso
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

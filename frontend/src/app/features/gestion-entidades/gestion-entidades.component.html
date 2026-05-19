@@ -1,0 +1,193 @@
+<div class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Modern Header -->
+  <header class="flex items-end justify-between mb-8 border-b border-slate-100 pb-6">
+    <div class="space-y-1">
+      <h1 class="text-4xl font-black tracking-tighter text-slate-900 leading-none flex items-center gap-3">
+        <span>Gestión de <span class="text-gradient-indigo">Entidades</span></span>
+        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-black tracking-widest">{{ entidades().length }} Totales</span>
+      </h1>
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Administración y Vinculación de Estructuras Legales y Corporativas SAFI</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button (click)="cargarDatos()" class="btn-action btn-action-reload" matTooltip="Sincronizar Lista">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button *ngIf="!selectedEntidad()" (click)="crearEntidad()" class="btn-action btn-action-create" matTooltip="Crear Nueva Entidad">
+        <mat-icon>add_business</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex-1">
+    <!-- SUB-VISTA A: LISTADO GENERAL DE ENTIDADES -->
+    <div *ngIf="!selectedEntidad()" class="animate-in fade-in duration-300">
+      <!-- Barra de acciones y filtros -->
+      <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
+        <div class="relative w-full md:w-96">
+          <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</mat-icon>
+          <input type="text" 
+                 [ngModel]="filtroEntidad()" 
+                 (ngModelChange)="filtroEntidad.set($event)"
+                 placeholder="Buscar por Nombre o Código (Haga clic en una fila para ver unidades)..." 
+                 class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+        </div>
+      </div>
+
+      <!-- Listado de Entidades -->
+      <div class="overflow-x-auto rounded-3xl border border-slate-100 bg-white shadow-2xl shadow-slate-200/40">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50/70 border-b border-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider">
+              <th class="py-4 px-6">ID</th>
+              <th class="py-4 px-6">Código / Slug</th>
+              <th class="py-4 px-6">Nombre de Entidad</th>
+              <th class="py-4 px-6">Tipo / Descripción</th>
+              <th class="py-4 px-6 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 text-slate-700 text-xs">
+            <tr *ngFor="let e of entidadesFiltradas()" 
+                (click)="selectEntidad(e)"
+                class="hover:bg-blue-50/20 transition-all cursor-pointer group">
+              <td class="py-4 px-6 font-mono font-bold text-blue-600 group-hover:text-blue-800 transition-colors">{{ e.id }}</td>
+              <td class="py-4 px-6 font-bold text-slate-800">{{ e.slug }}</td>
+              <td class="py-4 px-6 text-gray-550 font-semibold">{{ e.nombre }}</td>
+              <td class="py-4 px-6">
+                <span class="bg-blue-50 text-blue-700 font-black text-[9px] tracking-wider uppercase px-2.5 py-1 rounded-lg">
+                  {{ e.desc || 'ENTIDAD' }}
+                </span>
+              </td>
+              <td class="py-4 px-6 text-center" (click)="$event.stopPropagation()">
+                <button mat-icon-button color="primary" 
+                        (click)="editEntidad(e)"
+                        matTooltip="Editar Entidad"
+                        class="hover:scale-115 transition-transform mr-1">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" 
+                        (click)="eliminarEntidadSafi(e)"
+                        matTooltip="Eliminar Entidad"
+                        class="hover:scale-115 transition-transform">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="entidadesFiltradas().length === 0">
+              <td colspan="5" class="py-12 text-center text-gray-400">
+                <mat-icon class="!w-12 !h-12 !text-5xl text-gray-200 mb-2">storefront</mat-icon>
+                <p class="font-bold">No se encontraron entidades SAFI</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA B: DETALLE DE ENTIDAD SELECCIONADA Y SUS UNIDADES ASOCIADAS -->
+    <div *ngIf="selectedEntidad()" class="animate-in zoom-in-95 duration-250">
+      <!-- Banner de la Entidad Seleccionada -->
+      <div class="p-6 bg-gradient-to-r from-slate-900 to-blue-950 text-white rounded-3xl relative flex justify-between items-start mb-6 overflow-hidden shadow-lg">
+        <div class="relative z-10">
+          <span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-blue-500/25 border border-blue-450/30 rounded-md text-blue-300">
+            ID ENTIDAD: {{ selectedEntidad()?.id }}
+          </span>
+          <h3 class="text-2xl font-extrabold mt-2 tracking-tight text-white flex items-center gap-2">
+            <mat-icon class="text-blue-400">business</mat-icon>
+            {{ selectedEntidad()?.nombre }}
+          </h3>
+          <p class="text-slate-300 text-xs mt-1.5 flex items-center gap-1.5 font-medium">
+            <mat-icon class="!w-4 !h-4 !text-sm text-slate-400">fingerprint</mat-icon>
+            Código Técnico: <span class="font-mono font-bold text-blue-300">{{ selectedEntidad()?.slug }}</span>
+            <span class="mx-2 text-slate-650">|</span>
+            <span class="bg-blue-900/40 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-[9px] font-black uppercase">
+              {{ selectedEntidad()?.desc || 'ENTIDAD' }}
+            </span>
+          </p>
+        </div>
+        <button mat-stroked-button (click)="volverAListado()" class="relative z-10 !border-slate-755 !text-slate-205 hover:!bg-slate-800 transition-all !rounded-xl">
+          <mat-icon>arrow_back</mat-icon> Volver al Listado
+        </button>
+      </div>
+
+      <!-- Layout de Asociación de Unidades -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- PANEL IZQUIERDO: UNIDADES DISPONIBLES (NO ASOCIADAS) -->
+        <div class="lg:col-span-6 flex flex-col bg-slate-50/50 border border-slate-200/50 rounded-3xl p-6 shadow-inner">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+              <mat-icon class="text-slate-550">add_circle_outline</mat-icon>
+              Unidades Disponibles ({{ unidadesDisponibles().length }})
+            </h4>
+          </div>
+          <p class="text-[11px] text-gray-500 mb-4">Haga clic en vincular para asociar una unidad operacional a esta entidad legal.</p>
+
+          <!-- Lista de Disponibles -->
+          <div class="space-y-2.5 max-h-[450px] overflow-y-auto pr-1">
+            <div *ngFor="let u of unidadesDisponibles()" 
+                 class="p-4 bg-white border border-slate-100 rounded-2xl flex items-center justify-between hover:shadow-md transition-all group">
+              <div class="flex items-center gap-3 flex-1 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                  <mat-icon class="!text-lg !w-5 !h-5 font-bold">lan</mat-icon>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h5 class="text-xs font-bold text-slate-800 truncate">{{ u.nombre }}</h5>
+                  <span class="text-[9px] font-mono text-gray-400 block truncate">{{ u.slug }}</span>
+                </div>
+              </div>
+              <button mat-flat-button color="primary" class="!rounded-xl !text-xs !px-3 shadow-sm shrink-0" (click)="vincularUnidadRapido(u.id)">
+                <mat-icon class="!mr-1">link</mat-icon> Vincular
+              </button>
+            </div>
+            
+            <div *ngIf="unidadesDisponibles().length === 0" class="py-16 text-center text-slate-400">
+              <mat-icon class="!w-12 !h-12 !text-5xl text-slate-200 mb-2">done_all</mat-icon>
+              <p class="font-bold text-xs">¡Todas las unidades están vinculadas!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL DERECHO: UNIDADES ASOCIADAS (ACTUALMENTE VINCULADAS) -->
+        <div class="lg:col-span-6 flex flex-col bg-blue-50/10 border border-blue-100/50 rounded-3xl p-6 shadow-inner">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="text-xs font-black uppercase tracking-widest text-blue-700 flex items-center gap-1.5">
+              <mat-icon class="text-blue-600">lan</mat-icon>
+              Unidades Asociadas ({{ unidadesAsociadas().length }})
+            </h4>
+          </div>
+          <p class="text-[11px] text-gray-500 mb-4">Estas unidades tienen jurisdicción legal/operativa en esta entidad.</p>
+
+          <!-- Lista de Asociadas -->
+          <div class="space-y-2.5 max-h-[450px] overflow-y-auto pr-1">
+            <div *ngFor="let u of unidadesAsociadas()" 
+                 class="p-4 bg-white border border-blue-50 rounded-2xl flex items-center justify-between hover:shadow-md transition-all group">
+              <div class="flex items-center gap-3 flex-1 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                  <mat-icon class="!text-lg !w-5 !h-5">lan</mat-icon>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h5 class="text-xs font-bold text-slate-800 truncate">{{ u.nombre }}</h5>
+                  <span class="text-[9px] font-mono text-blue-600 block truncate">{{ u.slug }}</span>
+                </div>
+              </div>
+              <button mat-stroked-button color="warn" class="!rounded-xl !text-xs !px-3 shrink-0" (click)="desvincularUnidadRapida(u.id)">
+                <mat-icon class="!mr-1">link_off</mat-icon> Desvincular
+              </button>
+            </div>
+
+            <div *ngIf="unidadesAsociadas().length === 0" class="py-16 text-center text-slate-400">
+              <mat-icon class="!w-12 !h-12 !text-5xl text-slate-200 mb-2">link_off</mat-icon>
+              <p class="font-bold text-xs">Sin unidades asociadas</p>
+              <p class="text-[10px] text-slate-400 mt-1">Haga clic en Vincular en la lista de la izquierda.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

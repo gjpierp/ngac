@@ -1,0 +1,124 @@
+<div class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  
+  <!-- CABECERA PRINCIPAL PREMIUM -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">
+          Administración de <span class="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Políticas</span>
+        </h1>
+        <span class="bg-indigo-100/80 text-indigo-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-indigo-200">
+          {{ politicasFiltradas().length }} Totales
+        </span>
+      </div>
+      <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        Define y gestiona las clases de política principales (Policy Classes) que estructuran el motor de seguridad NGAC
+      </p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <!-- BOTÓN RECARGAR -->
+      <button (click)="loadPoliticas()" 
+              class="w-11 h-11 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/60 flex items-center justify-center transition-all hover:scale-[1.02] active:scale-95"
+              matTooltip="Recargar Lista">
+        <mat-icon>refresh</mat-icon>
+      </button>
+
+      <!-- BOTÓN CREAR -->
+      <button (click)="crearPolitica()" 
+              class="h-11 px-5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-800 border border-indigo-200/60 flex items-center gap-2 font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
+              matTooltip="Nueva Política">
+        <mat-icon class="!w-5 !h-5 !text-xl">add_circle</mat-icon>
+        <span>Nueva Política</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1">
+    <!-- Barra de acciones y filtros -->
+    <div class="mb-6 relative max-w-md group">
+      <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors">search</mat-icon>
+      <input type="text" 
+             [ngModel]="filtro()" 
+             (ngModelChange)="filtro.set($event)"
+             placeholder="Buscar política..." 
+             class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/80 focus:bg-white transition-all shadow-inner" />
+    </div>
+
+    <!-- CONTENIDO DE TABLA PREMIUM -->
+    <div class="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden mb-6">
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="pagedPoliticasFiltradas" class="w-full text-left border-collapse">
+          
+          <!-- Código Técnico -->
+          <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider">Código Técnico</th>
+            <td mat-cell *matCellDef="let pol" class="py-4 px-6 font-mono font-bold text-indigo-600">{{ pol.codigo_tecnico }}</td>
+          </ng-container>
+
+          <!-- Nombre / Etiqueta -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider">Nombre / Etiqueta</th>
+            <td mat-cell *matCellDef="let pol" class="py-4 px-6 font-bold text-slate-800">{{ pol.etiqueta }}</td>
+          </ng-container>
+
+          <!-- Descripción -->
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider">Descripción</th>
+            <td mat-cell *matCellDef="let pol" class="py-4 px-6 text-slate-500 font-medium">{{ pol.descripcion || 'Sin descripción' }}</td>
+          </ng-container>
+
+          <!-- Estado -->
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider">Estado</th>
+            <td mat-cell *matCellDef="let pol" class="py-4 px-6 font-medium">
+              <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border"
+                    [ngClass]="pol.activo === 'S' ? 'bg-emerald-50 text-emerald-700 border-emerald-250' : 'bg-slate-50 text-slate-400 border-slate-200'">
+                {{ pol.activo === 'S' ? 'Activa' : 'Inactiva' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Acciones -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider text-center">Acciones</th>
+            <td mat-cell *matCellDef="let pol" class="py-4 px-6 text-center">
+              <div class="flex items-center justify-center gap-2" (click)="$event.stopPropagation()">
+                <button (click)="editPolitica(pol)"
+                        class="w-8 h-8 rounded-lg border border-indigo-100 hover:border-indigo-200 text-indigo-600 hover:bg-indigo-50/40 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm"
+                        matTooltip="Editar Política">
+                  <mat-icon class="!w-4 !h-4 !text-sm">edit</mat-icon>
+                </button>
+                <button (click)="deletePolitica(pol)"
+                        class="w-8 h-8 rounded-lg border border-red-100 hover:border-red-200 text-red-650 hover:bg-red-50/40 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm"
+                        matTooltip="Eliminar Política">
+                  <mat-icon class="!w-4 !h-4 !text-sm">delete_forever</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['codigo', 'nombre', 'descripcion', 'estado', 'actions']" class="bg-slate-50/70 border-b border-slate-100"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['codigo', 'nombre', 'descripcion', 'estado', 'actions']"
+            class="hover:bg-slate-50/20 transition-all cursor-pointer"
+            (click)="verPoliticaHub(row)"
+          ></tr>
+        </table>
+        
+        <!-- Paginador -->
+        <mat-paginator
+          [length]="politicasFiltradas().length"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 20, 50]"
+          (page)="onPageChange($event)"
+          aria-label="Selector de página de políticas"
+          class="border-t border-slate-100 bg-slate-50/50"
+        >
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

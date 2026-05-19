@@ -1,0 +1,255 @@
+<div class="animate-in fade-in duration-700 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  
+  <!-- Cabecera Premium -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight">
+          Comparador de <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Permisos</span>
+        </h1>
+      </div>
+      <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        Compara de forma interactiva y administra los accesos asignados entre múltiples roles bajo diferentes políticas y ramas de la jerarquía.
+      </p>
+    </div>
+  </div>
+
+  <!-- Sección de Control y Filtros -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+    
+    <!-- Tarjeta de Políticas y Nodos Raíz -->
+    <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[24px] shadow-sm p-6 space-y-6">
+      
+      <!-- Selección Múltiple de Políticas -->
+      <div>
+        <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-indigo-500 !text-lg !w-[18px] !h-[18px]">policy</mat-icon>
+          1. Políticas (Una o más)
+        </h2>
+        <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+          <mat-label>Seleccionar Políticas</mat-label>
+          <mat-select 
+            multiple
+            [value]="selectedPolicies()" 
+            (selectionChange)="onPoliciesChange($event.value)">
+            <mat-option *ngFor="let p of politicas()" [value]="p.id_nodo">
+              {{ p.etiqueta }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix class="mr-2 text-slate-400">shield</mat-icon>
+        </mat-form-field>
+        <span class="text-[10px] text-slate-400 mt-1 block">Si no selecciona ninguna, se evaluarán todas las políticas.</span>
+      </div>
+
+      <!-- Selección Múltiple de Nodos Raíz -->
+      <div class="border-t border-slate-100 pt-6">
+        <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-indigo-500 !text-lg !w-[18px] !h-[18px]">account_tree</mat-icon>
+          2. Nodos Raíz (Módulos)
+        </h2>
+        <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+          <mat-label>Filtrar por Módulos Raíz</mat-label>
+          <mat-select 
+            multiple
+            [value]="selectedRootNodes()" 
+            (selectionChange)="onRootNodesChange($event.value)">
+            <mat-option *ngFor="let r of nodosRaiz()" [value]="r.codigo_tecnico">
+              {{ r.etiqueta }} ({{ r.codigo_tecnico }})
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix class="mr-2 text-slate-400">lan</mat-icon>
+        </mat-form-field>
+        <span class="text-[10px] text-slate-400 mt-1 block">Muestra solo los objetos que descienden de las ramas seleccionadas.</span>
+      </div>
+
+      <!-- Opciones de Visualización -->
+      <div class="border-t border-slate-100 pt-6">
+        <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-indigo-500 !text-lg !w-[18px] !h-[18px]">visibility</mat-icon>
+          Opciones de Visualización
+        </h2>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <mat-checkbox 
+              [checked]="showOnlyDifferences()" 
+              (change)="showOnlyDifferences.set($event.checked)"
+              color="primary">
+              <span class="text-xs font-semibold text-slate-700">Mostrar solo diferencias</span>
+            </mat-checkbox>
+            <mat-icon class="text-slate-400 !text-[16px] cursor-help" matTooltip="Oculta los accesos que sean idénticos en todos los roles seleccionados">info</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Selección de Roles -->
+    <div class="lg:col-span-8 bg-white border border-slate-100 rounded-[24px] shadow-sm p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+          <mat-icon class="text-indigo-500 !text-lg !w-[18px] !h-[18px]">people</mat-icon>
+          3. Seleccionar Roles a Comparar
+        </h2>
+        <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full">
+          {{ selectedRoles().length }} seleccionados
+        </span>
+      </div>
+
+      <!-- Buscador de Roles -->
+      <mat-form-field appearance="outline" class="w-full mb-3" subscriptSizing="dynamic">
+        <mat-label>Buscar rol...</mat-label>
+        <input matInput [(ngModel)]="roleSearchQuery" placeholder="Escribe para filtrar la lista de roles" />
+        <mat-icon matSuffix class="text-slate-400">search</mat-icon>
+      </mat-form-field>
+
+      <!-- Listado de Roles con Scroll -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
+        <div 
+          *ngFor="let role of filteredRolesList()"
+          (click)="toggleRoleSelection(role.codigo)"
+          [class.bg-indigo-50]="isRoleSelected(role.codigo)"
+          [class.border-indigo-200]="isRoleSelected(role.codigo)"
+          class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-indigo-100 hover:bg-slate-50 transition-all cursor-pointer select-none">
+          <mat-checkbox 
+            [checked]="isRoleSelected(role.codigo)" 
+            (click)="$event.stopPropagation(); toggleRoleSelection(role.codigo)"
+            color="primary"
+            class="pointer-events-none">
+          </mat-checkbox>
+          <div class="flex flex-col overflow-hidden">
+            <span class="text-xs font-bold text-slate-700 truncate">{{ role.nombre || role.codigo }}</span>
+            <span class="text-[9px] font-semibold text-slate-400 truncate">{{ role.codigo }}</span>
+          </div>
+        </div>
+        <div *ngIf="filteredRolesList().length === 0" class="col-span-full py-8 text-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+          No se encontraron roles
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Comparativa / Resultados -->
+  <div class="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden">
+    
+    <!-- Barra de Búsqueda sobre los Módulos -->
+    <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
+      <div class="flex items-center gap-3">
+        <div class="w-1.5 h-6 bg-indigo-600 rounded-full"></div>
+        <h3 class="text-base font-bold text-slate-800">Matriz Comparativa de Accesos</h3>
+      </div>
+      <mat-form-field appearance="outline" class="w-full sm:max-w-xs" subscriptSizing="dynamic">
+        <mat-label>Filtrar por Módulo u Operación...</mat-label>
+        <input matInput [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Ej: CONTABILIDAD" />
+        <mat-icon matSuffix class="text-slate-400">filter_alt</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Indicador de Carga -->
+    <div *ngIf="loading()" class="py-20 flex flex-col items-center justify-center gap-4">
+      <mat-spinner diameter="40" strokeWidth="3" color="primary"></mat-spinner>
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Procesando y Comparando...</span>
+    </div>
+
+    <!-- Vista cuando no hay roles seleccionados -->
+    <div *ngIf="!loading() && selectedRoles().length === 0" class="py-24 text-center max-w-md mx-auto space-y-4">
+      <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center mx-auto text-slate-400">
+        <mat-icon class="!text-3xl !w-[30px] !h-[30px]">compare_arrows</mat-icon>
+      </div>
+      <div class="space-y-1">
+        <h4 class="text-base font-bold text-slate-700">Sin Datos que Comparar</h4>
+        <p class="text-slate-400 text-xs leading-relaxed">
+          Selecciona uno o más roles de la lista superior para comenzar la comparación de permisos y accesos autorizados.
+        </p>
+      </div>
+    </div>
+
+    <!-- Tabla de Datos -->
+    <div *ngIf="!loading() && selectedRoles().length > 0" class="overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-slate-100 text-left bg-slate-50">
+            <th class="p-4 pl-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Módulo / Objeto</th>
+            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center w-36">Operación</th>
+            <!-- Cabeceras Dinámicas para cada Rol -->
+            <th 
+              *ngFor="let rol of selectedRoles()"
+              class="p-4 text-xs font-bold text-slate-600 uppercase tracking-wider text-center min-w-[140px] border-l border-slate-100">
+              <div class="flex flex-col items-center justify-center">
+                <span class="text-slate-800 font-extrabold">{{ getRoleName(rol) }}</span>
+                <span class="text-[9px] text-slate-400 tracking-normal font-semibold mt-0.5">{{ rol }}</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr 
+            *ngFor="let row of filteredRows()"
+            class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+            
+            <!-- Celda del Módulo/Objeto -->
+            <td class="p-4 pl-6">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+                  <mat-icon class="!text-sm !w-4 !h-4">folder</mat-icon>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs font-bold text-slate-800">{{ row.objLabel }}</span>
+                  <span class="text-[9px] font-semibold text-slate-400">{{ row.objId }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Celda de Operación -->
+            <td class="p-4 text-center">
+              <span class="inline-block text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md">
+                {{ row.op }}
+              </span>
+            </td>
+
+            <!-- Celdas de Roles -->
+            <td 
+              *ngFor="let role of selectedRoles()"
+              class="p-4 text-center border-l border-slate-100 relative group/cell">
+              
+              <!-- Contenido interactivo del permiso -->
+              <div class="relative inline-flex items-center justify-center">
+                
+                <!-- Spinner de carga -->
+                <div *ngIf="row.rolesLoading[role]" class="p-1">
+                  <mat-spinner diameter="16" strokeWidth="2"></mat-spinner>
+                </div>
+
+                <!-- Botón de Estado del Permiso -->
+                <button 
+                  *ngIf="!row.rolesLoading[role]"
+                  (click)="toggleCellPermission(row, role)"
+                  [matTooltip]="'Haga clic para ' + (row.rolesState[role] ? 'revocar' : 'otorgar') + ' este permiso a ' + role"
+                  [class.bg-emerald-50]="row.rolesState[role]"
+                  [class.text-emerald-700]="row.rolesState[role]"
+                  [class.border-emerald-200]="row.rolesState[role]"
+                  [class.bg-slate-50]="!row.rolesState[role]"
+                  [class.text-slate-400]="!row.rolesState[role]"
+                  [class.border-slate-200]="!row.rolesState[role]"
+                  class="flex items-center gap-1 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm">
+                  
+                  <mat-icon class="!text-[12px] !w-3 !h-3 leading-none flex items-center justify-center font-bold">
+                    {{ row.rolesState[role] ? 'check_circle' : 'cancel' }}
+                  </mat-icon>
+                  <span>{{ row.rolesState[role] ? 'Permitido' : 'Denegado' }}</span>
+                </button>
+
+              </div>
+            </td>
+          </tr>
+
+          <!-- Fila vacía al filtrar -->
+          <tr *ngIf="filteredRows().length === 0" class="border-b border-slate-100">
+            <td [attr.colspan]="2 + selectedRoles().length" class="py-16 text-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+              No se encontraron registros coincidentes
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

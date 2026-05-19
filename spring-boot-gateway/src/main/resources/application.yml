@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ngac-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth-service/**
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin-service/**
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# SpringDoc OpenAPI Configuration (Centralized)
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    # Esta propiedad es clave para habilitar el agregador dinámico
+    urls-primary-name: ngac-gateway
+    display-query-params: true
+    config-url: /v3/api-docs/swagger-config
+  cache:
+    disabled: true

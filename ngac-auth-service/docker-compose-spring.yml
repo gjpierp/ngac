@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Base de Datos y Eureka se mantienen
+  ngac-db:
+    image: gvenzl/oracle-xe:21.3.0-slim
+    container_name: ngac-db
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: G3rC4t_01
+    healthcheck:
+      test: ["CMD-SHELL", "echo exit | sqlplus -S ngac_user/G3rC4t_01@localhost/XEPDB1"]
+      interval: 30s
+      timeout: 10s
+      retries: 12
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./ngac-auth-service/script:/scripts
+
+  eureka:
+    image: steeltoeoss/eureka-server
+    container_name: ngac-eureka
+    ports:
+      - "9090:8761"
+    environment:
+      EUREKA_SERVER_ENABLE_SELF_PRESERVATION: "false"
+
+  # Nuevos servicios Spring Boot
+  spring-gateway:
+    build:
+      context: ./spring-boot-gateway
+      dockerfile: Dockerfile
+    container_name: spring-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://ngac-eureka:8761/eureka/
+
+  spring-security-service:
+    build:
+      context: ./spring-boot-microservice
+      dockerfile: Dockerfile
+    container_name: spring-security-service
+    depends_on:
+      ngac-db:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@ngac-db:1521/XEPDB1
+      - SPRING_DATASOURCE_USERNAME=ngac_user
+      - SPRING_DATASOURCE_PASSWORD=G3rC4t_01
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://ngac-eureka:8761/eureka/
+
+volumes:
+  oracle-data:
+    driver: local

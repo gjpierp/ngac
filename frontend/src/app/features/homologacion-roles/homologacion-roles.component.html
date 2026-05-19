@@ -1,0 +1,107 @@
+<div>
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Asignación de Permisos por Rol</h1>
+    <p class="text-gray-500 text-sm">Gestiona y simula las capacidades de acceso del motor NGAC.</p>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+    <div class="xl:col-span-2 space-y-8">
+      <!-- Simulador de contexto -->
+      <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-emerald-500">
+        <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <mat-icon class="text-emerald-500">manage_accounts</mat-icon>
+          Simular Árbol por Atributos
+        </h2>
+        <form [formGroup]="simulateForm" (ngSubmit)="simularTree()" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <mat-form-field appearance="outline">
+            <mat-label>Usuario (RUT)</mat-label>
+            <input matInput formControlName="usuario" placeholder="13259698">
+            <mat-icon matPrefix class="mr-2 text-gray-400">person</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="md:col-span-2">
+            <mat-label>Atributos (separados por coma)</mat-label>
+            <input matInput formControlName="atributos"
+              placeholder="ROL_ADMVO,CONTABILIDAD,VER,CREAR">
+            <mat-icon matPrefix class="mr-2 text-gray-400">label</mat-icon>
+          </mat-form-field>
+          <button mat-flat-button color="accent" type="submit" [disabled]="simulateForm.invalid" 
+                  class="!rounded-xl h-[56px] !font-bold !text-base shadow-lg shadow-emerald-100">
+            <mat-icon>preview</mat-icon> Simular Acceso
+          </button>
+        </form>
+      </div>
+
+      <!-- Matriz de permisos -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+          <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <mat-icon class="text-indigo-500">grid_on</mat-icon>
+            Matriz de Control de Acceso ({{matrixData().length}} nodos)
+          </h2>
+        </div>
+        
+        <div class="p-6 overflow-x-auto">
+          <div *ngIf="loading()" class="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+            <span>Calculando matriz de permisos...</span>
+          </div>
+          <app-matriz-permisos
+            *ngIf="!loading()"
+            [rows]="matrixData()"
+            (cellToggle)="onPermissionChanged($event)">
+          </app-matriz-permisos>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel lateral: Otorgar manual -->
+    <div class="space-y-6">
+      <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm border-t-4 border-blue-500">
+        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <mat-icon class="text-blue-500">verified_user</mat-icon>
+          Otorgar Permiso Directo
+        </h2>
+        <form [formGroup]="permisoForm" (ngSubmit)="otorgar()" class="space-y-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Rol / Atributo (usr)</mat-label>
+            <input matInput formControlName="usr" placeholder="Ej: ROL_JEFE_ADQ">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nodo Objetivo (obj)</mat-label>
+            <input matInput formControlName="obj" placeholder="Ej: CONTABILIDAD">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Operación (op)</mat-label>
+            <input matInput formControlName="op" placeholder="Ej: VER">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Condición ABAC (JSON - Opcional)</mat-label>
+            <textarea matInput formControlName="condicion" placeholder='{"monto_max": 5000}' rows="2"></textarea>
+            <button mat-icon-button matSuffix (click)="formatJSON()" type="button" matTooltip="Formatear JSON" class="text-indigo-500">
+              <mat-icon>auto_fix_high</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="permisoForm.invalid" 
+                  class="w-full !py-6 !rounded-xl !text-lg !font-bold shadow-lg shadow-blue-100 mt-2">
+            <mat-icon>add_moderator</mat-icon> Confirmar Permiso
+          </button>
+        </form>
+      </div>
+
+      <div class="bg-blue-900 rounded-2xl p-6 text-white shadow-xl">
+        <h3 class="font-bold text-blue-100 mb-2 flex items-center gap-2">
+          <mat-icon class="text-blue-400">info</mat-icon>
+          Nota sobre el Motor
+        </h3>
+        <p class="text-sm text-blue-300 leading-relaxed">
+          Las asociaciones creadas aquí son persistentes en la tabla <code class="bg-blue-800 px-1 rounded text-white">ACC_ASOCIACIONES</code>. 
+          Cualquier cambio afecta inmediatamente al cálculo de acceso en tiempo real.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

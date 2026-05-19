@@ -185,6 +185,28 @@ Los scripts usan las variables DB_USER, DB_PASSWORD y DB_CONNECTION_STRING. El s
 
 - npm start
 
+## Estrategia de ramas
+
+Para este repositorio se recomienda un flujo simple de ramas:
+
+- main: contiene el estado estable del proyecto.
+- feature/\*: para funcionalidades o cambios de varias sesiones.
+- fix/\*: para correcciones puntuales.
+
+Convencion sugerida:
+
+- feature/<modulo>-<cambio>
+- fix/<modulo>-<problema>
+
+Ejemplos:
+
+- feature/frontend-dashboard
+- feature/backend-roles
+- fix/gateway-routing
+- fix/auth-env-config
+
+Si el cambio es pequeno y controlado, puede hacerse directamente sobre main. Si toca varias carpetas, dura mas de una sesion o puede romper integraciones, usa una rama feature/_ o fix/_.
+
 ## Notas
 
 - El frontend tiene un README propio generado por Angular CLI, pero este archivo documenta el sistema completo.

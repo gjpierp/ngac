@@ -1,0 +1,90 @@
+<div class="p-0 overflow-hidden">
+  <!-- Header del Modal -->
+  <div class="bg-slate-900 px-6 py-5 text-white relative">
+    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+    <h2 mat-dialog-title class="!text-lg !font-black !tracking-tight !flex !items-center !gap-2 !relative !m-0 !p-0 !text-white !border-b-0">
+      <mat-icon class="text-indigo-400 !text-xl">{{data.nodo ? 'edit_note' : 'add_circle'}}</mat-icon>
+      {{data.fixedType === 'POLICY' ? (data.nodo ? 'Modificar Política' : 'Crear Nueva Política') : (data.nodo ? 'Modificar Nodo' : 'Crear Nuevo Nodo')}}
+    </h2>
+    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5 relative">
+      {{data.nodo ? 'Ajusta los parámetros técnicos del elemento' : 'Define un nuevo nodo en la jerarquía'}}
+    </p>
+  </div>
+  
+  <mat-dialog-content class="!p-6 !m-0">
+    <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Etiqueta</mat-label>
+        <input matInput formControlName="etiqueta" placeholder="Ej: Gestión de Finanzas">
+        <mat-icon matPrefix class="mr-2 text-gray-400">label</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Código Técnico</mat-label>
+        <input matInput formControlName="codigo" placeholder="Ej: MOD_FINANZAS" style="text-transform: uppercase;">
+        <mat-icon matPrefix class="mr-2 text-gray-400">code</mat-icon>
+        <mat-error *ngIf="form.get('codigo')?.hasError('required')">El código técnico es obligatorio</mat-error>
+        <mat-error *ngIf="form.get('codigo')?.hasError('pattern')">Solo se permiten letras mayúsculas, números y guiones bajos</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" placeholder="Ej: Define las reglas y accesos para la política..." rows="3"></textarea>
+        <mat-icon matPrefix class="mr-2 text-gray-400">description</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Nodo</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option *ngFor="let t of tipos()" [value]="t.codigo">
+            {{t.descripcion}} ({{t.codigo}})
+          </mat-option>
+        </mat-select>
+        <mat-icon matPrefix class="mr-2 text-gray-400">category</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="S">Activo</mat-option>
+          <mat-option value="N">Inactivo</mat-option>
+        </mat-select>
+        <mat-icon matPrefix class="mr-2 text-gray-400">toggle_on</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ruta / URL</mat-label>
+        <input matInput formControlName="ruta" placeholder="/ruta/del/recurso">
+        <mat-icon matPrefix class="mr-2 text-gray-400">link</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Slug (Opcional)</mat-label>
+        <input matInput formControlName="slug">
+        <mat-icon matPrefix class="mr-2 text-gray-400">tag</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ícono (Material)</mat-label>
+        <input matInput formControlName="icono" placeholder="Ej: dashboard">
+        <mat-icon matPrefix class="mr-2 text-gray-400">face</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Orden Visual</mat-label>
+        <input matInput type="number" formControlName="orden">
+        <mat-icon matPrefix class="mr-2 text-gray-400">reorder</mat-icon>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="!px-6 !pb-6 !pt-0 !m-0 gap-2">
+    <button mat-button type="button" (click)="onCancel()" class="!rounded-lg !px-4 !text-slate-500 hover:!bg-slate-50 font-bold uppercase tracking-widest text-[9px]">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" type="button" [disabled]="form.invalid" (click)="onSave()"
+            class="!rounded-lg !px-6 !bg-indigo-600 shadow-md shadow-indigo-200 font-bold uppercase tracking-widest text-[9px]">
+      <span>{{data.nodo ? 'Actualizar' : 'Registrar'}}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

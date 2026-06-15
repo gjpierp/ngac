@@ -1,0 +1,5 @@
+ALTER SESSION SET CURRENT_SCHEMA = NGAC_USER;
+SELECT id_nodo, codigo_tecnico 
+FROM acc_nodos 
+WHERE codigo_tecnico LIKE 'PRESUPUESTO\_HOSP%' ESCAPE '\';
+EXIT;

@@ -46,7 +46,7 @@ export class GestionEntidadesComponent implements OnInit {
   entidadesFiltradas = computed(() => {
     const q = this.filtroEntidad().toLowerCase().trim();
     return this.entidades().filter(e =>
-      e.estado !== 0 && (
+      e.activo !== 'N' && (
         e.nombre.toLowerCase().includes(q) ||
         e.slug.toLowerCase().includes(q) ||
         (e.desc || '').toLowerCase().includes(q)
@@ -171,6 +171,7 @@ export class GestionEntidadesComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dto: ICrearSafiEntidadDto = {
+          codigo: result.codigo,
           slug_entidad: result.slug_entidad,
           nombre_entidad: result.nombre_entidad,
           tipo_entidad: result.tipo_entidad
@@ -196,10 +197,11 @@ export class GestionEntidadesComponent implements OnInit {
       if (result) {
         const payload: ISafiEntidad = {
           id: entidad.id,
+          codigo: entidad.codigo,
           nombre: result.nombre_entidad,
           slug: entidad.slug,
           desc: result.tipo_entidad,
-          estado: entidad.estado
+          activo: entidad.activo
         };
         this.safiSvc.upsertEntidad(payload).subscribe({
           next: () => {

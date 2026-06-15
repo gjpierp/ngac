@@ -24,7 +24,7 @@
   "packageManager": "npm@10.9.2",
   "dependencies": {
     "@angular/animations": "^21.2.12",
-    "@angular/cdk": "^21.2.10",
+    "@angular/cdk": "21.2.10",
     "@angular/common": "^21.0.0",
     "@angular/compiler": "^21.0.0",
     "@angular/core": "^21.0.0",
@@ -36,6 +36,7 @@
     "material-design-icons-iconfont": "^6.7.0",
     "ngx-mat-select-search": "^8.0.5",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.26.25",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "ngx-mat-select-search": "^8.0.5"
+    "ngx-mat-select-search": "^8.0.5",
+    "oracledb": "^6.10.0"
   }
 }

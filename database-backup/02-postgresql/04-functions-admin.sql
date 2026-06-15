@@ -1,0 +1,257 @@
+-- ==========================================
+-- POSTGRESQL FUNCTIONS: SEGURIDAD ADMIN
+-- ==========================================
+
+SET search_path TO ngac, public;
+
+-- 1. UPSERT OPERACION
+CREATE OR REPLACE FUNCTION fn_upsert_operacion(
+    p_nombre_op VARCHAR(100),
+    p_desc VARCHAR(255) DEFAULT NULL
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_OPERACIONES (NOMBRE_OP, DESCRIPCION, ACTIVO, CREADO_POR, FECHA_CREACION)
+    VALUES (upper(trim(p_nombre_op)), p_desc, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+    ON CONFLICT (NOMBRE_OP) DO UPDATE
+    SET DESCRIPCION = COALESCE(p_desc, ACC_OPERACIONES.DESCRIPCION),
+        ACTIVO = 'S',
+        FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+        MODIFICADO_POR = CURRENT_USER;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. UPSERT TIPO NODO
+CREATE OR REPLACE FUNCTION fn_upsert_tipo_nodo(
+    p_codigo VARCHAR(50),
+    p_desc VARCHAR(255) DEFAULT NULL
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_TIPOS_NODO (CODIGO_TIPO, DESCRIPCION, ACTIVO, CREADO_POR, FECHA_CREACION)
+    VALUES (upper(trim(p_codigo)), p_desc, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+    ON CONFLICT (CODIGO_TIPO) DO UPDATE
+    SET DESCRIPCION = COALESCE(p_desc, ACC_TIPOS_NODO.DESCRIPCION),
+        ACTIVO = 'S',
+        FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+        MODIFICADO_POR = CURRENT_USER;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. UPSERT NODO
+CREATE OR REPLACE FUNCTION fn_upsert_nodo(
+    p_id_nodo BIGINT,
+    p_codigo VARCHAR(255),
+    p_etiqueta VARCHAR(500),
+    p_id_tipo_nodo BIGINT,
+    p_ruta VARCHAR(1000) DEFAULT NULL,
+    p_slug VARCHAR(500) DEFAULT NULL,
+    p_icono VARCHAR(100) DEFAULT NULL,
+    p_descripcion VARCHAR(1000) DEFAULT NULL,
+    p_orden_visual INTEGER DEFAULT 0
+) RETURNS void AS $$
+BEGIN
+    IF p_id_nodo IS NOT NULL AND EXISTS (SELECT 1 FROM ACC_NODOS WHERE ID_NODO = p_id_nodo) THEN
+        UPDATE ACC_NODOS
+        SET CODIGO_TECNICO = p_codigo,
+            ETIQUETA = p_etiqueta,
+            ID_TIPO_NODO = p_id_tipo_nodo,
+            URL_RUTA = p_ruta,
+            SLUG = p_slug,
+            ICONO = p_icono,
+            DESCRIPCION = p_descripcion,
+            ORDEN_VISUAL = p_orden_visual,
+            ACTIVO = 'S',
+            FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+            MODIFICADO_POR = CURRENT_USER
+        WHERE ID_NODO = p_id_nodo;
+    ELSE
+        INSERT INTO ACC_NODOS (CODIGO_TECNICO, ETIQUETA, ID_TIPO_NODO, URL_RUTA, SLUG, ICONO, DESCRIPCION, ORDEN_VISUAL, ACTIVO, CREADO_POR, FECHA_CREACION)
+        VALUES (upper(trim(p_codigo)), p_etiqueta, p_id_tipo_nodo, p_ruta, p_slug, p_icono, p_descripcion, p_orden_visual, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+        ON CONFLICT (CODIGO_TECNICO) DO UPDATE
+        SET ETIQUETA = p_etiqueta,
+            ID_TIPO_NODO = p_id_tipo_nodo,
+            URL_RUTA = p_ruta,
+            SLUG = p_slug,
+            ICONO = p_icono,
+            DESCRIPCION = p_descripcion,
+            ORDEN_VISUAL = p_orden_visual,
+            ACTIVO = 'S',
+            FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+            MODIFICADO_POR = CURRENT_USER;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 4. UPSERT ROL
+CREATE OR REPLACE FUNCTION fn_upsert_rol(
+    p_id_rol BIGINT,
+    p_codigo VARCHAR(50),
+    p_nombre VARCHAR(100),
+    p_descripcion VARCHAR(255) DEFAULT NULL
+) RETURNS void AS $$
+BEGIN
+    IF p_id_rol IS NOT NULL AND EXISTS (SELECT 1 FROM ACC_ROLES WHERE ID_ROL = p_id_rol) THEN
+        UPDATE ACC_ROLES
+        SET CODIGO = upper(trim(p_codigo)),
+            NOMBRE = p_nombre,
+            DESCRIPCION = p_descripcion,
+            FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+            MODIFICADO_POR = CURRENT_USER
+        WHERE ID_ROL = p_id_rol;
+    ELSE
+        INSERT INTO ACC_ROLES (CODIGO, NOMBRE, DESCRIPCION, CREADO_POR, FECHA_CREACION)
+        VALUES (upper(trim(p_codigo)), p_nombre, p_descripcion, CURRENT_USER, CURRENT_TIMESTAMP)
+        ON CONFLICT (CODIGO) DO UPDATE
+        SET NOMBRE = p_nombre,
+            DESCRIPCION = p_descripcion,
+            FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+            MODIFICADO_POR = CURRENT_USER;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 5. LINK NODES
+CREATE OR REPLACE FUNCTION fn_enlazar_nodos(
+    p_id_padre BIGINT,
+    p_id_hijo BIGINT
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_ASIGNACIONES (ID_PADRE, ID_HIJO, ACTIVO, CREADO_POR, FECHA_CREACION)
+    VALUES (p_id_padre, p_id_hijo, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+    ON CONFLICT (ID_PADRE, ID_HIJO) DO UPDATE
+    SET ACTIVO = 'S',
+        FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+        MODIFICADO_POR = CURRENT_USER;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 6. GRANT PERMISSION
+CREATE OR REPLACE FUNCTION fn_otorgar_permiso(
+    p_id_usr BIGINT,
+    p_id_obj BIGINT,
+    p_id_op BIGINT,
+    p_condicion_js VARCHAR(2000) DEFAULT NULL
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_ASOCIACIONES (ID_USR_ATTR, ID_OBJ_ATTR, ID_OP, CONDICION_JSON, ACTIVO, CREADO_POR, FECHA_CREACION)
+    VALUES (p_id_usr, p_id_obj, p_id_op, p_condicion_js, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+    ON CONFLICT (ID_USR_ATTR, ID_OBJ_ATTR, ID_OP) DO UPDATE
+    SET CONDICION_JSON = p_condicion_js,
+        ACTIVO = 'S',
+        FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+        MODIFICADO_POR = CURRENT_USER;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 7. DENY PERMISSION
+CREATE OR REPLACE FUNCTION fn_denegar_permiso(
+    p_id_usr BIGINT,
+    p_id_obj BIGINT,
+    p_id_op BIGINT
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_PROHIBICIONES (ID_USR_ATTR, ID_OBJ_ATTR, ID_OP, ACTIVO, CREADO_POR, FECHA_CREACION)
+    VALUES (p_id_usr, p_id_obj, p_id_op, 'S', CURRENT_USER, CURRENT_TIMESTAMP)
+    ON CONFLICT (ID_USR_ATTR, ID_OBJ_ATTR, ID_OP) DO UPDATE
+    SET ACTIVO = 'S',
+        FECHA_MODIFICACION = CURRENT_TIMESTAMP,
+        MODIFICADO_POR = CURRENT_USER;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 8. REVOKES & DELETIONS
+CREATE OR REPLACE FUNCTION fn_desactivar_nodo(
+    p_id BIGINT
+) RETURNS void AS $$
+BEGIN
+    UPDATE ACC_NODOS
+    SET ACTIVO = 'N', FECHA_ELIMINACION = CURRENT_TIMESTAMP, ELIMINADO_POR = CURRENT_USER
+    WHERE ID_NODO = p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_eliminar_enlace(
+    p_id_padre BIGINT,
+    p_id_hijo BIGINT
+) RETURNS void AS $$
+BEGIN
+    UPDATE ACC_ASIGNACIONES
+    SET ACTIVO = 'N', FECHA_ELIMINACION = CURRENT_TIMESTAMP, ELIMINADO_POR = CURRENT_USER
+    WHERE ID_PADRE = p_id_padre AND ID_HIJO = p_id_hijo;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_revocar_permiso(
+    p_id_usr BIGINT,
+    p_id_obj BIGINT,
+    p_id_op BIGINT
+) RETURNS void AS $$
+BEGIN
+    UPDATE ACC_ASOCIACIONES
+    SET ACTIVO = 'N', FECHA_ELIMINACION = CURRENT_TIMESTAMP, ELIMINADO_POR = CURRENT_USER
+    WHERE ID_USR_ATTR = p_id_usr AND ID_OBJ_ATTR = p_id_obj AND ID_OP = p_id_op;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 9. CLONING HIERARCHY
+CREATE OR REPLACE FUNCTION fn_clonar_jerarquia(
+    p_id_destino BIGINT,
+    p_id_origen BIGINT
+) RETURNS void AS $$
+BEGIN
+    INSERT INTO ACC_ASIGNACIONES (ID_PADRE, ID_HIJO, ACTIVO, CREADO_POR, FECHA_CREACION)
+    SELECT p_id_destino, ID_HIJO, 'S', CURRENT_USER, CURRENT_TIMESTAMP
+    FROM ACC_ASIGNACIONES
+    WHERE ID_PADRE = p_id_origen AND ACTIVO = 'S'
+    ON CONFLICT (ID_PADRE, ID_HIJO) DO UPDATE SET ACTIVO = 'S';
+END;
+$$ LANGUAGE plpgsql;
+
+-- 10. LIST REPORTING FUNCTIONS (RETURNING TABLES)
+CREATE OR REPLACE FUNCTION fn_get_dashboard_stats()
+RETURNS TABLE (
+    ActiveNodes BIGINT,
+    TotalAssignments BIGINT,
+    TotalAssociations BIGINT,
+    TotalProhibitions BIGINT,
+    ActiveSafiUsers BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        (SELECT COUNT(*) FROM ACC_NODOS WHERE ACTIVO = 'S'),
+        (SELECT COUNT(*) FROM ACC_ASIGNACIONES WHERE ACTIVO = 'S'),
+        (SELECT COUNT(*) FROM ACC_ASOCIACIONES WHERE ACTIVO = 'S'),
+        (SELECT COUNT(*) FROM ACC_PROHIBICIONES WHERE ACTIVO = 'S'),
+        (SELECT COUNT(*) FROM SAFI_USUARIOS WHERE ACTIVO = 'S');
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_get_nodos_activos()
+RETURNS TABLE (
+    ID_NODO BIGINT,
+    ID_TIPO_NODO BIGINT,
+    CODIGO_TECNICO VARCHAR,
+    ETIQUETA VARCHAR,
+    URL_RUTA VARCHAR,
+    SLUG VARCHAR,
+    ICONO VARCHAR,
+    ORDEN_VISUAL NUMERIC,
+    ACTIVO VARCHAR,
+    DESCRIPCION VARCHAR,
+    CODIGO_TIPO VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT n.ID_NODO, n.ID_TIPO_NODO, n.CODIGO_TECNICO, n.ETIQUETA, n.URL_RUTA, n.SLUG, n.ICONO, n.ORDEN_VISUAL, n.ACTIVO, n.DESCRIPCION, t.CODIGO_TIPO
+    FROM ACC_NODOS n
+    INNER JOIN ACC_TIPOS_NODO t ON n.ID_TIPO_NODO = t.ID_TIPO_NODO
+    WHERE n.ACTIVO = 'S';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_get_roles()
+RETURNS SETOF ACC_ROLES AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM ACC_ROLES;
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,15 @@
+<nav class="breadcrumbs" aria-label="Migas de pan">
+  <ol class="flex items-center space-x-2 text-xs">
+    <li *ngFor="let miga of migas; let i = index" class="flex items-center">
+      <button
+        class="text-indigo-600 hover:underline font-bold disabled:text-slate-400 disabled:cursor-default"
+        [disabled]="i === migas.length - 1"
+        (click)="onMigaClick(miga, i)"
+        type="button"
+      >
+        {{ miga.etiqueta }}
+      </button>
+      <span *ngIf="i < migas.length - 1" class="mx-1 text-slate-400">/</span>
+    </li>
+  </ol>
+</nav>

@@ -26,9 +26,9 @@ import { DialogoConfirmacionComponent } from '../../shared/components/dialogo-co
     FormsModule,
     MatPaginatorModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
-  templateUrl: './gestion-politicas.component.html'
+  templateUrl: './gestion-politicas.component.html',
 })
 export class GestionPoliticasComponent implements OnInit {
   private accesosSvc = inject(AccesosService);
@@ -51,10 +51,11 @@ export class GestionPoliticasComponent implements OnInit {
     const query = this.filtro().toLowerCase();
     const data = this.politicas();
     if (!query) return data;
-    return data.filter(p =>
-      (p.codigo_tecnico || '').toLowerCase().includes(query) ||
-      (p.etiqueta || '').toLowerCase().includes(query) ||
-      (p.descripcion || '').toLowerCase().includes(query)
+    return data.filter(
+      (p) =>
+        (p.codigo_tecnico || '').toLowerCase().includes(query) ||
+        (p.etiqueta || '').toLowerCase().includes(query) ||
+        (p.descripcion || '').toLowerCase().includes(query),
     );
   });
 
@@ -83,9 +84,11 @@ export class GestionPoliticasComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.snackBar.open('Error al cargar las políticas: ' + err.message, 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Error al cargar las políticas: ' + err.message, 'Cerrar', {
+          duration: 4000,
+        });
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -99,11 +102,11 @@ export class GestionPoliticasComponent implements OnInit {
       width: '500px',
       data: {
         nodo: undefined,
-        fixedType: 'POLICY'
-      }
+        fixedType: 'POLICY',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loading.set(true);
         const payload = {
@@ -115,7 +118,7 @@ export class GestionPoliticasComponent implements OnInit {
           icono: result.icono || 'policy',
           descripcion: result.descripcion || null,
           orden: result.orden || 0,
-          activo: result.activo || 'S'
+          activo: result.activo || 'S',
         };
 
         this.accesosSvc.upsertNodo(payload).subscribe({
@@ -124,9 +127,13 @@ export class GestionPoliticasComponent implements OnInit {
             this.loadPoliticas();
           },
           error: (err) => {
-            this.snackBar.open('Error al crear política: ' + (err.error?.detail || err.message), 'Cerrar', { duration: 5000 });
+            this.snackBar.open(
+              'Error al crear política: ' + (err.error?.detail || err.message),
+              'Cerrar',
+              { duration: 5000 },
+            );
             this.loading.set(false);
-          }
+          },
         });
       }
     });
@@ -137,14 +144,15 @@ export class GestionPoliticasComponent implements OnInit {
       width: '500px',
       data: {
         nodo: politica,
-        fixedType: 'POLICY'
-      }
+        fixedType: 'POLICY',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loading.set(true);
         const payload = {
+          id_nodo: politica.id_nodo,
           codigo: result.codigo,
           etiqueta: result.etiqueta,
           tipo: 'POLICY',
@@ -153,7 +161,7 @@ export class GestionPoliticasComponent implements OnInit {
           icono: result.icono || 'policy',
           descripcion: result.descripcion || null,
           orden: result.orden || 0,
-          activo: result.activo || 'S'
+          activo: result.activo || 'S',
         };
 
         this.accesosSvc.upsertNodo(payload).subscribe({
@@ -162,9 +170,13 @@ export class GestionPoliticasComponent implements OnInit {
             this.loadPoliticas();
           },
           error: (err) => {
-            this.snackBar.open('Error al actualizar política: ' + (err.error?.detail || err.message), 'Cerrar', { duration: 5000 });
+            this.snackBar.open(
+              'Error al actualizar política: ' + (err.error?.detail || err.message),
+              'Cerrar',
+              { duration: 5000 },
+            );
             this.loading.set(false);
-          }
+          },
         });
       }
     });
@@ -175,22 +187,32 @@ export class GestionPoliticasComponent implements OnInit {
       width: '450px',
       data: {
         title: 'Eliminar Política',
-        message: `¿Confirma la desactivación de la política "${politica.etiqueta}"?`
-      }
+        message: `¿Confirma la desactivación de la política "${politica.etiqueta}"?`,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(confirm => {
+    dialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
+        if (!politica.id_nodo) {
+          this.snackBar.open('No se pudo resolver el ID de la política', 'Cerrar', {
+            duration: 4000,
+          });
+          return;
+        }
         this.loading.set(true);
-        this.accesosSvc.deleteNodo(politica.codigo_tecnico).subscribe({
+        this.accesosSvc.deleteNodo(politica.id_nodo).subscribe({
           next: () => {
             this.snackBar.open('Política desactivada exitosamente', 'Cerrar', { duration: 3000 });
             this.loadPoliticas();
           },
           error: (err) => {
-            this.snackBar.open('Error al desactivar política: ' + (err.error?.detail || err.message), 'Cerrar', { duration: 5000 });
+            this.snackBar.open(
+              'Error al desactivar política: ' + (err.error?.detail || err.message),
+              'Cerrar',
+              { duration: 5000 },
+            );
             this.loading.set(false);
-          }
+          },
         });
       }
     });

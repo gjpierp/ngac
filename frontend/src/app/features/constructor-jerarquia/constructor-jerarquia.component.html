@@ -1,17 +1,32 @@
 <div class="flex flex-col h-[calc(100vh-120px)] animate-in fade-in duration-500 font-sans gap-3">
-
   <!-- ── Header ── -->
   <div class="flex items-start justify-between">
     <div>
       <h1 class="text-xl font-black text-slate-800 tracking-tight">Constructor de Jerarquías</h1>
-      <p class="text-[10px] text-slate-500 font-medium">Gestión de acceso por política de seguridad NGAC</p>
+      <p class="text-[10px] text-slate-500 font-medium">
+        Gestión de acceso por política de seguridad NGAC
+      </p>
     </div>
-    <div class="flex items-center gap-2" *ngIf="selectedPolicyCode()">
-      <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5">
-        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Asignados</span>
-        <span class="text-[11px] font-black text-emerald-600">{{ assignedCount() }}</span>
-        <span class="text-slate-300">/</span>
-        <span class="text-[11px] font-black text-slate-500">{{ totalResourceCount() }}</span>
+    <div class="flex items-center gap-2">
+      <button
+        (click)="goToClonePage()"
+        class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 text-[9px] font-black uppercase tracking-widest hover:border-slate-300 transition-colors"
+      >
+        <mat-icon class="!text-sm !w-4 !h-4">content_copy</mat-icon>
+        Clonar árbol
+      </button>
+
+      <div class="flex items-center gap-2" *ngIf="selectedPolicyCode()">
+        <div
+          class="flex items-center gap-1.5 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5"
+        >
+          <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest"
+            >Asignados</span
+          >
+          <span class="text-[11px] font-black text-emerald-600">{{ assignedCount() }}</span>
+          <span class="text-slate-300">/</span>
+          <span class="text-[11px] font-black text-slate-500">{{ totalResourceCount() }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -24,8 +39,12 @@
           <mat-icon class="text-indigo-600 !text-lg">policy</mat-icon>
         </div>
         <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Política de Seguridad</p>
-          <p class="text-[9px] text-slate-400 font-semibold">Selecciona una política para gestionar su jerarquía de acceso</p>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            Política de Seguridad
+          </p>
+          <p class="text-[9px] text-slate-400 font-semibold">
+            Selecciona una política para gestionar su jerarquía de acceso
+          </p>
         </div>
       </div>
 
@@ -41,10 +60,13 @@
             [class.text-slate-700]="selectedPolicyCode() !== pol.codigo_tecnico"
             [class.border-slate-200]="selectedPolicyCode() !== pol.codigo_tecnico"
             [class.hover:border-indigo-300]="selectedPolicyCode() !== pol.codigo_tecnico"
-            class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm">
-            <mat-icon class="!text-sm !w-4 !h-4 shrink-0"
-                      [class.text-white]="selectedPolicyCode() === pol.codigo_tecnico"
-                      [class.text-indigo-400]="selectedPolicyCode() !== pol.codigo_tecnico">
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+          >
+            <mat-icon
+              class="!text-sm !w-4 !h-4 shrink-0"
+              [class.text-white]="selectedPolicyCode() === pol.codigo_tecnico"
+              [class.text-indigo-400]="selectedPolicyCode() !== pol.codigo_tecnico"
+            >
               shield
             </mat-icon>
             <div class="flex flex-col min-w-0">
@@ -58,193 +80,242 @@
           </button>
         </div>
 
-        <div *ngIf="allPolicies().length === 0 && !loading()" class="text-[10px] text-slate-400 font-bold py-2">
+        <div
+          *ngIf="allPolicies().length === 0 && !loading()"
+          class="text-[10px] text-slate-400 font-bold py-2"
+        >
           No hay políticas disponibles
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Árbol + Panel Derecho ── -->
-  <div class="flex flex-1 gap-3 min-h-0">
-
-    <!-- Columna Izquierda: Árbol de Recursos -->
-    <div class="w-5/12 flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-
-      <!-- Toolbar del árbol -->
-      <div class="p-3 border-b border-slate-50 bg-slate-50/50 space-y-2">
-        <!-- Buscador -->
-        <div class="relative group">
-          <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-base group-focus-within:text-indigo-600 transition-colors">search</mat-icon>
-          <input type="text"
-                 [ngModel]="searchTerm()"
-                 (ngModelChange)="searchTerm.set($event)"
-                 placeholder="Buscar módulo o recurso..."
-                 class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-100 rounded-xl text-xs font-medium placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+  <div
+    class="flex flex-1 flex-col bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-0"
+  >
+    <div class="p-3 border-b border-slate-50 bg-slate-50/50 space-y-2">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+            Jerarquía de la política
+          </p>
+          <p class="text-[9px] text-slate-400 font-semibold">
+            Haz clic en un nodo para moverlo entre no asignados y asignados
+          </p>
         </div>
-
-        <!-- Filtros Asignado / No Asignado -->
-        <div class="flex items-center gap-1.5">
-          <button
-            (click)="setFilter('all')"
-            [class.bg-slate-700]="assignFilter() === 'all'"
-            [class.text-white]="assignFilter() === 'all'"
-            [class.bg-slate-100]="assignFilter() !== 'all'"
-            [class.text-slate-500]="assignFilter() !== 'all'"
-            class="flex-1 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all">
-            Todos
-          </button>
-          <button
-            (click)="setFilter('assigned')"
-            [class.bg-emerald-500]="assignFilter() === 'assigned'"
-            [class.text-white]="assignFilter() === 'assigned'"
-            [class.bg-emerald-50]="assignFilter() !== 'assigned'"
-            [class.text-emerald-600]="assignFilter() !== 'assigned'"
-            class="flex-1 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all">
-            Asignados
-          </button>
-          <button
-            (click)="setFilter('unassigned')"
-            [class.bg-rose-500]="assignFilter() === 'unassigned'"
-            [class.text-white]="assignFilter() === 'unassigned'"
-            [class.bg-rose-50]="assignFilter() !== 'unassigned'"
-            [class.text-rose-600]="assignFilter() !== 'unassigned'"
-            class="flex-1 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all">
-            No Asignados
-          </button>
-        </div>
+        <button
+          *ngIf="selectedPolicyCode()"
+          (click)="createRootNode()"
+          class="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 text-white text-[9px] font-black uppercase tracking-widest shadow-sm hover:bg-indigo-500 transition-colors"
+        >
+          <mat-icon class="!text-sm !w-4 !h-4">account_tree</mat-icon>
+          Nuevo nodo raíz
+        </button>
       </div>
 
-      <!-- Cargando -->
-      <div *ngIf="loading()" class="flex flex-col items-center justify-center py-16 gap-3">
-        <div class="animate-spin rounded-full h-8 w-8 border-[2px] border-indigo-100 border-t-indigo-600"></div>
-        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Cargando...</span>
-      </div>
-
-      <!-- Sin política seleccionada -->
-      <div *ngIf="!loading() && !selectedPolicyCode()" class="flex-1 flex flex-col items-center justify-center gap-3 py-16 text-center px-4">
-        <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
-          <mat-icon class="text-indigo-400 !text-2xl">policy</mat-icon>
-        </div>
-        <p class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Selecciona una política</p>
-        <p class="text-[9px] text-slate-400 font-semibold max-w-[200px]">
-          Elige una política en la parte superior para ver y gestionar su jerarquía de recursos.
-        </p>
-      </div>
-
-      <!-- Árbol -->
-      <div *ngIf="!loading() && selectedPolicyCode()" class="flex-1 overflow-y-auto custom-scrollbar p-2">
-
-        <div *ngIf="filteredTree().length === 0" class="py-12 text-center text-slate-400 text-[10px] font-black uppercase tracking-wider">
-          Sin resultados
-        </div>
-
-        <ng-container *ngTemplateOutlet="treeTmpl; context: { $implicit: filteredTree(), level: 0 }"></ng-container>
+      <div class="relative group">
+        <mat-icon
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-base group-focus-within:text-indigo-600 transition-colors"
+          >search</mat-icon
+        >
+        <input
+          type="text"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Buscar módulo o recurso..."
+          class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-100 rounded-xl text-xs font-medium placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+        />
       </div>
     </div>
 
-    <!-- Columna Derecha: Hub de Gestión Detallada -->
-    <div class="flex-1 overflow-hidden">
-      <app-hub-detalle-nodo
-        [nodo]="selectedNode()"
-        [parents]="getParentsOf(selectedNode()?.codigo_tecnico || '')"
-        [allNodes]="fullNodes()"
-        [roles]="roles()"
-        [operations]="operaciones()"
-        [onReloadTree]="reloadTree">
-      </app-hub-detalle-nodo>
+    <div *ngIf="loading()" class="flex flex-col items-center justify-center py-16 gap-3 flex-1">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-[2px] border-indigo-100 border-t-indigo-600"
+      ></div>
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest"
+        >Cargando...</span
+      >
+    </div>
+
+    <div
+      *ngIf="!loading() && !selectedPolicyCode()"
+      class="flex-1 flex flex-col items-center justify-center gap-3 py-16 text-center px-4"
+    >
+      <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
+        <mat-icon class="text-indigo-400 !text-2xl">policy</mat-icon>
+      </div>
+      <p class="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+        Selecciona una política
+      </p>
+      <p class="text-[9px] text-slate-400 font-semibold max-w-[220px]">
+        Elige una política en la parte superior para ver toda su jerarquía separada por estado.
+      </p>
+    </div>
+
+    <div
+      *ngIf="!loading() && selectedPolicyCode()"
+      class="grid grid-cols-1 xl:grid-cols-2 gap-3 p-3 flex-1 min-h-0"
+    >
+      <div
+        class="rounded-2xl border border-rose-100 bg-white overflow-hidden shadow-sm min-h-0 flex flex-col"
+      >
+        <div
+          class="flex items-center justify-between px-3 py-2 border-b border-rose-50 bg-rose-50/70"
+        >
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center"
+            >
+              <mat-icon class="!text-sm">link_off</mat-icon>
+            </div>
+            <div>
+              <p class="text-[9px] font-black text-rose-700 uppercase tracking-widest">
+                No asignados
+              </p>
+              <p class="text-[8px] text-rose-400 font-bold">Árbol disponible para asignar</p>
+            </div>
+          </div>
+          <span class="text-[9px] font-black text-rose-600">{{ unassignedCount() }}</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+          <div
+            *ngIf="unassignedTree().length === 0"
+            class="py-12 text-center text-rose-300 text-[10px] font-black uppercase tracking-wider"
+          >
+            Sin nodos no asignados
+          </div>
+
+          <ng-container
+            *ngTemplateOutlet="
+              treeTmpl;
+              context: { $implicit: unassignedTree(), level: 0, mode: 'unassigned' }
+            "
+          ></ng-container>
+        </div>
+      </div>
+
+      <div
+        class="rounded-2xl border border-emerald-100 bg-white overflow-hidden shadow-sm min-h-0 flex flex-col"
+      >
+        <div
+          class="flex items-center justify-between px-3 py-2 border-b border-emerald-50 bg-emerald-50/70"
+        >
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center"
+            >
+              <mat-icon class="!text-sm">verified</mat-icon>
+            </div>
+            <div>
+              <p class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">
+                Asignados
+              </p>
+              <p class="text-[8px] text-emerald-400 font-bold">Árbol asociado a la política</p>
+            </div>
+          </div>
+          <span class="text-[9px] font-black text-emerald-600">{{ assignedCount() }}</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+          <div
+            *ngIf="assignedTree().length === 0"
+            class="py-12 text-center text-emerald-300 text-[10px] font-black uppercase tracking-wider"
+          >
+            Sin nodos asignados
+          </div>
+
+          <ng-container
+            *ngTemplateOutlet="
+              treeTmpl;
+              context: { $implicit: assignedTree(), level: 0, mode: 'assigned' }
+            "
+          ></ng-container>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- ── Template Árbol Recursivo ── -->
-<ng-template #treeTmpl let-nodes let-lv="level">
+<ng-template #treeTmpl let-nodes let-lv="level" let-mode="mode">
   <div *ngFor="let n of nodes" class="flex flex-col">
-
-    <!-- Fila del nodo -->
     <div
-      class="flex items-center gap-1.5 rounded-lg cursor-pointer transition-all duration-150 hover:bg-slate-50 group relative"
-      [class.bg-indigo-50]="selectedNode()?.codigo_tecnico === n.codigo_tecnico"
-      [class.ring-1]="selectedNode()?.codigo_tecnico === n.codigo_tecnico"
-      [class.ring-inset]="selectedNode()?.codigo_tecnico === n.codigo_tecnico"
-      [class.ring-indigo-200]="selectedNode()?.codigo_tecnico === n.codigo_tecnico"
+      class="flex items-center gap-2 rounded-lg cursor-pointer transition-all duration-150 group relative"
+      [class.hover:bg-rose-50]="mode === 'unassigned'"
+      [class.hover:bg-emerald-50]="mode === 'assigned'"
       [style.padding-left.px]="lv * 16 + 6"
-      style="padding-top: 3px; padding-bottom: 3px; padding-right: 6px;"
-      (click)="selectNode(n); $event.stopPropagation()">
+      style="padding-top: 3px; padding-bottom: 3px; padding-right: 6px"
+      (click)="toggleAssignment(n); $event.stopPropagation()"
+    >
+      <div
+        *ngIf="lv > 0"
+        class="absolute top-0 bottom-0 border-l border-slate-100"
+        [style.left.px]="lv * 16 - 4"
+      ></div>
 
-      <!-- Línea guía -->
-      <div *ngIf="lv > 0" class="absolute top-0 bottom-0 border-l border-slate-100"
-           [style.left.px]="lv * 16 - 4"></div>
-
-      <!-- Botón expand -->
-      <button *ngIf="n.children?.length" mat-icon-button
-              class="!w-5 !h-5 !min-w-0 z-10 hover:bg-white transition-colors shrink-0"
-              (click)="toggleNode(n.codigo_tecnico); $event.stopPropagation()">
-        <mat-icon class="!text-[9px] transition-transform duration-200"
-                  [class.rotate-90]="isExpanded(n.codigo_tecnico)"
-                  [class.text-indigo-500]="isExpanded(n.codigo_tecnico)"
-                  [class.text-slate-400]="!isExpanded(n.codigo_tecnico)">
-          chevron_right
-        </mat-icon>
-      </button>
-      <div *ngIf="!n.children?.length" class="w-5 h-5 flex items-center justify-center shrink-0 z-10">
+      <div
+        class="w-5 h-5 flex items-center justify-center shrink-0 z-10"
+        *ngIf="n.children?.length"
+      >
+        <mat-icon class="!text-[10px] !w-3 !h-3 text-slate-400">subdirectory_arrow_right</mat-icon>
+      </div>
+      <div
+        *ngIf="!n.children?.length"
+        class="w-5 h-5 flex items-center justify-center shrink-0 z-10"
+      >
         <div class="w-1 h-1 rounded-full bg-slate-200"></div>
       </div>
 
-      <!-- Ícono del nodo -->
-      <div class="w-5 h-5 rounded-md flex items-center justify-center shrink-0 z-10 transition-all"
-           [class.bg-amber-50]="n.children?.length && !n.isActive"
-           [class.bg-emerald-50]="n.isLinked"
-           [class.bg-teal-50]="n.isInherited && !n.isLinked"
-           [class.bg-slate-50]="!n.isActive && !n.children?.length">
-        <mat-icon class="!text-[10px] !w-3 !h-3 transition-all"
-                  [class.text-amber-500]="n.children?.length && !n.isActive"
-                  [class.text-emerald-600]="n.isLinked"
-                  [class.text-teal-500]="n.isInherited && !n.isLinked"
-                  [class.text-slate-400]="!n.isActive && !n.children?.length">
-          {{ n.isLinked ? 'verified' : (n.children?.length ? (isExpanded(n.codigo_tecnico) ? 'folder_open' : 'folder') : 'insert_drive_file') }}
+      <div
+        class="w-5 h-5 rounded-md flex items-center justify-center shrink-0 z-10 transition-all"
+        [class.bg-rose-50]="mode === 'unassigned'"
+        [class.bg-emerald-50]="mode === 'assigned'"
+      >
+        <mat-icon
+          class="!text-[10px] !w-3 !h-3 transition-all"
+          [class.text-rose-600]="mode === 'unassigned'"
+          [class.text-emerald-600]="mode === 'assigned'"
+        >
+          {{ n.children?.length ? 'folder' : 'insert_drive_file' }}
         </mat-icon>
       </div>
 
-      <!-- Etiqueta -->
       <div class="flex items-center gap-1.5 flex-1 min-w-0 z-10">
-        <span class="text-[11px] font-bold tracking-tight leading-tight truncate transition-colors"
-              [class.text-indigo-700]="selectedNode()?.codigo_tecnico === n.codigo_tecnico"
-              [class.text-emerald-700]="n.isLinked && selectedNode()?.codigo_tecnico !== n.codigo_tecnico"
-              [class.text-teal-700]="n.isInherited && selectedNode()?.codigo_tecnico !== n.codigo_tecnico"
-              [class.text-slate-600]="!n.isActive && selectedNode()?.codigo_tecnico !== n.codigo_tecnico">
+        <span
+          class="text-[11px] font-bold tracking-tight leading-tight truncate transition-colors"
+          [class.text-rose-700]="mode === 'unassigned'"
+          [class.text-emerald-700]="mode === 'assigned'"
+        >
           {{ n.etiqueta }}
         </span>
-        <!-- Badges de estado -->
-        <span *ngIf="n.isLinked"
-              class="shrink-0 text-[7px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-widest">
-          Raíz
+        <span
+          *ngIf="n.isLinked"
+          class="shrink-0 text-[7px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-widest"
+        >
+          Directo
         </span>
-        <span *ngIf="n.isInherited && !n.isLinked"
-              class="shrink-0 text-[7px] px-1.5 py-0.5 bg-teal-50 text-teal-600 rounded-full font-black uppercase tracking-widest">
+        <span
+          *ngIf="n.isInherited && !n.isLinked"
+          class="shrink-0 text-[7px] px-1.5 py-0.5 bg-teal-50 text-teal-600 rounded-full font-black uppercase tracking-widest"
+        >
           Heredado
         </span>
       </div>
 
-      <!-- Acción rápida de asignación: solo en nodos raíz (lv === 0) -->
-      <button *ngIf="lv === 0"
-              (click)="toggleAssignment(n); $event.stopPropagation()"
-              class="shrink-0 z-10 opacity-0 group-hover:opacity-100 transition-all duration-150 w-6 h-6 rounded-lg flex items-center justify-center"
-              [class.bg-emerald-500]="n.isLinked"
-              [class.text-white]="n.isLinked"
-              [class.bg-slate-100]="!n.isLinked"
-              [class.text-slate-500]="!n.isLinked"
-              [class.hover:bg-rose-500]="n.isLinked"
-              [class.hover:bg-indigo-500]="!n.isLinked"
-              [class.hover:text-white]="true"
-              [matTooltip]="n.isLinked ? 'Desasignar de la política' : 'Asignar a la política'">
-        <mat-icon class="!text-[11px] !w-3 !h-3">{{ n.isLinked ? 'link_off' : 'add_link' }}</mat-icon>
-      </button>
+      <mat-icon
+        class="!text-sm !w-4 !h-4 shrink-0"
+        [class.text-rose-500]="mode === 'unassigned'"
+        [class.text-emerald-500]="mode === 'assigned'"
+      >
+        {{ mode === 'assigned' ? 'east' : 'west' }}
+      </mat-icon>
     </div>
 
-    <!-- Hijos colapsables -->
-    <div *ngIf="n.children?.length && isExpanded(n.codigo_tecnico)" class="overflow-hidden">
-      <ng-container *ngTemplateOutlet="treeTmpl; context: { $implicit: n.children, level: lv + 1 }"></ng-container>
+    <div *ngIf="n.children?.length" class="overflow-hidden">
+      <ng-container
+        *ngTemplateOutlet="treeTmpl; context: { $implicit: n.children, level: lv + 1, mode: mode }"
+      ></ng-container>
     </div>
   </div>
 </ng-template>

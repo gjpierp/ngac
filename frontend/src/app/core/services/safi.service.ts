@@ -12,7 +12,8 @@ import {
   ICrearSafiEntidadDto,
   IVinculoUsuarioUnidadDto,
   IVinculoUsuarioEntidadDto,
-  IVinculoUnidadEntidadDto
+  IVinculoUnidadEntidadDto,
+  ISafiModulo
 } from '../models/ngac-admin.models';
 
 @Injectable({
@@ -125,5 +126,29 @@ export class SafiService {
 
   getUnidadEntidadVinculos(): Observable<IRespuestaJSON<{ id_unidad: number, id_entidad: number }[]>> {
     return this.http.get<IRespuestaJSON<{ id_unidad: number, id_entidad: number }[]>>(`${this.API_URL}/vinculos/unidad-entidad`);
+  }
+
+  // ==========================================
+  // 5. GESTIÓN DE MÓDULOS SAFI
+  // ==========================================
+
+  getModulos(): Observable<ISafiModulo[]> {
+    return this.http.get<ISafiModulo[]>(`${this.API_URL}/modulos`);
+  }
+
+  upsertModulo(modulo: ISafiModulo): Observable<IRespuestaJSON<null>> {
+    return this.http.post<IRespuestaJSON<null>>(`${this.API_URL}/modulos`, modulo);
+  }
+
+  deleteModulo(id: number): Observable<IRespuestaJSON<null>> {
+    return this.http.delete<IRespuestaJSON<null>>(`${this.API_URL}/modulos/${id}`);
+  }
+
+  vincularModuloNodo(idModulo: number, idNodo: number): Observable<IRespuestaJSON<null>> {
+    return this.http.post<IRespuestaJSON<null>>(`${this.API_URL}/vinculos/modulo-nodo`, { id_modulo: idModulo, id_nodo: idNodo });
+  }
+
+  desvincularModuloNodo(idModulo: number, idNodo: number): Observable<IRespuestaJSON<null>> {
+    return this.http.request<IRespuestaJSON<null>>('DELETE', `${this.API_URL}/vinculos/modulo-nodo`, { body: { id_modulo: idModulo, id_nodo: idNodo } });
   }
 }

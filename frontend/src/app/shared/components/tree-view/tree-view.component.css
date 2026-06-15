@@ -1,0 +1,12 @@
+.font-bold {
+  font-weight: bold;
+}
+.text-emerald-600 {
+  color: #059669;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.hover\:underline:hover {
+  text-decoration: underline;
+}

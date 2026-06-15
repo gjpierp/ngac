@@ -1,73 +1,127 @@
-<aside class="flex flex-col transition-all duration-300 shadow-2xl z-20 border-r border-slate-800/40 h-screen bg-slate-900"
-       [class.w-72]="!collapsed"
-       [class.w-20]="collapsed">
+<aside
+  class="flex flex-col transition-all duration-300 shadow-2xl z-20 border-r border-slate-800/40 h-screen bg-slate-900"
+  [class.w-72]="!collapsed"
+  [class.w-20]="collapsed"
+>
   <div class="flex items-center h-20 px-6 border-b border-slate-800/50 shrink-0">
-    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+    <div
+      class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0"
+    >
       <mat-icon class="text-white !w-6 !h-6">security</mat-icon>
     </div>
-    <div *ngIf="!collapsed" class="ml-4 flex flex-col overflow-hidden animate-in fade-in slide-in-from-left-4 duration-300">
+    <div
+      *ngIf="!collapsed"
+      class="ml-4 flex flex-col overflow-hidden animate-in fade-in slide-in-from-left-4 duration-300"
+    >
       <span class="text-white font-black text-lg tracking-tight leading-none">SAFI NGAC</span>
-      <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Admin Panel</span>
+      <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1"
+        >Admin Panel</span
+      >
     </div>
   </div>
-  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2 custom-scrollbar">    
-    <div *ngIf="dynamicModules().length === 0" class="px-4 py-10 text-center animate-in fade-in duration-500">
+  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2 custom-scrollbar">
+    <div
+      *ngIf="dynamicModules().length === 0"
+      class="px-4 py-10 text-center animate-in fade-in duration-500"
+    >
       <mat-icon class="text-slate-800 !w-12 !h-12 !text-5xl mb-3">cloud_off</mat-icon>
-      <p *ngIf="!collapsed" class="text-slate-600 text-[10px] uppercase font-bold tracking-widest leading-relaxed">
+      <p
+        *ngIf="!collapsed"
+        class="text-slate-600 text-[10px] uppercase font-bold tracking-widest leading-relaxed"
+      >
         Sin respuesta de la base de datos
       </p>
     </div>
 
     <!-- Renderizado Recursivo de Módulos -->
-    <ng-container *ngTemplateOutlet="recursiveMenu; context:{ $implicit: dynamicModules(), level: 0 }"></ng-container>
-
+    <ng-container
+      *ngTemplateOutlet="recursiveMenu; context: { $implicit: dynamicModules(), level: 0 }"
+    ></ng-container>
   </nav>
 
   <!-- Template Recursivo para Submenús -->
   <ng-template #recursiveMenu let-items let-level="level">
     <div class="space-y-1">
       <ng-container *ngFor="let item of items">
-        
         <!-- Item con Hijos (Prioridad: Acordeón) -->
         <div *ngIf="item.children && item.children.length > 0" class="space-y-1">
-          <div (click)="toggleItem(item)"
-               class="flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer text-slate-400 hover:bg-slate-800/80 hover:text-white group"
-               [style.margin-left.px]="!collapsed ? level * 12 : 0">
+          <div
+            (click)="toggleItem(item)"
+            class="flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer text-slate-400 hover:bg-slate-800/80 hover:text-white group"
+            [style.margin-left.px]="!collapsed ? level * 12 : 0"
+          >
             <div class="flex items-center gap-3 overflow-hidden">
-              <mat-icon class="material-icons !text-[18px] shrink-0 text-slate-500 group-hover:text-blue-400">{{item.icon}}</mat-icon>
-              <span *ngIf="!collapsed" class="text-[12px] font-bold truncate tracking-wide">{{item.label}}</span>
+              <mat-icon
+                class="material-icons !text-[18px] shrink-0 text-slate-500 group-hover:text-blue-400"
+                >{{ item.icon }}</mat-icon
+              >
+              <span *ngIf="!collapsed" class="text-[12px] font-bold truncate tracking-wide">{{
+                item.label
+              }}</span>
             </div>
-            <mat-icon *ngIf="!collapsed" 
-                      class="material-icons !text-[16px] transition-transform duration-300"
-                      [class.rotate-90]="item.expanded">chevron_right</mat-icon>
+            <mat-icon
+              *ngIf="!collapsed"
+              class="material-icons !text-[16px] transition-transform duration-300"
+              [class.rotate-90]="item.expanded"
+              >chevron_right</mat-icon
+            >
           </div>
 
           <!-- Sub-ítems (Recursión) -->
-          <div *ngIf="item.expanded && !collapsed" class="overflow-hidden animate-in slide-in-from-top-2 duration-200">
-             <ng-container *ngTemplateOutlet="recursiveMenu; context:{ $implicit: item.children, level: level + 1 }"></ng-container>
+          <div
+            *ngIf="item.expanded && !collapsed"
+            class="overflow-hidden animate-in slide-in-from-top-2 duration-200"
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                recursiveMenu;
+                context: { $implicit: item.children, level: level + 1 }
+              "
+            ></ng-container>
           </div>
         </div>
 
         <!-- Item Hoja (Enlace Directo sin hijos) -->
-        <a *ngIf="(!item.children || item.children.length === 0) && item.route"
-           [routerLink]="item.route"
-           routerLinkActive="bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-900/40"
-           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer text-slate-400 hover:bg-slate-800/80 hover:text-white group relative"
-           [style.margin-left.px]="!collapsed ? level * 12 : 0"
-           [matTooltip]="collapsed ? item.label : ''"
-           matTooltipPosition="right">
-          <mat-icon class="material-icons !text-[18px] shrink-0 transition-transform group-hover:scale-110">{{item.icon}}</mat-icon>
-          <span *ngIf="!collapsed" class="text-[12px] font-bold truncate tracking-wide animate-in fade-in duration-300">{{item.label}}</span>
+        <a
+          *ngIf="(!item.children || item.children.length === 0) && item.route"
+          [routerLink]="item.route"
+          (click)="toggleItem(item)"
+          routerLinkActive="is-active"
+          #rla="routerLinkActive"
+          [ngClass]="rla.isActive 
+            ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-900/40' 
+            : 'text-slate-400 hover:bg-slate-800/80 hover:text-white'"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer group relative"
+          [style.margin-left.px]="!collapsed ? level * 12 : 0"
+          [matTooltip]="collapsed ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon
+            class="material-icons !text-[18px] shrink-0 transition-transform group-hover:scale-110"
+            [ngClass]="rla.isActive ? 'text-white' : ''"
+            >{{ item.icon }}</mat-icon
+          >
+          <span
+            *ngIf="!collapsed"
+            class="text-[12px] font-bold truncate tracking-wide animate-in fade-in duration-300"
+            >{{ item.label }}</span
+          >
         </a>
-
       </ng-container>
     </div>
   </ng-template>
 
   <!-- User Profile & Collapse Toggle -->
   <div class="p-4 border-t border-slate-800/50 bg-slate-900/50">
-    <div *ngIf="!collapsed" class="mb-4 px-2 py-3 bg-slate-800/50 rounded-2xl flex items-center gap-3 animate-in fade-in duration-300">
-      <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-black shadow-lg">A</div>
+    <div
+      *ngIf="!collapsed"
+      class="mb-4 px-2 py-3 bg-slate-800/50 rounded-2xl flex items-center gap-3 animate-in fade-in duration-300"
+    >
+      <div
+        class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-black shadow-lg"
+      >
+        A
+      </div>
       <div class="flex flex-col overflow-hidden">
         <span class="text-xs font-bold text-white truncate">Administrador</span>
         <span class="text-[10px] text-green-400 font-bold flex items-center gap-1">
@@ -77,17 +131,15 @@
       </div>
     </div>
 
-    <!-- Botón de Simulación de Contexto (Motor NGAC) -->
-    <button (click)="navegarGeneradorContexto()"
-            class="w-full flex items-center justify-center gap-2 py-3 mb-2 rounded-xl text-indigo-400 hover:bg-indigo-900/20 hover:text-indigo-300 transition-all duration-200 border border-indigo-500/20 group shadow-lg shadow-indigo-900/10">
-      <mat-icon class="material-icons text-[18px] group-hover:rotate-12 transition-transform">hub</mat-icon>
-      <span *ngIf="!collapsed" class="text-[10px] font-black uppercase tracking-widest">Generador de Contexto</span>
-    </button>
-
-    <button (click)="toggle()"
-            class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 border border-transparent hover:border-slate-700">
-      <mat-icon class="material-icons transition-transform duration-300" 
-                [class.rotate-180]="collapsed">chevron_left</mat-icon>
+    <button
+      (click)="toggle()"
+      class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 border border-transparent hover:border-slate-700"
+    >
+      <mat-icon
+        class="material-icons transition-transform duration-300"
+        [class.rotate-180]="collapsed"
+        >chevron_left</mat-icon
+      >
       <span *ngIf="!collapsed" class="text-xs font-bold uppercase tracking-widest">Colapsar</span>
     </button>
   </div>

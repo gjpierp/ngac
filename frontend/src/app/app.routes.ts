@@ -48,6 +48,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'clonacion',
+        loadComponent: () =>
+          import('./features/clonacion-jerarquia/clonacion-jerarquia.component').then(
+            (m) => m.ClonacionJerarquiaComponent,
+          ),
+      },
+      {
         path: 'permisos',
         loadComponent: () =>
           import('./features/gestion-permisos/gestion-permisos.component').then(
@@ -125,6 +132,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/gestion-unidades/gestion-unidades.component').then(
             (m) => m.GestionUnidadesComponent,
+          ),
+      },
+      {
+        path: 'homologacion-roles',
+        loadComponent: () =>
+          import('./features/homologacion-roles/homologacion-roles.component').then(
+            (m) => m.HomologacionRolesComponent,
           ),
       },
     ],

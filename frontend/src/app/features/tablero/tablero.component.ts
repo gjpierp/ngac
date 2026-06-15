@@ -138,8 +138,10 @@ export class TableroComponent implements OnInit {
 
     this.accesosSvc.getModulosRaiz().subscribe({
       next: (modulos: any[]) => {
-        this.modules.set(modulos);
-        this.buildParentMap(modulos, null);
+        // Filtrar solo los módulos activos
+        const activos = (modulos || []).filter((m) => m.activo === 'S');
+        this.modules.set(activos);
+        this.buildParentMap(activos, null);
         this.updateDistribution();
         this._lastSync = new Date();
       },
@@ -152,15 +154,18 @@ export class TableroComponent implements OnInit {
 
     this.accesosSvc.getRoles().subscribe({
       next: (roles: any[]) => {
-        const mappedRoles = (roles || []).map(r => ({
-          id_nodo: r.id_rol,
-          codigo_tecnico: r.codigo,
-          etiqueta: r.nombre || r.codigo,
-          tipo_nodo: 'USR_ATTR',
-          icono: 'admin_panel_settings',
-          activo: 'S',
-          children: []
-        }));
+        // Filtrar solo los roles activos
+        const mappedRoles = (roles || [])
+          .map((r) => ({
+            id_nodo: r.id_rol,
+            codigo_tecnico: r.codigo,
+            etiqueta: r.nombre || r.codigo,
+            tipo_nodo: 'USR_ATTR',
+            icono: 'admin_panel_settings',
+            activo: r.activo ?? 'S',
+            children: [],
+          }))
+          .filter((r) => r.activo === 'S');
         this.roles.set(mappedRoles);
         this.buildParentMap(mappedRoles, null);
         this.updateDistribution();
@@ -175,10 +180,13 @@ export class TableroComponent implements OnInit {
 
     this.accesosSvc.getPoliticasRaiz().subscribe({
       next: (politicas: any[]) => {
-        const mappedPolicies = (politicas || []).map(p => ({
-          ...p,
-          tipo_nodo: p.tipo_nodo || 'POLICY'
-        }));
+        // Filtrar solo las políticas activas
+        const mappedPolicies = (politicas || [])
+          .map((p) => ({
+            ...p,
+            tipo_nodo: p.tipo_nodo || 'POLICY',
+          }))
+          .filter((p) => p.activo === 'S');
         this.policies.set(mappedPolicies);
         this.buildParentMap(mappedPolicies, null);
         this.updateDistribution();

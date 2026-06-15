@@ -1,0 +1,108 @@
+##
+## @file docker-compose.yml
+## @description Orquestacion Docker del proyecto SAFI-NGAC. Define los servicios de
+##              base de datos Oracle, backend Node.js, y frontend Angular.
+##              Todos los contenedores pertenecen a global-network. La variable
+##              SITIO_BASE_URL apunta al motor central sitio-base-backend.
+##              Puertos estandarizados: backend 3008, frontend 4208:8080, oracle 1524.
+## @author IA Assistant
+## @date 2026-06-10
+## @version 1.2.0
+##
+## HISTORIAL DE CAMBIOS:
+## -----------------------------------------------------------------------------------------
+## FECHA        | AUTOR             | VERSION   | DESCRIPCION DEL CAMBIO
+## -----------------------------------------------------------------------------------------
+## 2026-06-04   | Gerardo Paiva     | 1.0.0     | Creacion inicial del archivo.
+## 2026-06-09   | IA Assistant      | 1.1.0     | Migracion a global-network centralizada.
+## 2026-06-10   | IA Assistant      | 1.2.0     | Estandarizacion de puertos:
+##              |                   |           | backend 3008, frontend 4208:8080,
+##              |                   |           | oracle 1524. Agrega SITIO_BASE_URL.
+## -----------------------------------------------------------------------------------------
+
+services:
+  # ── Oracle Database ──
+  oracle-db:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: safi-ngac-oracle
+    ports:
+      - "1524:1521"
+    environment:
+      ORACLE_PASSWORD: "G3rC4t_01_$$"
+      ORACLE_DATABASE: "XEPDB1"
+      APP_USER: "NGAC_USER"
+      APP_USER_PASSWORD: "G3rC4t_01_$$"
+    volumes:
+      - ./database-backup/00-oracle:/container-entrypoint-initdb.d:ro
+      - C:/Local/safi-ngac/backup:/backup
+    networks:
+      - global-network
+
+  # ── Backend (Node.js) ──
+  backend:
+    build: ./backend
+    container_name: safi-ngac-backend
+    ports:
+      - "3008:3200"
+    environment:
+      - DB_USER=NGAC_USER
+      - DB_PASSWORD=G3rC4t_01_$$
+      - DB_CONNECTION_STRING=oracle-db:1521/XEPDB1
+      - PORT=3200
+      - LOAD_EXCEL_ON_START=true
+      - EXCEL_PATH=/excel/NGACRol - Permisos - Opciones - v2.xlsx
+      - EUREKA_ENABLED=true
+      - EUREKA_HOST=eureka-server
+      - EUREKA_PORT=8761
+      - EUREKA_IP_ADDR=safi-ngac-backend
+      - SITIO_BASE_URL=http://sitio-base-backend:3003
+    depends_on:
+      - oracle-db
+    volumes:
+      # Montar la carpeta que contiene el Excel (RW) para permitir respaldo
+      - "C:/Users/gjpie/OneDrive/Documentos/Gerardo_Paiva/FACH:/excel"
+    networks:
+      - global-network
+
+  # ── Oracle Init (schema creation) ──
+  oracle-init:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: safi-ngac-oracle-init
+    depends_on:
+      - oracle-db
+    volumes:
+      - ./database-backup/00-oracle:/scripts:ro
+      - C:/Local/safi-ngac/backup:/backup
+    entrypoint: ["/bin/sh","-c","while ! nc -z oracle-db 1521; do sleep 2; done && for f in /scripts/*.sql; do echo \"Ejecutando $$f\"; sqlplus NGAC_USER/G3rC4t_01_$$@//oracle-db:1521/XEPDB1 @$$f; done && touch /backup/.schema_created"]
+    networks:
+      - global-network
+    restart: "no"
+
+  # ── Frontend (Angular) ──
+  frontend:
+    build: ./frontend
+    container_name: safi-ngac-frontend
+    ports:
+      - "4208:8080"
+    depends_on:
+      - backend
+    networks:
+      - global-network
+
+  # ── Backup (expdp) ──
+  backup:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: safi-ngac-backup
+    depends_on:
+      - oracle-db
+    volumes:
+      - C:/Local/safi-ngac/backup:/backup
+      - "C:/Users/gjpie/OneDrive/Documentos/Gerardo_Paiva/FACH:/excel"
+    entrypoint: ["/bin/sh","-c","while [ ! -f /excel/.loaded ]; do sleep 2; done && expdp NGAC_USER/G3rC4t_01_$$@//oracle-db:1521/XEPDB1 directory=DATA_PUMP_DIR dumpfile=initial_load.dmp logfile=initial_load.log && touch /backup/.loaded"]
+    networks:
+      - global-network
+    restart: "no"
+
+networks:
+  global-network:
+    external: true

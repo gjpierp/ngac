@@ -48,6 +48,9 @@
           <app-matriz-permisos
             *ngIf="!loading()"
             [rows]="matrixData()"
+            [columns]="operations"
+            [roles]="roles()"
+            [politicas]="[]"
             (cellToggle)="onPermissionChanged($event)">
           </app-matriz-permisos>
         </div>

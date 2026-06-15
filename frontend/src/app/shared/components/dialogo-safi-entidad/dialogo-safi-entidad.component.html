@@ -14,6 +14,13 @@
   <mat-dialog-content class="!p-6 !m-0">
     <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
       <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Código de la Entidad</mat-label>
+        <input matInput formControlName="codigo" placeholder="ej. ENT-FIN" [readonly]="isEdit" />
+        <mat-icon matPrefix class="mr-2 text-gray-400">qr_code</mat-icon>
+        <mat-error *ngIf="form.get('codigo')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
         <mat-label>Nombre de la Entidad</mat-label>
         <input matInput formControlName="nombre_entidad" placeholder="ej. Entidad de Finanzas Corporativas" />
         <mat-icon matPrefix class="mr-2 text-gray-400">business</mat-icon>
@@ -29,16 +36,18 @@
         <mat-error *ngIf="form.get('slug_entidad')?.hasError('pattern')">Formato inválido</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Tipo Entidad / Categoría</mat-label>
-        <mat-select formControlName="tipo_entidad">
-          <mat-option value="ENTIDAD">Entidad Principal</mat-option>
-          <mat-option value="FILIAL">Filial / Subsidiaria</mat-option>
-          <mat-option value="PARTNER">Socio de Negocios</mat-option>
-        </mat-select>
-        <mat-icon matPrefix class="mr-2 text-gray-400">category</mat-icon>
-        <mat-error *ngIf="form.get('tipo_entidad')?.hasError('required')">Requerido</mat-error>
-      </mat-form-field>
+      <div class="premium-select-container !py-1 !px-3 h-[52px]">
+        <mat-icon class="!w-4 !h-4 text-[16px]">category</mat-icon>
+        <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+          <mat-label>Tipo Entidad / Categoría</mat-label>
+          <mat-select formControlName="tipo_entidad" panelClass="custom-select-panel" disableOptionCentering>
+            <mat-option value="ENTIDAD">Entidad Principal</mat-option>
+            <mat-option value="FILIAL">Filial / Subsidiaria</mat-option>
+            <mat-option value="PARTNER">Socio de Negocios</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="form.get('tipo_entidad')?.hasError('required')" class="absolute -bottom-5 left-2 text-[10px]">Requerido</mat-error>
+      </div>
     </form>
   </mat-dialog-content>
 

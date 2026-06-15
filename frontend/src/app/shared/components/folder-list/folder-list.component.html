@@ -1,0 +1,15 @@
+<div>
+  <h3>Carpetas Raíz</h3>
+  <ul>
+    <li *ngFor="let carpeta of carpetasRaiz">
+      {{ carpeta.nombre }}
+    </li>
+  </ul>
+
+  <h3>Carpetas Raíz Sin Hijos</h3>
+  <ul>
+    <li *ngFor="let carpeta of carpetasRaizSinHijos">
+      {{ carpeta.nombre }}
+    </li>
+  </ul>
+</div>

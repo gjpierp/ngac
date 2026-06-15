@@ -54,7 +54,10 @@
                 (click)="selectEntidad(e)"
                 class="hover:bg-blue-50/20 transition-all cursor-pointer group">
               <td class="py-4 px-6 font-mono font-bold text-blue-600 group-hover:text-blue-800 transition-colors">{{ e.id }}</td>
-              <td class="py-4 px-6 font-bold text-slate-800">{{ e.slug }}</td>
+              <td class="py-4 px-6 font-bold text-slate-800">
+                <span class="text-slate-900">{{ e.codigo }}</span>
+                <span class="text-gray-400 font-normal text-[10px] block">Slug: {{ e.slug }}</span>
+              </td>
               <td class="py-4 px-6 text-gray-550 font-semibold">{{ e.nombre }}</td>
               <td class="py-4 px-6">
                 <span class="bg-blue-50 text-blue-700 font-black text-[9px] tracking-wider uppercase px-2.5 py-1 rounded-lg">
@@ -101,7 +104,9 @@
           </h3>
           <p class="text-slate-300 text-xs mt-1.5 flex items-center gap-1.5 font-medium">
             <mat-icon class="!w-4 !h-4 !text-sm text-slate-400">fingerprint</mat-icon>
-            Código Técnico: <span class="font-mono font-bold text-blue-300">{{ selectedEntidad()?.slug }}</span>
+            Código: <span class="font-mono font-bold text-white bg-blue-900 px-2 py-0.5 rounded">{{ selectedEntidad()?.codigo }}</span>
+            <span class="mx-2 text-slate-650">|</span>
+            Slug: <span class="font-mono font-bold text-blue-300">{{ selectedEntidad()?.slug }}</span>
             <span class="mx-2 text-slate-650">|</span>
             <span class="bg-blue-900/40 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-[9px] font-black uppercase">
               {{ selectedEntidad()?.desc || 'ENTIDAD' }}

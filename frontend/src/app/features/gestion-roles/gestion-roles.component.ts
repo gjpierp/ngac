@@ -28,43 +28,52 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class GestionRolesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
+
   roles = signal<any[]>([]);
-  pageSize = 10;
-  pageIndex = 0;
+  pageSize = signal(10);
+  pageIndex = signal(0);
   loading = false;
   editingRole: any | null = null;
-  newRole: any = { 
-    codigo: '', 
-    nombre: '', 
+  newRole: any = {
+    codigo: '',
+    nombre: '',
     descripcion: '',
-    id_tipo_nodo: 2, 
+    id_tipo_nodo: 2,
     icono: 'admin_panel_settings',
     url_ruta: '',
     slug: '',
     orden_visual: 0,
-    activo: true
+    activo: true,
   };
   showForm = false;
-  
+
   filtro = signal('');
-  
+
   rolesFiltrados = computed(() => {
     const query = this.filtro().toLowerCase();
     const data = this.roles();
     if (!query) return data;
-    return data.filter(r => 
-      r.codigo.toLowerCase().includes(query) || 
-      r.nombre.toLowerCase().includes(query) || 
-      (r.descripcion || '').toLowerCase().includes(query)
+    return data.filter(
+      (r) =>
+        String(r?.codigo ?? '')
+          .toLowerCase()
+          .includes(query) ||
+        String(r?.nombre ?? '')
+          .toLowerCase()
+          .includes(query) ||
+        String(r?.descripcion ?? '')
+          .toLowerCase()
+          .includes(query),
     );
   });
 
-  get pagedRolesFiltrados() {
+  pagedRolesFiltrados = computed(() => {
     const data = this.rolesFiltrados();
-    const start = this.pageIndex * this.pageSize;
-    return data.slice(start, start + this.pageSize);
-  }
+    const size = this.pageSize();
+    const index = this.pageIndex();
+    const start = index * size;
+    return data.slice(start, start + size);
+  });
 
   constructor(
     private rolesService: RolesService,
@@ -81,39 +90,40 @@ export class GestionRolesComponent implements OnInit {
     this.loading = true;
     this.rolesService.getRoles().subscribe({
       next: (roles) => {
-        this.roles.set(roles);
+        this.roles.set(roles || []);
         this.loading = false;
       },
       error: () => {
+        this.roles.set([]);
         this.loading = false;
       },
     });
   }
 
   onPageChange(event: any) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   openForm(role?: any) {
     if (role) {
       this.editingRole = { ...role };
-      this.newRole = { 
+      this.newRole = {
         ...role,
-        activo: role.activo === 'S' || role.activo === true || role.activo === 1
+        activo: role.activo === 'S' || role.activo === true || role.activo === 1,
       };
     } else {
       this.editingRole = null;
-      this.newRole = { 
-        codigo: '', 
-        nombre: '', 
+      this.newRole = {
+        codigo: '',
+        nombre: '',
         descripcion: '',
         id_tipo_nodo: 2,
         icono: 'admin_panel_settings',
         url_ruta: '',
         slug: '',
         orden_visual: this.roles().length + 1,
-        activo: true
+        activo: true,
       };
     }
     this.showForm = true;
@@ -124,32 +134,32 @@ export class GestionRolesComponent implements OnInit {
   }
 
   saveRole() {
-    console.log("[RolesManager] saveRole - Iniciando guardado...", this.newRole);
+    console.log('[RolesManager] saveRole - Iniciando guardado...', this.newRole);
     if (!this.newRole.codigo || !this.newRole.nombre) {
-      console.warn("[RolesManager] saveRole - Faltan campos obligatorios");
+      console.warn('[RolesManager] saveRole - Faltan campos obligatorios');
       return;
     }
-    
+
     this.loading = true;
     const payload = {
       ...this.newRole,
       id_rol: this.editingRole?.id_rol || this.newRole.id_rol,
-      activo: this.newRole.activo ? 'S' : 'N'
+      activo: this.newRole.activo ? 'S' : 'N',
     };
 
-    console.log("[RolesManager] saveRole - Enviando payload:", payload);
+    console.log('[RolesManager] saveRole - Enviando payload:', payload);
 
     this.rolesService.upsertRol(payload).subscribe({
       next: (res) => {
-        console.log("[RolesManager] saveRole - Éxito:", res);
+        console.log('[RolesManager] saveRole - Éxito:', res);
         this.loadRoles();
         this.showForm = false;
         this.loading = false;
       },
       error: (err) => {
-        console.error("[RolesManager] saveRole - Error:", err);
+        console.error('[RolesManager] saveRole - Error:', err);
         this.loading = false;
-      }
+      },
     });
   }
 

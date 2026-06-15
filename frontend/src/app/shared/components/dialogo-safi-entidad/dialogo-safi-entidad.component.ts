@@ -13,10 +13,16 @@ import { ISafiEntidad } from '../../../core/models/ngac-admin.models';
   selector: 'app-dialogo-safi-entidad',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatDialogModule,
-    MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
   ],
-  templateUrl: './dialogo-safi-entidad.component.html'
+  templateUrl: './dialogo-safi-entidad.component.html',
 })
 export class DialogoSafiEntidadComponent implements OnInit {
   form: FormGroup;
@@ -25,16 +31,17 @@ export class DialogoSafiEntidadComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogoSafiEntidadComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { entidad?: ISafiEntidad }
+    @Inject(MAT_DIALOG_DATA) public data: { entidad?: ISafiEntidad },
   ) {
     this.form = this.fb.group({
+      codigo: ['', [Validators.required]],
       slug_entidad: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_\-]+$/)]],
       nombre_entidad: ['', [Validators.required]],
-      tipo_entidad: ['ENTIDAD', [Validators.required]]
+      tipo_entidad: ['ENTIDAD', [Validators.required]],
     });
 
     // Auto-completar el slug si no está en modo de edición
-    this.form.get('nombre_entidad')?.valueChanges.subscribe(val => {
+    this.form.get('nombre_entidad')?.valueChanges.subscribe((val) => {
       if (val && !this.isEdit) {
         const normalized = this.normalizeText(val);
         this.form.get('slug_entidad')?.setValue(normalized, { emitEvent: false });
@@ -46,12 +53,14 @@ export class DialogoSafiEntidadComponent implements OnInit {
     if (this.data.entidad) {
       this.isEdit = true;
       this.form.patchValue({
+        codigo: this.data.entidad.codigo,
         slug_entidad: this.data.entidad.slug,
         nombre_entidad: this.data.entidad.nombre,
-        tipo_entidad: this.data.entidad.desc || 'ENTIDAD'
+        tipo_entidad: this.data.entidad.desc || 'ENTIDAD',
       });
-      // En edición, no permitimos modificar el slug de la entidad
+      // En edición, no permitimos modificar el slug de la entidad ni el código
       this.form.get('slug_entidad')?.disable();
+      this.form.get('codigo')?.disable();
     }
   }
 
@@ -71,6 +80,6 @@ export class DialogoSafiEntidadComponent implements OnInit {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/\s+/g, '_')
-      .replace(/[^A-Z0-9_\-]/g, '');
+      .replace(/[^a-z0-9-]/g, '');
   }
 }

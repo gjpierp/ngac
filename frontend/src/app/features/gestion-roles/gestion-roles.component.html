@@ -42,7 +42,7 @@
     <!-- CONTENIDO DE TABLA PREMIUM -->
     <div class="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden mb-6">
       <div class="overflow-x-auto">
-        <table mat-table [dataSource]="pagedRolesFiltrados" class="w-full text-left border-collapse roles-table">
+        <table mat-table [dataSource]="pagedRolesFiltrados()" class="w-full text-left border-collapse roles-table">
           <!-- Código -->
           <ng-container matColumnDef="codigo">
             <th mat-header-cell *matHeaderCellDef class="py-4 px-6 text-slate-500 text-[10px] font-black uppercase tracking-wider">Código</th>
@@ -91,7 +91,7 @@
         
         <mat-paginator
           [length]="rolesFiltrados().length"
-          [pageSize]="pageSize"
+          [pageSize]="pageSize()"
           [pageSizeOptions]="[5, 10, 20, 50]"
           (page)="onPageChange($event)"
           aria-label="Selector de página de roles"
@@ -263,3 +263,4 @@
   </div>
 
 </div>
+

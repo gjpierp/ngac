@@ -1,23 +1,70 @@
 <div class="flex flex-col h-full animate-in fade-in-0 duration-1000">
-  
   <!-- Modern Header -->
   <header class="flex items-end justify-between mb-8">
     <div class="space-y-1">
-      <h1 class="text-4xl font-black tracking-tighter text-slate-900 leading-none flex items-center gap-3">
+      <h1
+        class="text-4xl font-black tracking-tighter text-slate-900 leading-none flex items-center gap-3"
+      >
         <span>Explorador <span class="text-gradient-indigo">de Recursos</span></span>
-        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-black tracking-widest">{{ nodos().length }} Totales</span>
+        <span
+          class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-black tracking-widest"
+          >{{ nodos().length }} Totales</span
+        >
       </h1>
       <div class="flex items-center gap-2">
         <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Gestión de Atributos y Objetos NGAC</p>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          Gestión de Atributos y Objetos NGAC
+        </p>
       </div>
     </div>
-    
+
     <div class="flex items-center gap-3">
-      <button (click)="reloadAll()" class="btn-action btn-action-reload" matTooltip="Recargar Jerarquía Completa">
+      <!-- Simulator -->
+      <div class="premium-select-container mr-4 !py-1 !px-3 h-10 w-64">
+        <mat-icon class="!w-4 !h-4 text-[16px]">psychology</mat-icon>
+        <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+          <mat-select
+            panelClass="custom-select-panel"
+            disableOptionCentering
+            (selectionChange)="simulateRole($event.value)"
+          >
+            <mat-option value="">Modo Admin (Real)</mat-option>
+            <mat-option *ngFor="let rol of roles()" [value]="rol.codigo">{{ rol.nombre }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Batch Actions -->
+      <button
+        *ngIf="draftService.hasDrafts()"
+        (click)="saveBatch()"
+        class="h-9 px-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-md animate-pulse"
+      >
+        <mat-icon class="!w-4 !h-4 text-[16px]">save</mat-icon>
+        <span class="text-xs">Guardar Cambios</span>
+      </button>
+
+      <button
+        *ngIf="selectedNode()"
+        (click)="timeTravelOpen.set(true)"
+        class="h-9 px-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors shadow-sm"
+      >
+        <mat-icon class="!w-4 !h-4 text-[16px]">history</mat-icon>
+        <span class="text-xs">Time Travel</span>
+      </button>
+      <button
+        (click)="reloadAll()"
+        class="btn-action btn-action-reload"
+        matTooltip="Recargar Jerarquía Completa"
+      >
         <mat-icon>refresh</mat-icon>
       </button>
-      <button (click)="crearNodo()" class="btn-action btn-action-create" matTooltip="Crear Nodo Raíz (OBJ_ATTR)">
+      <button
+        (click)="crearNodo()"
+        class="btn-action btn-action-create"
+        matTooltip="Crear Nodo Raíz (OBJ_ATTR)"
+      >
         <mat-icon>add_circle</mat-icon>
       </button>
     </div>
@@ -25,89 +72,181 @@
 
   <!-- Main Content Layout -->
   <div class="hub-container flex-1 min-h-0">
-    
     <!-- Sidebar Explorer Pane -->
-    <aside class="col-span-12 lg:col-span-4 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative">
+    <aside
+      class="col-span-12 lg:col-span-5 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative"
+    >
       <!-- Search & Context Actions -->
       <div class="p-6 pb-4 space-y-4 relative z-10">
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <h3
+              class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"
+            >
               Explorador de Jerarquía
-              <span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[8px]">{{ displayNodes().length }} Visibles</span>
+              <span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[8px]"
+                >{{ displayNodes().length }} Visibles</span
+              >
             </h3>
-            <button *ngIf="selectedNode()" 
-                    (click)="crearNodo(selectedNode()!)"
-                    class="btn-action btn-action-create btn-action-sm" matTooltip="Añadir Nodo Hijo">
+            <button
+              *ngIf="selectedNode()"
+              (click)="crearNodo(selectedNode()!)"
+              class="btn-action btn-action-create btn-action-sm"
+              matTooltip="Añadir Nodo Hijo"
+            >
               <mat-icon>subdirectory_arrow_right</mat-icon>
             </button>
           </div>
 
-          <!-- Filtro por Carpeta Raíz -->
-          <mat-form-field appearance="fill" class="w-full !h-[42px] custom-white-field-mini">
-            <mat-select [value]="selectedRoot()" (selectionChange)="selectedRoot.set($event.value)" placeholder="Carpeta Raíz">
-              <mat-option value="ALL" class="!text-[10px] font-black uppercase tracking-widest">
-                <mat-icon class="!text-xs text-indigo-400">apps</mat-icon> Todos los recursos
-              </mat-option>
-              <mat-divider></mat-divider>
-              <mat-option *ngFor="let r of rootNodes()" [value]="r.codigo_tecnico" class="!text-[10px] font-bold">
-                <mat-icon class="!text-xs text-slate-400">folder_special</mat-icon> {{ r.etiqueta }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <!-- Filtros de Búsqueda -->
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Filtro por Carpeta Raíz -->
+            <div class="premium-select-container !py-1 !px-3 h-11 w-full">
+              <mat-icon class="!w-4 !h-4 text-[16px]">folder_special</mat-icon>
+              <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+                <mat-select
+                  panelClass="custom-select-panel"
+                  disableOptionCentering
+                  [ngModel]="selectedRoot()"
+                  (ngModelChange)="selectedRoot.set($event)"
+                >
+                  <mat-option value="ALL">Todas las Carpetas Raíz</mat-option>
+                  <mat-option *ngFor="let r of rootNodes()" [value]="r.codigo_tecnico">{{ r.etiqueta }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Tipo de Recurso -->
+            <div class="premium-select-container !py-1 !px-3 h-11 w-full">
+              <mat-icon class="!w-4 !h-4 text-[16px]">label</mat-icon>
+              <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+                <mat-select
+                  panelClass="custom-select-panel"
+                  disableOptionCentering
+                  [ngModel]="selectedType()"
+                  (ngModelChange)="selectedType.set($event)"
+                >
+                  <mat-option value="ALL">Todos los Tipos</mat-option>
+                  <mat-option *ngFor="let t of availableTypes()" [value]="t">{{ t }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
 
           <!-- Búsqueda General -->
           <div class="relative group">
-            <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors !text-xl">search</mat-icon>
-            <input type="text" 
-                   [(ngModel)]="tipoSeleccionado" 
-                   placeholder="Buscar en esta rama..." 
-                   class="w-full h-11 pl-12 pr-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all">
+            <mat-icon
+              class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors !text-xl"
+              >search</mat-icon
+            >
+            <input
+              type="text"
+              [(ngModel)]="tipoSeleccionado"
+              placeholder="Buscar por etiqueta o código técnico..."
+              class="w-full h-11 pl-12 pr-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
+            />
           </div>
         </div>
       </div>
 
       <!-- Hierarchical List with Scroll -->
-      <div class="flex-1 overflow-auto custom-scrollbar px-2 pb-6 scroll-smooth" style="max-height: calc(100vh - 350px);">
-        <div *ngFor="let node of displayNodes()" 
-             (click)="selectNode(node)"
-             [class.active]="selectedNode()?.id_nodo === node.id_nodo"
-             class="node-item rounded-xl group mx-2 mb-0.5 border-none hover:shadow-sm whitespace-nowrap min-w-fit"
-             [style.padding-left.px]="node.level * 16 + 12">
-          
+      <div
+        class="flex-1 overflow-y-auto max-h-[calc(100vh-350px)] p-4 custom-scrollbar"
+        #treeScrollContainer
+        cdkDropList
+        (cdkDropListDropped)="onDrop($event)"
+      >
+        <!-- Nodos (Flattened Tree) -->
+        <div
+          *ngFor="let node of displayNodes(); trackBy: trackByNode"
+          cdkDrag
+          [cdkDragData]="node"
+          (click)="selectNode(node)"
+          [id]="selectedNode()?.id_nodo === node.id_nodo ? 'selected-tree-node' : null"
+          class="flex items-center gap-1.5 py-1 px-2 rounded-lg cursor-pointer transition-all hover:bg-white hover:shadow-sm group relative border border-transparent mb-0.5 mx-2 min-w-fit"
+          [class.bg-white]="selectedNode()?.id_nodo === node.id_nodo && !node.hasChildren"
+          [class.bg-indigo-50]="selectedNode()?.id_nodo === node.id_nodo && node.hasChildren"
+          [class.border-l-2]="selectedNode()?.id_nodo === node.id_nodo"
+          [class.border-l-indigo-400]="selectedNode()?.id_nodo === node.id_nodo && node.hasChildren"
+          [class.border-l-emerald-400]="selectedNode()?.id_nodo === node.id_nodo && !node.hasChildren"
+          [class.shadow-sm]="selectedNode()?.id_nodo === node.id_nodo"
+          [style.padding-left.px]="node.level * 20 + 8"
+        >
           <!-- Expand/Collapse Button -->
-          <button *ngIf="node.hasChildren" 
-                  (click)="toggleRow(node.id_nodo, $event)"
-                  class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-200/50 transition-colors">
-            <mat-icon class="!text-xs text-slate-400 transition-transform duration-300" 
-                      [class.rotate-90]="isExpanded(node.id_nodo)">
+          <button
+            *ngIf="node.hasChildren"
+            (click)="toggleRow(node.id_nodo, $event)"
+            class="!w-5 !h-5 !leading-none z-10 hover:bg-slate-50 transition-colors bg-transparent border-0 cursor-pointer p-0 flex items-center justify-center"
+          >
+            <mat-icon
+              class="!text-[10px] text-slate-400 transition-transform duration-300"
+              [class.rotate-90]="isExpanded(node.id_nodo)"
+              [class.text-indigo-500]="isExpanded(node.id_nodo)"
+            >
               chevron_right
             </mat-icon>
           </button>
-          <div *ngIf="!node.hasChildren" class="w-6 h-6"></div>
-
-          <!-- Icon Contextual -->
-          <div class="w-8 h-8 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 group-hover:bg-white group-hover:text-indigo-600 transition-all shadow-sm border border-slate-100/50">
-            <mat-icon class="!text-sm">
-              {{ node.icono || (node.tipo_nodo === 'OBJ_ATTR' ? 'folder' : (node.tipo_nodo === 'OBJETO' || node.tipo_nodo === 'OA' ? 'insert_drive_file' : 'token')) }}
-            </mat-icon>
+          
+          <div *ngIf="!node.hasChildren" class="w-5 h-5 flex items-center justify-center">
+            <div class="w-1 h-1 rounded-full bg-gray-200"></div>
           </div>
+
+          <!-- Iconos por Tipo -->
+          <mat-icon
+            class="!text-[10px] !w-3.5 !h-3.5 z-10"
+            [class.text-amber-400]="node.tipo_nodo === 'OBJ_ATTR'"
+            [class.text-indigo-400]="node.tipo_nodo !== 'OBJ_ATTR'"
+          >
+            {{
+              node.icono ||
+                (node.tipo_nodo === 'OBJ_ATTR'
+                  ? isExpanded(node.id_nodo)
+                    ? 'folder_open'
+                    : 'folder'
+                  : node.tipo_nodo === 'OBJETO' || node.tipo_nodo === 'OA'
+                    ? 'insert_drive_file'
+                    : 'token')
+            }}
+          </mat-icon>
 
           <!-- Node Text Content -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-black text-slate-700 truncate leading-tight">{{ node.etiqueta }}</span>
-              <span *ngIf="node.activo === 'S'" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span *ngIf="node.activo === 'N'" class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+          <div
+            class="flex flex-col flex-1 z-10 min-w-0"
+            [class.opacity-50]="node.activo === 'N'"
+            [class.grayscale]="node.activo === 'N'"
+          >
+            <div class="flex items-center gap-1.5 truncate">
+              <span
+                class="text-[11px] font-bold tracking-tight truncate"
+                [class.text-indigo-600]="
+                  selectedNode()?.id_nodo === node.id_nodo ||
+                  isExpanded(node.id_nodo)
+                "
+                [class.text-gray-700]="
+                  selectedNode()?.id_nodo !== node.id_nodo &&
+                  !isExpanded(node.id_nodo)
+                "
+              >
+                {{ node.etiqueta }}
+              </span>
+              <!-- Health Badges -->
+              <span
+                *ngFor="let badge of getHealthBadges(node)"
+                class="text-[9px] px-1.5 py-0.5 rounded font-black uppercase flex items-center gap-0.5 border shadow-sm {{ badge.color }}"
+                [matTooltip]="badge.label"
+              >
+                <mat-icon class="!text-[10px] !w-[10px] !h-[10px]">{{ badge.icon }}</mat-icon>
+                {{ badge.type }}
+              </span>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-[7px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 font-black uppercase tracking-tighter">{{ node.tipo_nodo }}</span>
-              <p class="text-[8px] font-mono font-bold text-slate-400 uppercase tracking-wider truncate">{{ node.codigo_tecnico }}</p>
-            </div>
+            <p
+              *ngIf="node.level === 0"
+              class="text-[8px] font-mono font-bold text-slate-400 uppercase tracking-wider truncate"
+            >
+              {{ node.codigo_tecnico }}
+            </p>
           </div>
 
-          <!-- Action Indicator -->
-          <mat-icon class="!text-[10px] text-slate-200 opacity-0 group-hover:opacity-100 transition-all">arrow_forward_ios</mat-icon>
         </div>
       </div>
 
@@ -118,25 +257,42 @@
           <div class="w-6 h-6 rounded-full border-2 border-white bg-emerald-500"></div>
           <div class="w-6 h-6 rounded-full border-2 border-white bg-amber-500"></div>
         </div>
-        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Multi-Tenant Enabled</span>
+        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest"
+          >Multi-Tenant Enabled</span
+        >
       </div>
     </aside>
 
     <!-- Main Detail Canvas -->
-    <main class="col-span-12 lg:col-span-8 flex flex-col h-full">
-      <div class="flex-1 bg-slate-50/30 rounded-[32px] border-2 border-dashed border-slate-100 flex flex-col overflow-hidden relative">
-        <app-hub-detalle-nodo 
+    <main class="col-span-12 lg:col-span-7 flex flex-col h-full">
+      <div
+        class="flex-1 bg-slate-50/30 rounded-[32px] border-2 border-dashed border-slate-100 flex flex-col overflow-hidden relative"
+      >
+        <app-hub-detalle-nodo
           class="h-full"
           [nodo]="selectedNode()"
-          [parents]="getParentsOf(selectedNode()?.codigo_tecnico || '')"
+          [selectedTreeParentId]="selectedTreeParentId()"
+          [parents]="getParentsOf(selectedNode()?.id_nodo)"
           [allNodes]="nodos()"
           [allLinks]="enlaces()"
           [roles]="roles()"
           [operations]="operaciones()"
-          [onReloadTree]="reloadAll">
+          [onReloadTree]="reloadAll"
+          [onDeleteNode]="handleNodeDeleted"
+        >
         </app-hub-detalle-nodo>
       </div>
     </main>
-
   </div>
 </div>
+
+<app-time-travel-drawer
+  [node]="selectedNode()"
+  [isOpen]="timeTravelOpen()"
+  (closeDrawer)="timeTravelOpen.set(false)"
+></app-time-travel-drawer>
+
+<app-spotlight-search
+  [nodes]="nodos()"
+  (nodeSelected)="selectNode($event)"
+></app-spotlight-search>

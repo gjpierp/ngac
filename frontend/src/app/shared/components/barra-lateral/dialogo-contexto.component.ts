@@ -10,7 +10,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AccesosService } from '../../../core/services/accesos.service';
 import { forkJoin } from 'rxjs';
-
 @Component({
   selector: 'app-dialogo-contexto',
   standalone: true,
@@ -24,173 +23,10 @@ import { forkJoin } from 'rxjs';
     MatButtonModule,
     MatCheckboxModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  template: `
-    <div class="flex flex-col h-[85vh] max-h-[750px] w-[850px] overflow-hidden bg-slate-50 rounded-[24px] shadow-2xl border border-white/40">
-      
-      <!-- Cabecera Compacta -->
-      <div class="bg-white px-6 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-700 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
-            <mat-icon class="!text-[20px]">security</mat-icon>
-          </div>
-          <div>
-            <h2 class="text-sm font-black text-slate-900 tracking-tight leading-none">Simulación NGAC</h2>
-            <p class="text-slate-400 text-[8px] font-bold uppercase tracking-[0.15em] mt-1">Panel de Auditoría Dinámica</p>
-          </div>
-        </div>
-        <button mat-icon-button (click)="onCancel()" class="text-slate-300 hover:text-slate-600 scale-75">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6">
-        <form [formGroup]="form" class="space-y-6">
-          
-          <!-- Identidad Compacta -->
-          <div class="bg-white rounded-[20px] border border-slate-100 p-4 shadow-sm">
-            <div class="grid grid-cols-2 gap-4">
-              <mat-form-field appearance="outline" class="custom-field-mini">
-                <mat-label class="!text-[10px]">Usuario ID</mat-label>
-                <input matInput formControlName="usuario_id" class="!text-[11px] font-bold">
-                <mat-icon matPrefix class="text-slate-300 !text-sm mr-1">fingerprint</mat-icon>
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="custom-field-mini">
-                <mat-label class="!text-[10px]">División</mat-label>
-                <input matInput formControlName="division" class="!text-[11px] font-bold">
-                <mat-icon matPrefix class="text-slate-300 !text-sm mr-1">account_tree</mat-icon>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <!-- SECCIÓN: ROLES (Micro) -->
-          <div class="space-y-3">
-            <div class="flex items-center justify-between px-1">
-              <h3 class="text-[9px] font-black text-indigo-500 uppercase tracking-[0.15em]">Sujeto: Roles Activos ({{ getSelectedCount('roles') }})</h3>
-              <button mat-button (click)="toggleAll('roles', false)" class="!h-6 !text-[8px] !font-bold !text-rose-500 !uppercase">Limpiar</button>
-            </div>
-            <div class="flex flex-wrap gap-1.5 p-3 bg-indigo-50/20 rounded-[18px] border-2 border-dashed border-indigo-100 min-h-[40px]">
-              <div *ngFor="let rol of getSelectedRoles()" 
-                   (click)="toggleSelection('roles', rol.codigo || rol.nombre)"
-                   class="bg-white border-indigo-400 shadow-sm px-2 py-1 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 hover:bg-rose-50 hover:border-rose-300 group">
-                <mat-icon class="!text-[10px] text-indigo-600 group-hover:hidden">verified</mat-icon>
-                <mat-icon class="!text-[10px] text-rose-500 hidden group-hover:block">remove_circle</mat-icon>
-                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tight">{{ rol.etiqueta || rol.nombre }}</span>
-              </div>
-              <div *ngIf="getSelectedCount('roles') === 0" class="w-full text-center py-1 text-[8px] font-bold text-indigo-300 uppercase italic">Sin roles activos</div>
-            </div>
-
-            <!-- Catálogo de Roles Mini -->
-            <div class="bg-white rounded-[20px] border border-slate-100 p-4 shadow-sm space-y-3">
-              <div class="flex items-center justify-between">
-                <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Catálogo: Roles</h3>
-                <div class="flex items-center gap-1 scale-90">
-                  <button mat-icon-button (click)="prevPage('roles')" [disabled]="pageRoles === 0"><mat-icon class="!text-xs">chevron_left</mat-icon></button>
-                  <span class="text-[8px] font-black text-slate-400">{{ pageRoles + 1 }}/{{ getTotalPages('roles') }}</span>
-                  <button mat-icon-button (click)="nextPage('roles')" [disabled]="pageRoles >= getTotalPages('roles') - 1"><mat-icon class="!text-xs">chevron_right</mat-icon></button>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
-                <div *ngFor="let rol of getPagedRoles()" 
-                     (click)="toggleSelection('roles', rol.codigo || rol.nombre)"
-                     class="bg-slate-50/50 border-slate-100 hover:border-emerald-400 hover:bg-emerald-50/30 group p-2 rounded-lg border transition-all cursor-pointer flex flex-col items-center text-center gap-1">
-                  <mat-icon class="!text-[12px] text-slate-300 group-hover:text-emerald-500">add_moderator</mat-icon>
-                  <span class="text-[8px] font-bold text-slate-600 uppercase tracking-tight truncate w-full">{{ rol.etiqueta || rol.nombre }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SECCIÓN: POLÍTICAS Y MÓDULOS COMPACTOS -->
-          <div class="grid grid-cols-2 gap-4">
-            <!-- Políticas -->
-            <div class="bg-white rounded-[20px] border border-slate-100 p-4 shadow-sm space-y-3">
-              <div class="flex items-center justify-between">
-                <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Políticas</h3>
-                <div class="flex items-center gap-1 scale-75">
-                  <button mat-icon-button (click)="prevPage('politicas')" [disabled]="pagePoliticas === 0"><mat-icon class="!text-xs">chevron_left</mat-icon></button>
-                  <button mat-icon-button (click)="nextPage('politicas')" [disabled]="pagePoliticas >= getTotalPages('politicas') - 1"><mat-icon class="!text-xs">chevron_right</mat-icon></button>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div *ngFor="let pol of getPagedPoliticas()" 
-                     (click)="toggleSelection('politicas', pol.codigo)"
-                     [ngClass]="isSelected('politicas', pol.codigo) ? 'bg-amber-500 text-white border-amber-600 shadow-md' : 'bg-slate-50 border-slate-100 text-slate-500'"
-                     class="p-2 rounded-lg border transition-all cursor-pointer flex items-center gap-2 group">
-                  <mat-icon class="!text-[10px]" [class.text-white]="isSelected('politicas', pol.codigo)">policy</mat-icon>
-                  <span class="text-[8px] font-black uppercase tracking-tight truncate">{{ pol.etiqueta }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Módulos -->
-            <div class="bg-white rounded-[20px] border border-slate-100 p-4 shadow-sm space-y-3">
-              <div class="flex items-center justify-between">
-                <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Módulos</h3>
-                <div class="flex items-center gap-1 scale-75">
-                  <button mat-icon-button (click)="prevPage('modulos')" [disabled]="pageModulos === 0"><mat-icon class="!text-xs">chevron_left</mat-icon></button>
-                  <button mat-icon-button (click)="nextPage('modulos')" [disabled]="pageModulos >= getTotalPages('modulos') - 1"><mat-icon class="!text-xs">chevron_right</mat-icon></button>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div *ngFor="let mod of getPagedModulos()" 
-                     (click)="toggleSelection('modulos', mod.codigo)"
-                     [ngClass]="isSelected('modulos', mod.codigo) ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-slate-50 border-slate-100 text-slate-500'"
-                     class="p-2 rounded-lg border transition-all cursor-pointer flex items-center gap-2">
-                  <mat-icon class="!text-[10px]" [class.text-white]="isSelected('modulos', mod.codigo)">apps</mat-icon>
-                  <span class="text-[8px] font-black uppercase tracking-tight truncate">{{ mod.etiqueta }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Atributos y Operaciones Compactas -->
-          <div class="grid grid-cols-3 gap-4">
-            <div class="col-span-2 bg-white rounded-[20px] border border-slate-100 p-4 shadow-sm">
-              <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Atributos Especiales</h3>
-              <mat-form-field appearance="outline" class="w-full custom-field-mini">
-                <input matInput formControlName="atributos" class="!text-[10px]" placeholder="atributo1, atributo2...">
-                <mat-icon matSuffix class="text-slate-300 !text-sm">vpn_key</mat-icon>
-              </mat-form-field>
-            </div>
-            <div class="bg-slate-900 rounded-[20px] p-4 text-white">
-              <h3 class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.15em] mb-2">Ops</h3>
-              <div class="flex flex-wrap gap-1 max-h-20 overflow-y-auto custom-scrollbar pr-1">
-                <div *ngFor="let op of operaciones" 
-                     (click)="toggleSelection('operaciones', op.nombre)"
-                     [ngClass]="isSelected('operaciones', op.nombre) ? 'bg-blue-600 border-blue-400' : 'bg-white/5 border-white/5 text-slate-500'"
-                     class="px-1.5 py-0.5 rounded border text-[7px] font-black uppercase cursor-pointer transition-all">
-                  {{ op.nombre }}
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </form>
-      </div>
-
-      <!-- Footer Compacto -->
-      <div class="bg-white px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
-        <button mat-button (click)="onCancel()" class="!h-9 !text-[9px] !font-bold !uppercase !tracking-widest !text-slate-400">Cancelar</button>
-        <button mat-raised-button 
-                class="!h-10 !bg-slate-900 !text-white !px-8 !rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-slate-200" 
-                (click)="onSave()" 
-                [disabled]="loading">
-          {{ loading ? 'Sincronizando...' : 'Actualizar' }}
-        </button>
-      </div>
-    </div>
-
-    <style>
-      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-      ::ng-deep .custom-field-mini .mat-mdc-text-field-wrapper { height: 38px !important; background-color: #f8fafc !important; border-radius: 12px !important; padding: 0 10px !important; }
-      ::ng-deep .custom-field-mini .mat-mdc-form-field-flex { height: 38px !important; align-items: center !important; }
-      ::ng-deep .custom-field-mini .mat-mdc-form-field-infix { padding-top: 6px !important; padding-bottom: 6px !important; min-height: 38px !important; }
-      ::ng-deep .custom-field-mini .mat-mdc-form-field-label-wrapper { top: -14px !important; }
-    </style>
-  `
+  templateUrl: './dialogo-contexto.component.html',
+  styleUrls: ['./dialogo-contexto.component.css'],
 })
 export class DialogoContextoComponent implements OnInit {
   private accesosSvc = inject(AccesosService);
@@ -201,6 +37,7 @@ export class DialogoContextoComponent implements OnInit {
   roles: any[] = [];
   politicas: any[] = [];
   modulos: any[] = [];
+  allModulos: any[] = [];
   operaciones: any[] = [];
 
   // Paginadores
@@ -215,47 +52,154 @@ export class DialogoContextoComponent implements OnInit {
     politicas: new FormControl([] as string[]),
     modulos: new FormControl([] as string[]),
     operaciones: new FormControl([] as string[]),
-    atributos: new FormControl('')
+    atributos: new FormControl(''),
   });
 
   constructor(
     public dialogRef: MatDialogRef<DialogoContextoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
+
+  private normalizeSelection(
+    values: string[] | null | undefined,
+    allowedValues: string[],
+  ): string[] {
+    if (!Array.isArray(values) || values.length === 0) {
+      return [];
+    }
+
+    const allowed = new Set(
+      allowedValues
+        .filter((value) => value !== undefined && value !== null && String(value).trim() !== '')
+        .map((value) => String(value).trim().toUpperCase()),
+    );
+
+    const seen = new Set<string>();
+    const normalized: string[] = [];
+
+    values.forEach((value) => {
+      const raw = String(value || '').trim();
+      const key = raw.toUpperCase();
+      if (!raw || !allowed.has(key) || seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      normalized.push(raw);
+    });
+
+    return normalized;
+  }
+
+  private applyPolicyScopedModules(policyCodes: string[], preferredModules?: string[]) {
+    const normalizedPolicies = Array.from(
+      new Set(
+        (policyCodes || [])
+          .map((code) =>
+            String(code || '')
+              .trim()
+              .toUpperCase(),
+          )
+          .filter((code) => !!code),
+      ),
+    );
+
+    const currentSelection = preferredModules || this.form.get('modulos')?.value || [];
+
+    if (normalizedPolicies.length === 0) {
+      this.modulos = [...this.allModulos];
+      const normalizedModulos = this.normalizeSelection(
+        currentSelection,
+        this.modulos.map((module) => module.codigo_tecnico),
+      );
+      this.form.patchValue({ modulos: normalizedModulos }, { emitEvent: false });
+      this.pageModulos = 0;
+      return;
+    }
+
+    this.accesosSvc.getModulosPorPoliticas(normalizedPolicies).subscribe({
+      next: (allowedCodes) => {
+        const allowed = new Set(
+          (allowedCodes || []).map((code) =>
+            String(code || '')
+              .trim()
+              .toUpperCase(),
+          ),
+        );
+        this.modulos = this.allModulos.filter((module) =>
+          allowed.has(
+            String(module.codigo_tecnico || '')
+              .trim()
+              .toUpperCase(),
+          ),
+        );
+
+        const normalizedModulos = this.normalizeSelection(
+          currentSelection,
+          this.modulos.map((module) => module.codigo_tecnico),
+        );
+
+        this.form.patchValue({ modulos: normalizedModulos }, { emitEvent: false });
+        this.pageModulos = 0;
+      },
+      error: (err) => {
+        console.error('Error filtrando modulos por politicas:', err);
+      },
+    });
+  }
 
   ngOnInit() {
     forkJoin({
       roles: this.accesosSvc.getRoles(),
       politicas: this.accesosSvc.getPoliticasRaiz(),
       modulos: this.accesosSvc.getModulosRaiz(),
-      operaciones: this.accesosSvc.getOperaciones()
+      operaciones: this.accesosSvc.getOperaciones(),
     }).subscribe({
       next: (res) => {
         this.roles = res.roles;
         this.politicas = res.politicas;
-        this.modulos = res.modulos;
+        this.allModulos = res.modulos;
+        this.modulos = [...this.allModulos];
         this.operaciones = res.operaciones;
         this.loading = false;
-        
+
         if (this.data) {
+          const normalizedRoles = this.normalizeSelection(
+            this.data.sujeto?.roles || [],
+            this.roles.map((role) => role.codigo || role.nombre),
+          );
+          const normalizedPoliticas = this.normalizeSelection(
+            this.data.contexto?.politicas || [],
+            this.politicas.map((policy) => policy.codigo_tecnico),
+          );
+          const normalizedModulos = this.normalizeSelection(
+            this.data.solicitud?.modulos || [],
+            this.allModulos.map((module) => module.codigo_tecnico),
+          );
+          const normalizedOperaciones = this.normalizeSelection(
+            this.data.solicitud?.operaciones || [],
+            this.operaciones.map((operation) => operation.nombre_op),
+          );
+
           this.form.patchValue({
             usuario_id: this.data.sujeto?.usuario_id || '',
             division: this.data.sujeto?.division || '',
-            roles: this.data.sujeto?.roles || [],
-            politicas: this.data.contexto?.politicas || [],
-            modulos: this.data.solicitud?.modulos || [],
-            operaciones: this.data.solicitud?.operaciones || [],
-            atributos: (this.data.atributos || this.data.claims || []).join(', ')
+            roles: normalizedRoles,
+            politicas: normalizedPoliticas,
+            modulos: [],
+            operaciones: normalizedOperaciones,
+            atributos: (this.data.atributos || this.data.claims || []).join(', '),
           });
+
+          this.applyPolicyScopedModules(normalizedPoliticas, normalizedModulos);
         }
       },
-      error: () => this.loading = false
+      error: () => (this.loading = false),
     });
   }
 
   // Lógica de Paginación
   getPagedRoles() {
-    const available = this.roles.filter(r => !this.isSelected('roles', r.codigo || r.nombre));
+    const available = this.roles.filter((r) => !this.isSelected('roles', r.codigo || r.nombre));
     return available.slice(this.pageRoles * this.pageSize, (this.pageRoles + 1) * this.pageSize);
   }
 
@@ -272,9 +216,16 @@ export class DialogoContextoComponent implements OnInit {
   getTotalPages(type: string): number {
     let length = 0;
     let size = this.pageSize;
-    if (type === 'roles') length = this.roles.filter(r => !this.isSelected('roles', r.codigo || r.nombre)).length;
-    if (type === 'politicas') { length = this.politicas.length; size = 6; }
-    if (type === 'modulos') { length = this.modulos.length; size = 6; }
+    if (type === 'roles')
+      length = this.roles.filter((r) => !this.isSelected('roles', r.codigo || r.nombre)).length;
+    if (type === 'politicas') {
+      length = this.politicas.length;
+      size = 6;
+    }
+    if (type === 'modulos') {
+      length = this.modulos.length;
+      size = 6;
+    }
     return Math.ceil(length / size) || 1;
   }
 
@@ -292,7 +243,7 @@ export class DialogoContextoComponent implements OnInit {
 
   getSelectedRoles(): any[] {
     const selected = this.form.get('roles')?.value || [];
-    return this.roles.filter(r => selected.includes(r.codigo || r.nombre));
+    return this.roles.filter((r) => selected.includes(r.codigo || r.nombre));
   }
 
   isSelected(field: string, value: string): boolean {
@@ -303,11 +254,15 @@ export class DialogoContextoComponent implements OnInit {
   toggleSelection(field: string, value: string) {
     let current = [...(this.form.get(field)?.value as string[])];
     if (current.includes(value)) {
-      current = current.filter(v => v !== value);
+      current = current.filter((v) => v !== value);
     } else {
       current.push(value);
     }
     this.form.get(field)?.setValue(current);
+
+    if (field === 'politicas') {
+      this.applyPolicyScopedModules(current);
+    }
   }
 
   getSelectedCount(field: string): number {
@@ -317,12 +272,16 @@ export class DialogoContextoComponent implements OnInit {
   toggleAll(field: string, checked: boolean) {
     let values: string[] = [];
     if (checked) {
-      if (field === 'roles') values = this.roles.map(r => r.codigo || r.nombre);
-      if (field === 'politicas') values = this.politicas.map(p => p.codigo);
-      if (field === 'modulos') values = this.modulos.map(m => m.codigo);
-      if (field === 'operaciones') values = this.operaciones.map(o => o.nombre);
+      if (field === 'roles') values = this.roles.map((r) => r.codigo || r.nombre);
+      if (field === 'politicas') values = this.politicas.map((p) => p.codigo_tecnico);
+      if (field === 'modulos') values = this.modulos.map((m) => m.codigo_tecnico);
+      if (field === 'operaciones') values = this.operaciones.map((o) => o.nombre_op);
     }
     this.form.get(field)?.setValue(values);
+
+    if (field === 'politicas') {
+      this.applyPolicyScopedModules(values);
+    }
   }
 
   onCancel() {
@@ -331,20 +290,40 @@ export class DialogoContextoComponent implements OnInit {
 
   onSave() {
     const raw = this.form.value;
+    const normalizedRoles = this.normalizeSelection(
+      raw.roles,
+      this.roles.map((role) => role.codigo || role.nombre),
+    );
+    const normalizedPoliticas = this.normalizeSelection(
+      raw.politicas,
+      this.politicas.map((policy) => policy.codigo_tecnico),
+    );
+    const normalizedModulos = this.normalizeSelection(
+      raw.modulos,
+      this.modulos.map((module) => module.codigo_tecnico),
+    );
+    const normalizedOperaciones = this.normalizeSelection(
+      raw.operaciones,
+      this.operaciones.map((operation) => operation.nombre_op),
+    );
+
     const formatted = {
       sujeto: {
         usuario_id: raw.usuario_id,
-        roles: raw.roles,
-        division: raw.division
+        roles: normalizedRoles,
+        division: raw.division,
       },
       contexto: {
-        politicas: raw.politicas
+        politicas: normalizedPoliticas,
       },
       solicitud: {
-        modulos: raw.modulos,
-        operaciones: raw.operaciones
+        modulos: normalizedModulos,
+        operaciones: normalizedOperaciones,
       },
-      atributos: (raw.atributos || '').split(',').map(s => s.trim()).filter(s => !!s)
+      atributos: (raw.atributos || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => !!s),
     };
     this.dialogRef.close(formatted);
   }

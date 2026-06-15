@@ -1,28 +1,38 @@
 <div class="permission-matrix p-4">
   <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
-    <mat-form-field appearance="outline" class="w-full sm:w-1/3">
-      <mat-label>Rol</mat-label>
-      <mat-select [ngModel]="selectedRole" (ngModelChange)="onRoleChange($event)">
-        <mat-option value="">Todos</mat-option>
-        <mat-option *ngFor="let rol of roles" [value]="rol.id_rol || rol.codigo_tecnico || rol.codigo || rol">
-          {{ rol.etiqueta || rol.nombre || rol }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    
-    <mat-form-field appearance="outline" class="w-full sm:w-1/3">
-      <mat-label>Política</mat-label>
-      <mat-select [ngModel]="selectedPolicy" (ngModelChange)="onPolicyChange($event)">
-        <mat-option value="">Todas</mat-option>
-        <mat-option *ngFor="let pol of politicas" [value]="pol.id_nodo || pol.codigo_tecnico || pol.codigo || pol">
-          {{ pol.etiqueta || pol.nombre || pol }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="premium-select-container !py-1 !px-3 h-14 w-full sm:w-1/3">
+      <mat-icon class="!w-4 !h-4 text-[16px]">account_circle</mat-icon>
+      <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+        <mat-select [ngModel]="selectedRole" (ngModelChange)="onRoleChange($event)" placeholder="Todos los Roles" panelClass="custom-select-panel" disableOptionCentering>
+          <mat-option value="">Todos los Roles</mat-option>
+          <mat-option
+            *ngFor="let rol of roles"
+            [value]="rol.id_nodo || rol.id_rol || rol.codigo_tecnico || rol.codigo || rol"
+          >
+            {{ rol.etiqueta || rol.nombre || rol }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="premium-select-container !py-1 !px-3 h-14 w-full sm:w-1/3">
+      <mat-icon class="!w-4 !h-4 text-[16px]">policy</mat-icon>
+      <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0">
+        <mat-select [ngModel]="selectedPolicy" (ngModelChange)="onPolicyChange($event)" placeholder="Todas las Políticas" panelClass="custom-select-panel" disableOptionCentering>
+          <mat-option value="">Todas las Políticas</mat-option>
+          <mat-option
+            *ngFor="let pol of politicas"
+            [value]="pol.id_nodo || pol.codigo_tecnico || pol.codigo || pol"
+          >
+            {{ pol.etiqueta || pol.nombre || pol }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <mat-form-field appearance="outline" class="w-full sm:w-1/3">
       <mat-label>Buscar Recurso</mat-label>
-      <input matInput [(ngModel)]="searchTerm" placeholder="Ej: Creación de Versiones...">
+      <input matInput [(ngModel)]="searchTerm" placeholder="Ej: Creación de Versiones..." />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
@@ -33,7 +43,7 @@
   </div>
 
   <div *ngIf="!loading">
-    <table mat-table [dataSource]="filteredRows" class="w-full">
+    <table mat-table [dataSource]="filteredRows()" class="w-full">
       <ng-container matColumnDef="recurso">
         <th mat-header-cell *matHeaderCellDef class="font-bold text-gray-700">Recurso / Objeto</th>
         <td mat-cell *matCellDef="let row" class="font-medium text-gray-800">
@@ -41,23 +51,23 @@
         </td>
       </ng-container>
 
-      <ng-container *ngFor="let col of columns; let colIndex = index" [matColumnDef]="col">
+      <ng-container *ngFor="let col of columnsArray; let colIndex = index" [matColumnDef]="col">
         <th mat-header-cell *matHeaderCellDef class="text-center">{{ col }}</th>
         <td mat-cell *matCellDef="let row" class="text-center">
           <button
-            mat-icon-button
+            class="focus:outline-none transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             [disabled]="!row.cells[colIndex].editable"
             (click)="onCellToggle(row, colIndex)"
           >
-            <mat-icon [color]="row.cells[colIndex].value ? 'primary' : 'warn'">
-              {{ row.cells[colIndex].value ? 'check_box' : 'check_box_outline_blank' }}
-            </mat-icon>
+            <span *ngIf="row.cells[colIndex].status === 'ALLOW'" class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-400 shadow-sm inline-flex items-center gap-1"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">check_circle</mat-icon> ALLOW</span>
+            <span *ngIf="row.cells[colIndex].status === 'DENY'" class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-red-400 shadow-sm inline-flex items-center gap-1"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">block</mat-icon> DENY</span>
+            <span *ngIf="row.cells[colIndex].status === 'NONE' || !row.cells[colIndex].status" class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-gray-400 shadow-sm inline-flex items-center gap-1"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">remove_circle_outline</mat-icon> NONE</span>
           </button>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="allColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: allColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="allColumns()"></tr>
+      <tr mat-row *matRowDef="let row; columns: allColumns()"></tr>
     </table>
   </div>
 </div>

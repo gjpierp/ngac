@@ -12,10 +12,15 @@ import { ISafiUnidad } from '../../../core/models/ngac-admin.models';
   selector: 'app-dialogo-safi-unidad',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatDialogModule,
-    MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
   ],
-  templateUrl: './dialogo-safi-unidad.component.html'
+  templateUrl: './dialogo-safi-unidad.component.html',
 })
 export class DialogoSafiUnidadComponent implements OnInit {
   form: FormGroup;
@@ -24,16 +29,17 @@ export class DialogoSafiUnidadComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogoSafiUnidadComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { unidad?: ISafiUnidad }
+    @Inject(MAT_DIALOG_DATA) public data: { unidad?: ISafiUnidad },
   ) {
     this.form = this.fb.group({
+      codigo: ['', [Validators.required]],
       slug_unidad: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_\-]+$/)]],
       nombre_unidad: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]]
+      descripcion: ['', [Validators.required]],
     });
 
     // Auto-completar el slug si no está en modo de edición
-    this.form.get('nombre_unidad')?.valueChanges.subscribe(val => {
+    this.form.get('nombre_unidad')?.valueChanges.subscribe((val) => {
       if (val && !this.isEdit) {
         const normalized = this.normalizeText(val);
         this.form.get('slug_unidad')?.setValue(normalized, { emitEvent: false });
@@ -45,12 +51,14 @@ export class DialogoSafiUnidadComponent implements OnInit {
     if (this.data.unidad) {
       this.isEdit = true;
       this.form.patchValue({
+        codigo: this.data.unidad.codigo,
         slug_unidad: this.data.unidad.slug,
         nombre_unidad: this.data.unidad.nombre,
-        descripcion: this.data.unidad.desc || ''
+        descripcion: this.data.unidad.desc || '',
       });
-      // En edición, no permitimos modificar el slug de la unidad
+      // En edición, no permitimos modificar el slug de la unidad ni el código
       this.form.get('slug_unidad')?.disable();
+      this.form.get('codigo')?.disable();
     }
   }
 
@@ -70,6 +78,6 @@ export class DialogoSafiUnidadComponent implements OnInit {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/\s+/g, '_')
-      .replace(/[^A-Z0-9_\-]/g, '');
+      .replace(/[^a-z0-9-]/g, '');
   }
 }

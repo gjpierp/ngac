@@ -16,7 +16,30 @@ import {
   VinculoUsuarioUnidadDto,
   VinculoUsuarioEntidadDto,
   VinculoUnidadEntidadDto,
+  SafiModulo,
+  SafiModuloNodo,
 } from "../models/ngac-admin.models";
+import { AccessEvaluator } from "../security/application/services/AccessEvaluator";
+import { NgacGraphManager } from "../security/application/services/NgacGraphManager";
+
+function mapMenuCursorRows(rows: any[]): Array<{
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  tieneHijos: boolean;
+}> {
+  return (rows || []).map((row: any) => ({
+    id: Number(row.ID ?? row.id ?? row.ID_NODO ?? row.id_nodo ?? 0),
+    nombre: String(
+      row.NOMBRE ?? row.nombre ?? row.ETIQUETA ?? row.etiqueta ?? "",
+    ),
+    descripcion:
+      row.DESCRIPCION ?? row.descripcion ?? row.DESC ?? row.desc ?? undefined,
+    tieneHijos: Boolean(
+      row.TIENE_HIJOS ?? row.tiene_hijos ?? row.TIENEHIJOS ?? row.tieneHijos,
+    ),
+  }));
+}
 
 /**
  * =============================================================================================================
@@ -29,6 +52,28 @@ import {
 
 export class NgacAdminService {
   /**
+   * @function    verificarAcceso
+   * @description  Llama a la función fn_verificar_acceso con operaciones como JSON Array.
+   * @param       {string[]} atributos - Array de atributos (ej: ["unidad:HOSP"])
+   * @param       {string[]} operaciones - Array de operaciones (ej: ["VER", "CREAR"])
+   * @param       {string} objeto - Objeto de acceso
+   * @param       {object} [contextoJson] - Contexto adicional (opcional)
+   * @returns     {Promise<number>} Resultado de acceso (0 = denegado, 1 = permitido)
+   */
+  static async verificarAcceso(
+    atributos: string[],
+    operaciones: string[],
+    objeto: string,
+    contextoJson?: object,
+  ): Promise<number> {
+    return await AccessEvaluator.getInstance().verificarAcceso(
+      atributos,
+      operaciones,
+      objeto,
+      contextoJson,
+    );
+  }
+  /**
    * =============================================================================================
    * 1. FUNCIONES Y PROCEDIMIENTOS: PKG_SEGURIDAD_NGAC
    * ---------------------------------------------------------------------------------------------
@@ -40,63 +85,11 @@ export class NgacAdminService {
   /**
    * @function    getMenuByContext
    * @description Genera el menú dinámico en formato JSON según el contexto recibido.
-   * @param {string} atributosContext - Contexto de usuario y políticas en formato JSON (CLOB).
-   * @returns {Promise<any>} Menú generado en formato JSON.
+   * @param       {string} atributosContext - Contexto de usuario y políticas en formato JSON (CLOB).
+   * @returns     {Promise<any>} Menú generado en formato JSON.
    */
   static async getMenuByContext(atributosContext: string): Promise<any> {
-    const connection = await getDbConnection();
-    try {
-      let payload: any;
-      try {
-        payload = JSON.parse(atributosContext);
-      } catch (e) {
-        payload = {};
-      }
-
-      // Si no vienen módulos en la solicitud, resolverlos dinámicamente como los hijos directos de la política activa
-      const hasModulos = payload.solicitud && Array.isArray(payload.solicitud.modulos) && payload.solicitud.modulos.length > 0;
-      const policyCode = payload.contexto?.politicas?.[0];
-
-      if (!hasModulos && policyCode) {
-        const resultModules = await connection.execute(
-          `SELECT nh.codigo_tecnico
-           FROM acc_asignaciones a
-           JOIN acc_nodos np ON a.id_padre = np.id_nodo
-           JOIN acc_nodos nh ON a.id_hijo = nh.id_nodo
-           WHERE UPPER(np.codigo_tecnico) = UPPER(:policyCode)
-             AND nh.id_tipo_nodo IN (SELECT id_tipo_nodo FROM acc_tipos_nodo WHERE codigo_tipo IN ('OBJETO', 'OBJ_ATTR'))`,
-          { policyCode },
-          { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-
-        const resolvedModules = (resultModules.rows || []).map((row: any) => row.CODIGO_TECNICO || row[0]);
-        if (resolvedModules.length > 0) {
-          if (!payload.solicitud) {
-            payload.solicitud = {};
-          }
-          payload.solicitud.modulos = resolvedModules;
-          atributosContext = JSON.stringify(payload);
-        }
-      }
-
-      const result = await connection.execute(
-        `BEGIN :ret := pkg_seguridad_ngac.fn_obtener_menu_json(:contexto); END;`,
-        {
-          contexto: {
-            dir: oracledb.BIND_IN,
-            val: atributosContext,
-            type: oracledb.CLOB,
-          },
-          ret: { dir: oracledb.BIND_OUT, type: oracledb.CLOB },
-        },
-      );
-      const clob = (result.outBinds as any).ret;
-      if (!clob) return null;
-      const jsonString = await clob.getData();
-      return JSON.parse(jsonString);
-    } finally {
-      await connection.close();
-    }
+    return await AccessEvaluator.getInstance().getMenuByContext(atributosContext);
   }
 
   /**
@@ -111,7 +104,7 @@ export class NgacAdminService {
   /**
    * @function    getDashboardStats
    * @description Obtiene estadísticas globales del dashboard de seguridad desde el package PL/SQL.
-   * @returns {Promise<any>} Objeto con los conteos de nodos, asignaciones, asociaciones, prohibiciones, logs, operaciones y tipos de nodo.
+   * @returns     {Promise<any>} Objeto con los conteos de nodos, asignaciones, asociaciones, prohibiciones, logs, operaciones y tipos de nodo.
    */
   static async getDashboardStats(): Promise<any> {
     const connection = await getDbConnection();
@@ -126,7 +119,7 @@ export class NgacAdminService {
       await rs.close();
 
       const dbRow = rows && rows[0] ? rows[0] : {};
-      
+
       const normalizedRow: any = {};
       for (const key of Object.keys(dbRow)) {
         normalizedRow[key.toUpperCase()] = dbRow[key];
@@ -135,12 +128,19 @@ export class NgacAdminService {
       return {
         acc_nodos: normalizedRow.TOTAL_NODOS ?? normalizedRow.ACC_NODOS ?? 0,
         acc_roles: normalizedRow.ACC_ROLES ?? 0,
-        acc_asignaciones: normalizedRow.ASIGNACIONES_JERARQUICAS ?? normalizedRow.ACC_ASIGNACIONES ?? 0,
-        acc_asociaciones: normalizedRow.ASOCIACIONES_PERMISOS ?? normalizedRow.ACC_ASOCIACIONES ?? 0,
+        acc_asignaciones:
+          normalizedRow.ASIGNACIONES_JERARQUICAS ??
+          normalizedRow.ACC_ASIGNACIONES ??
+          0,
+        acc_asociaciones:
+          normalizedRow.ASOCIACIONES_PERMISOS ??
+          normalizedRow.ACC_ASOCIACIONES ??
+          0,
         acc_prohibiciones: normalizedRow.ACC_PROHIBICIONES ?? 0,
-        acc_log_errores: normalizedRow.ERRORES_RECIENTES ?? normalizedRow.ACC_LOG_ERRORES ?? 0,
+        acc_log_errores:
+          normalizedRow.ERRORES_RECIENTES ?? normalizedRow.ACC_LOG_ERRORES ?? 0,
         acc_operaciones: normalizedRow.TOTAL_OPERACIONES ?? 0,
-        acc_tipos_nodo: normalizedRow.TOTAL_TIPOS_NODO ?? 0
+        acc_tipos_nodo: normalizedRow.TOTAL_TIPOS_NODO ?? 0,
       };
     } finally {
       await connection.close();
@@ -150,14 +150,14 @@ export class NgacAdminService {
   /**
    * @function    getTree
    * @description Obtiene el árbol de nodos y enlaces, filtrando por rol base si corresponde.
-   * @param {string} [rolBase] - Rol base para filtrar los nodos permitidos (opcional).
-   * @returns {Promise<AccNodo[]>} Árbol de nodos estructurado.
+   * @param       {string} [rolBase] - Rol base para filtrar los nodos permitidos (opcional).
+   * @returns     {Promise<AccNodo[]>} Árbol de nodos estructurado.
    */
   static async getTree(rolBase?: string): Promise<AccNodo[]> {
     const connection = await getDbConnection();
     try {
       const nodosResult = await connection.execute(
-        `BEGIN :cursor := pkg_seguridad_admin.fn_get_nodos_activos(); END;`,
+        `BEGIN :cursor := pkg_seguridad_admin.fn_get_modulos_raiz_nodos(); END;`,
         { cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT } },
         { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
@@ -166,7 +166,7 @@ export class NgacAdminService {
       await rsNodos.close();
 
       const linksResult = await connection.execute(
-        `BEGIN :cursor := pkg_seguridad_admin.fn_get_asignaciones_y_asociaciones(); END;`,
+        `BEGIN :cursor := pkg_seguridad_admin.fn_get_modulos_raiz_links(); END;`,
         { cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT } },
         { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
@@ -176,10 +176,11 @@ export class NgacAdminService {
 
       let allowedIds: Set<number> | null = null;
       if (rolBase) {
+        const resolvedRolBase = await this.resolveNodeCode(rolBase);
         const permisosResult = await connection.execute(
           `BEGIN :cursor := pkg_seguridad_admin.fn_get_permisos_rol(:rolBase); END;`,
           {
-            rolBase,
+            rolBase: resolvedRolBase,
             cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
           },
           { outFormat: oracledb.OUT_FORMAT_OBJECT },
@@ -253,18 +254,23 @@ export class NgacAdminService {
   /**
    * @function    upsertNodo
    * @description Inserta o actualiza un nodo en la estructura de seguridad.
-   * @param {UpsertNodoDto} dto - Datos del nodo a insertar o actualizar.
-   * @returns {Promise<void>}
+   * @param       {UpsertNodoDto} dto - Datos del nodo a insertar o actualizar.
+   * @returns     {Promise<void>}
    */
-  static async upsertNodo(dto: UpsertNodoDto) {
+  static async upsertNodo(dto: UpsertNodoDto): Promise<{ id_nodo: number }> {
     const connection = await getDbConnection();
     try {
+      const idTipoNodo = dto.id_tipo_nodo
+        ? dto.id_tipo_nodo
+        : await this.resolveTypeId(dto.tipo);
+
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_upsert_nodo(:codigo, :etiqueta, :tipo, :ruta, :slug, :icono, :descripcion, :orden, :activo); END;`,
+        `BEGIN pkg_seguridad_admin.p_upsert_nodo(:id_nodo, :codigo, :etiqueta, :id_tipo_nodo, :ruta, :slug, :icono, :descripcion, :orden, :activo); END;`,
         {
+          id_nodo: dto.id_nodo || null,
           codigo: dto.codigo,
           etiqueta: dto.etiqueta,
-          tipo: dto.tipo,
+          id_tipo_nodo: idTipoNodo,
           ruta: dto.ruta || null,
           slug: dto.slug || null,
           icono: dto.icono || null,
@@ -274,6 +280,101 @@ export class NgacAdminService {
         },
         { autoCommit: true },
       );
+
+      const id_nodo = dto.id_nodo || (await this.resolveNodeId(dto.codigo));
+      return { id_nodo };
+    } finally {
+      await connection.close();
+    }
+  }
+
+  /**
+   * @function    crearYEnlazarNodo
+   * @description Crea o actualiza un nodo y opcionalmente lo enlaza a un padre en el menú en una sola transacción atómica.
+   * @param       {UpsertNodoDto} dto - Datos del nodo a procesar.
+   * @param       {number | string} [padre] - Identificador (ID o código) del nodo padre.
+   * @returns     {Promise<{ id_nodo: number }>} ID del nodo procesado.
+   */
+  static async crearYEnlazarNodo(
+    dto: UpsertNodoDto,
+    padre?: number | string,
+  ): Promise<{ id_nodo: number }> {
+    const connection = await getDbConnection();
+    try {
+      const idTipoNodo = dto.id_tipo_nodo
+        ? dto.id_tipo_nodo
+        : await this.resolveTypeId(dto.tipo);
+
+      // 1. Ejecutar upsert del nodo (sin autoCommit)
+      await connection.execute(
+        `BEGIN pkg_seguridad_admin.p_upsert_nodo(:id_nodo, :codigo, :etiqueta, :id_tipo_nodo, :ruta, :slug, :icono, :descripcion, :orden, :activo); END;`,
+        {
+          id_nodo: dto.id_nodo || null,
+          codigo: dto.codigo,
+          etiqueta: dto.etiqueta,
+          id_tipo_nodo: idTipoNodo,
+          ruta: dto.ruta || null,
+          slug: dto.slug || null,
+          icono: dto.icono || null,
+          descripcion: dto.descripcion || null,
+          orden: dto.orden || 0,
+          activo: dto.activo || "S",
+        },
+        { autoCommit: false },
+      );
+
+      // 2. Obtener el ID del nodo procesado
+      let id_nodo = dto.id_nodo;
+      if (!id_nodo) {
+        const resId = await connection.execute(
+          `BEGIN :id := pkg_seguridad_admin.fn_resolve_node_id(:code); END;`,
+          {
+            code: String(dto.codigo).trim().toUpperCase(),
+            id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+          },
+        );
+        id_nodo = (resId.outBinds as any).id || 0;
+      }
+
+      if (!id_nodo) {
+        throw new Error("No se pudo resolver el ID del nodo creado");
+      }
+
+      // 3. Enlazar al padre si existe
+      if (padre) {
+        let padreId: number;
+        const numPadre = Number(padre);
+        if (!isNaN(numPadre)) {
+          padreId = numPadre;
+        } else {
+          const resPadre = await connection.execute(
+            `BEGIN :id := pkg_seguridad_admin.fn_resolve_node_id(:code); END;`,
+            {
+              code: String(padre).trim().toUpperCase(),
+              id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+            },
+          );
+          padreId = (resPadre.outBinds as any).id || 0;
+        }
+
+        if (!padreId) {
+          throw new Error(`No se pudo resolver el ID del nodo padre: ${padre}`);
+        }
+
+        await connection.execute(
+          `BEGIN pkg_seguridad_admin.p_enlazar_menu_nodos(:padre, :hijo); END;`,
+          { padre: padreId, hijo: id_nodo },
+          { autoCommit: false },
+        );
+      }
+
+      // 4. Confirmar transacción
+      await connection.commit();
+      return { id_nodo };
+    } catch (err) {
+      // Rollback en caso de error
+      await connection.rollback();
+      throw err;
     } finally {
       await connection.close();
     }
@@ -281,16 +382,16 @@ export class NgacAdminService {
 
   /**
    * @function    deactivateNodo
-   * @description Desactiva un nodo por su código técnico.
-   * @param {string} codigo - Código técnico del nodo a desactivar.
-   * @returns {Promise<void>}
+   * @description Desactiva un nodo por su identificador.
+   * @param       {number} id - ID del nodo a desactivar.
+   * @returns     {Promise<void>}
    */
-  static async deactivateNodo(codigo: string) {
+  static async deactivateNodo(id: number) {
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_desactivar_nodo(:codigo); END;`,
-        { codigo },
+        `BEGIN pkg_seguridad_admin.p_desactivar_nodo(:id); END;`,
+        { id },
         { autoCommit: true },
       );
     } finally {
@@ -301,8 +402,8 @@ export class NgacAdminService {
   /**
    * @function    enlazarNodos
    * @description Crea un enlace (asignación) entre dos nodos (padre e hijo).
-   * @param {EnlazarNodoDto} dto - Datos de los nodos a enlazar (padre e hijo).
-   * @returns {Promise<void>}
+   * @param       {EnlazarNodoDto} dto - Datos de los nodos a enlazar (padre e hijo).
+   * @returns     {Promise<void>}
    */
   static async enlazarNodos(dto: EnlazarNodoDto) {
     const padreId = await this.resolveNodeId(dto.padre);
@@ -329,7 +430,7 @@ export class NgacAdminService {
   /**
    * @function    getEnlaces
    * @description Obtiene todos los enlaces (asignaciones/asociaciones) entre nodos.
-   * @returns {Promise<any[]>} Lista de enlaces entre nodos.
+   * @returns     {Promise<any[]>} Lista de enlaces entre nodos.
    */
   static async getEnlaces() {
     const connection = await getDbConnection();
@@ -342,12 +443,55 @@ export class NgacAdminService {
       const rs = (result.outBinds as any).cursor;
       const rows = await rs.getRows();
       await rs.close();
-      return (rows || []).map((row: any) => ({
+      const enlaces = (rows || []).map((row: any) => ({
         id_asignacion: row.ID_ASIGNACION || row.id_asignacion,
         id_padre: row.ID_PADRE || row.id_padre,
         id_hijo: row.ID_HIJO || row.id_hijo,
         padre: row.PADRE || row.padre,
         hijo: row.HIJO || row.hijo,
+      }));
+
+      // Agregar enlaces estructurales de Política -> Nodos Raíz
+      const policyRootsResult = await connection.execute(`
+        SELECT pmr.id_policy as ID_PADRE, mn.id_nodo as ID_HIJO
+        FROM acc_policy_menu_raices pmr
+        JOIN acc_menu_nodos mn ON mn.id_menu_nodo = pmr.id_menu_nodo
+        WHERE pmr.activo = 'S'
+      `, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+      const policyRoots = (policyRootsResult.rows || []).map((row: any) => ({
+        id_asignacion: null,
+        id_padre: row.ID_PADRE,
+        id_hijo: row.ID_HIJO,
+        padre: null,
+        hijo: null
+      }));
+
+      return [...enlaces, ...policyRoots];
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async getMenuEnlaces() {
+    const connection = await getDbConnection();
+    try {
+      const result = await connection.execute(
+        `BEGIN :cursor := pkg_seguridad_admin.fn_get_menu_enlaces(); END;`,
+        { cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT } },
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
+      );
+      const rs = (result.outBinds as any).cursor;
+      const rows = await rs.getRows();
+      await rs.close();
+      return (rows || []).map((row: any) => ({
+        id_menu_asignacion: row.ID_MENU_ASIGNACION || row.id_menu_asignacion,
+        id_padre: row.ID_PADRE || row.id_padre,
+        id_hijo: row.ID_HIJO || row.id_hijo,
+        padre: row.PADRE || row.padre,
+        hijo: row.HIJO || row.hijo,
+        padre_etiqueta: row.PADRE_ETIQUETA || row.padre_etiqueta,
+        hijo_etiqueta: row.HIJO_ETIQUETA || row.hijo_etiqueta,
       }));
     } finally {
       await connection.close();
@@ -357,8 +501,8 @@ export class NgacAdminService {
   /**
    * @function    deleteEnlace
    * @description Elimina un enlace (asignación) entre dos nodos.
-   * @param {EnlazarNodoDto} dto - Datos de los nodos a desenlazar (padre e hijo).
-   * @returns {Promise<void>}
+   * @param       {EnlazarNodoDto} dto - Datos de los nodos a desenlazar (padre e hijo).
+   * @returns     {Promise<void>}
    */
   static async deleteEnlace(dto: EnlazarNodoDto) {
     const padreId = await this.resolveNodeId(dto.padre);
@@ -372,8 +516,41 @@ export class NgacAdminService {
 
     const connection = await getDbConnection();
     try {
+      try {
+        await connection.execute(
+          `BEGIN pkg_seguridad_admin.p_eliminar_enlace(:padre, :hijo); END;`,
+          { padre: padreId, hijo: hijoId },
+          { autoCommit: true },
+        );
+      } catch (err: any) {
+        const message = String(err?.message || "");
+        if (
+          message.includes("ORA-20002") ||
+          message.includes("Vínculo no encontrado")
+        ) {
+          return;
+        }
+        throw err;
+      }
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async enlazarMenuNodos(dto: EnlazarNodoDto) {
+    const padreId = await this.resolveNodeId(dto.padre);
+    const hijoId = await this.resolveNodeId(dto.hijo);
+
+    if (!padreId || !hijoId) {
+      throw new Error(
+        `No se pudo resolver el ID del nodo de menú: padre=${dto.padre} (ID: ${padreId}), hijo=${dto.hijo} (ID: ${hijoId})`,
+      );
+    }
+
+    const connection = await getDbConnection();
+    try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_eliminar_enlace(:padre, :hijo); END;`,
+        `BEGIN pkg_seguridad_admin.p_enlazar_menu_nodos(:padre, :hijo); END;`,
         { padre: padreId, hijo: hijoId },
         { autoCommit: true },
       );
@@ -382,27 +559,94 @@ export class NgacAdminService {
     }
   }
 
+  static async clonarMenuJerarquia(dto: EnlazarNodoDto) {
+    const padreId = await this.resolveNodeId(dto.padre);
+    const hijoId = await this.resolveNodeId(dto.hijo);
+
+    if (!padreId || !hijoId) {
+      throw new Error(
+        `No se pudo resolver el ID del nodo para clonar: padre=${dto.padre} (ID: ${padreId}), hijo=${dto.hijo} (ID: ${hijoId})`,
+      );
+    }
+
+    const connection = await getDbConnection();
+    try {
+      await connection.execute(
+        `BEGIN pkg_seguridad_admin.p_clonar_jerarquia(:padre, :hijo); END;`,
+        { padre: padreId, hijo: hijoId },
+        { autoCommit: true },
+      );
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async deleteMenuEnlace(dto: EnlazarNodoDto) {
+    const padreId = await this.resolveNodeId(dto.padre);
+    const hijoId = await this.resolveNodeId(dto.hijo);
+
+    if (!padreId || !hijoId) {
+      throw new Error(
+        `No se pudo resolver el ID del vínculo de menú: padre=${dto.padre} (ID: ${padreId}), hijo=${dto.hijo} (ID: ${hijoId})`,
+      );
+    }
+
+    const connection = await getDbConnection();
+    try {
+      try {
+        await connection.execute(
+          `BEGIN pkg_seguridad_admin.p_eliminar_menu_enlace(:padre, :hijo); END;`,
+          { padre: padreId, hijo: hijoId },
+          { autoCommit: true },
+        );
+      } catch (err: any) {
+        const message = String(err?.message || "");
+        if (
+          message.includes("ORA-20002") ||
+          message.includes("Vínculo de menú no encontrado")
+        ) {
+          return;
+        }
+        throw err;
+      }
+    } finally {
+      await connection.close();
+    }
+  }
+
   /**
    * @function    otorgarPermiso
    * @description Otorga un permiso a un usuario/rol sobre un objeto y operación.
-   * @param {OtorgarPermisoDto} dto - Datos del permiso a otorgar.
-   * @returns {Promise<void>}
+   * @param       {OtorgarPermisoDto} dto - Datos del permiso a otorgar.
+   * @returns     {Promise<void>}
    */
   static async otorgarPermiso(dto: OtorgarPermisoDto) {
     const usrId = await this.resolveNodeId(dto.usr);
     const objId = await this.resolveNodeId(dto.obj);
+    const opId = await this.resolveOperationId(dto.op);
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_otorgar_permiso(:usr, :obj, :op, :condicion); END;`,
+        `BEGIN pkg_seguridad_admin.p_otorgar_permiso(:usr, :obj, :opId, :condicion); END;`,
         {
           usr: usrId,
           obj: objId,
-          op: dto.op,
+          opId,
           condicion: dto.condicion_js || null,
         },
         { autoCommit: true },
       );
+    } catch (err: any) {
+      const message = String(err?.message || "");
+      if (
+        message.includes("ORA-00001") ||
+        message.toUpperCase().includes("UNIQUE CONSTRAINT") ||
+        message.toUpperCase().includes("YA EXISTE") ||
+        message.toUpperCase().includes("ALREADY EXISTS")
+      ) {
+        return;
+      }
+      throw err;
     } finally {
       await connection.close();
     }
@@ -418,11 +662,12 @@ export class NgacAdminService {
   static async denegarPermiso(dto: OtorgarPermisoDto) {
     const usrId = await this.resolveNodeId(dto.usr);
     const objId = await this.resolveNodeId(dto.obj);
+    const opId = await this.resolveOperationId(dto.op);
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_denegar_permiso(:usr, :obj, :op); END;`,
-        { usr: usrId, obj: objId, op: dto.op },
+        `BEGIN pkg_seguridad_admin.p_denegar_permiso(:usr, :obj, :opId); END;`,
+        { usr: usrId, obj: objId, opId },
         { autoCommit: true },
       );
     } finally {
@@ -434,17 +679,18 @@ export class NgacAdminService {
    * @function    revocarPermiso
    * @author      Gerardo Paiva G.
    * @description Revoca un permiso previamente otorgado a un usuario/rol.
-   * @param {OtorgarPermisoDto} dto - Datos del permiso a revocar.
-   * @returns {Promise<void>}
+   * @param       {OtorgarPermisoDto} dto - Datos del permiso a revocar.
+   * @returns     {Promise<void>}
    */
   static async revocarPermiso(dto: OtorgarPermisoDto) {
     const usrId = await this.resolveNodeId(dto.usr);
     const objId = await this.resolveNodeId(dto.obj);
+    const opId = await this.resolveOperationId(dto.op);
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_revocar_permiso(:usr, :obj, :op); END;`,
-        { usr: usrId, obj: objId, op: dto.op },
+        `BEGIN pkg_seguridad_admin.p_revocar_permiso(:usr, :obj, :opId); END;`,
+        { usr: usrId, obj: objId, opId },
         { autoCommit: true },
       );
     } finally {
@@ -476,15 +722,17 @@ export class NgacAdminService {
         { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const rs = (result.outBinds as any).cursor;
-      const rows = await rs.getRows();
+      const rows = (await rs.getRows()) || [];
       await rs.close();
 
       let data = (rows || []).map((row: any) => ({
         id_asociacion: row.ID_ASOCIACION || row.id_asociacion,
         usr: row.USR || row.usr,
+        usr_codigo: row.USR_CODIGO || row.usr_codigo,
         usr_etiqueta:
           row.USR_ETIQUETA || row.usr_etiqueta || row.USR || row.usr,
         obj: row.OBJ || row.obj,
+        obj_codigo: row.OBJ_CODIGO || row.obj_codigo,
         obj_etiqueta:
           row.OBJ_ETIQUETA || row.obj_etiqueta || row.OBJ || row.obj,
         op: row.OP || row.op,
@@ -503,7 +751,11 @@ export class NgacAdminService {
             d.usr_etiqueta !== undefined && d.usr_etiqueta !== null
               ? String(d.usr_etiqueta).toUpperCase().trim()
               : "";
-          return dUsr === uSearch || dEtq === uSearch;
+          const dCodigo =
+            d.usr_codigo !== undefined && d.usr_codigo !== null
+              ? String(d.usr_codigo).toUpperCase().trim()
+              : "";
+          return dUsr === uSearch || dEtq === uSearch || dCodigo === uSearch;
         });
       }
       if (obj) {
@@ -517,7 +769,11 @@ export class NgacAdminService {
             d.obj_etiqueta !== undefined && d.obj_etiqueta !== null
               ? String(d.obj_etiqueta).toUpperCase().trim()
               : "";
-          return dObj === oSearch || dEtq === oSearch;
+          const dCodigo =
+            d.obj_codigo !== undefined && d.obj_codigo !== null
+              ? String(d.obj_codigo).toUpperCase().trim()
+              : "";
+          return dObj === oSearch || dEtq === oSearch || dCodigo === oSearch;
         });
       }
 
@@ -530,23 +786,75 @@ export class NgacAdminService {
     }
   }
 
+  static async getPermisosMatrix(rol?: string, politica?: number) {
+    const connection = await getDbConnection();
+    try {
+      const normalizedRole = String(rol || "")
+        .trim()
+        .toUpperCase();
+      const policyId = Number(politica);
+
+      if (!normalizedRole || !Number.isFinite(policyId) || policyId <= 0) {
+        return { total: 0, data: [] };
+      }
+
+      const result = await connection.execute(
+        `BEGIN :cursor := pkg_seguridad_admin.fn_get_permisos_matrix(:rol, :politica); END;`,
+        {
+          rol: normalizedRole,
+          politica: policyId,
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
+        },
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
+      );
+      const rs = (result.outBinds as any).cursor;
+      const rows = (await rs.getRows()) || [];
+      await rs.close();
+
+      const data = rows.map((row: any) => ({
+        id_asociacion: row.ID_ASOCIACION || row.id_asociacion,
+        usr: row.USR || row.usr,
+        usr_codigo: row.USR_CODIGO || row.usr_codigo,
+        usr_etiqueta:
+          row.USR_ETIQUETA || row.usr_etiqueta || row.USR || row.usr,
+        obj: row.OBJ || row.obj,
+        obj_codigo: row.OBJ_CODIGO || row.obj_codigo,
+        obj_etiqueta:
+          row.OBJ_ETIQUETA || row.obj_etiqueta || row.OBJ || row.obj,
+        op: row.OP || row.op,
+        condicion_json: row.CONDICION_JSON || row.condicion_json,
+        fecha_registro: row.FECHA_REGISTRO || row.fecha_registro,
+      }));
+
+      return {
+        total: data.length,
+        data,
+      };
+    } finally {
+      await connection.close();
+    }
+  }
+
   /**
    * @function    getRolesPorNodo
    * @author      Gerardo Paiva G.
    * @description Obtiene los roles asociados a un nodo específico.
-   * @param {number} id - ID del nodo.
-   * @returns {Promise<any[]>} Lista de roles asociados.
+   * @param       {number} id - ID del nodo.
+   * @returns     {Promise<any[]>} Lista de roles asociados.
    */
   static async getRolesPorNodo(id: number) {
     const connection = await getDbConnection();
     try {
       const result = await connection.execute(
         `BEGIN :cursor := pkg_seguridad_admin.fn_get_roles_por_nodo(:id); END;`,
-        { id, cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT } },
+        {
+          id,
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
+        },
         { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const rs = (result.outBinds as any).cursor;
-      const rows = await rs.getRows();
+      const rows = (await rs.getRows()) || [];
       await rs.close();
       return (rows || []).map((row: any) => ({
         id_rol: row.ID_ROL || row.id_rol,
@@ -562,7 +870,7 @@ export class NgacAdminService {
    * @function    getNodos
    * @author      Gerardo Paiva G.
    * @description Obtiene la lista de nodos existentes en la estructura de seguridad.
-   * @returns {Promise<any[]>} Lista de nodos.
+   * @returns     {Promise<any[]>} Lista de nodos.
    */
   static async getNodos() {
     const connection = await getDbConnection();
@@ -596,7 +904,7 @@ export class NgacAdminService {
    * @function    getOperaciones
    * @author      Gerardo Paiva G.
    * @description Obtiene la lista de operaciones registradas en el sistema.
-   * @returns {Promise<any[]>} Lista de operaciones.
+   * @returns     {Promise<any[]>} Lista de operaciones.
    */
   static async getOperaciones() {
     const connection = await getDbConnection();
@@ -622,9 +930,9 @@ export class NgacAdminService {
    * @function    upsertOperacion
    * @author      Gerardo Paiva G.
    * @description Inserta o actualiza una operación en el sistema.
-   * @param {string} nombre - Nombre de la operación.
-   * @param {string} [desc] - Descripción de la operación (opcional).
-   * @returns {Promise<void>}
+   * @param       {string} nombre - Nombre de la operación.
+   * @param       {string} [desc] - Descripción de la operación (opcional).
+   * @returns     {Promise<void>}
    */
   static async upsertOperacion(nombre: string, desc?: string) {
     const connection = await getDbConnection();
@@ -643,8 +951,8 @@ export class NgacAdminService {
    * @function    deleteOperacion
    * @author      Gerardo Paiva G.
    * @description Elimina una operación del sistema.
-   * @param {string} nombre - Nombre de la operación a eliminar.
-   * @returns {Promise<void>}
+   * @param       {string} nombre - Nombre de la operación a eliminar.
+   * @returns     {Promise<void>}
    */
   static async deleteOperacion(nombre: string) {
     const connection = await getDbConnection();
@@ -663,7 +971,7 @@ export class NgacAdminService {
    * @function    getTiposNodo
    * @author      Gerardo Paiva G.
    * @description Obtiene la lista de tipos de nodo registrados.
-   * @returns {Promise<any[]>} Lista de tipos de nodo.
+   * @returns     {Promise<any[]>} Lista de tipos de nodo.
    */
   static async getTiposNodo() {
     const connection = await getDbConnection();
@@ -689,8 +997,8 @@ export class NgacAdminService {
    * @function    upsertTipoNodo
    * @author      Gerardo Paiva G.
    * @description Inserta o actualiza un tipo de nodo.
-   * @param {UpsertTipoNodoDto} dto - Datos del tipo de nodo a insertar o actualizar.
-   * @returns {Promise<void>}
+   * @param       {UpsertTipoNodoDto} dto - Datos del tipo de nodo a insertar o actualizar.
+   * @returns     {Promise<void>}
    */
   static async upsertTipoNodo(dto: UpsertTipoNodoDto) {
     const connection = await getDbConnection();
@@ -709,8 +1017,8 @@ export class NgacAdminService {
    * @function    deleteTipoNodo
    * @author      Gerardo Paiva G.
    * @description Elimina un tipo de nodo del sistema.
-   * @param {string} codigo - Código del tipo de nodo a eliminar.
-   * @returns {Promise<void>}
+   * @param       {string} codigo - Código del tipo de nodo a eliminar.
+   * @returns     {Promise<void>}
    */
   static async deleteTipoNodo(codigo: string) {
     const connection = await getDbConnection();
@@ -729,7 +1037,7 @@ export class NgacAdminService {
    * @function    getModulosRaiz
    * @author      Gerardo Paiva G.
    * @description Obtiene los nodos raíz de tipo módulo.
-   * @returns {Promise<AccNodo[]>} Lista de nodos raíz tipo módulo.
+   * @returns     {Promise<AccNodo[]>} Lista de nodos raíz tipo módulo.
    */
   static async getModulosRaiz(): Promise<AccNodo[]> {
     const connection = await getDbConnection();
@@ -800,10 +1108,59 @@ export class NgacAdminService {
   }
 
   /**
+   * @function    getModulosPorPoliticas
+   * @description Obtiene los códigos de módulos raíz permitidos para una o más políticas.
+   * @param       {string[]} policyCodes - Códigos de políticas seleccionadas.
+   * @returns     {Promise<string[]>} Lista de códigos técnicos de módulos válidos para esas políticas.
+   */
+  static async getModulosPorPoliticas(
+    policyCodes: string[],
+  ): Promise<string[]> {
+    const normalizedCodes = Array.from(
+      new Set(
+        (policyCodes || [])
+          .map((code) =>
+            String(code || "")
+              .trim()
+              .toUpperCase(),
+          )
+          .filter((code) => !!code),
+      ),
+    );
+
+    if (normalizedCodes.length === 0) {
+      return [];
+    }
+
+    const connection = await getDbConnection();
+    try {
+      const result = await connection.execute(
+        `BEGIN :cursor := pkg_seguridad_admin.fn_get_modulos_por_politicas(:policyCodes); END;`,
+        {
+          policyCodes: normalizedCodes.join(","),
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
+        },
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
+      );
+      const rs = (result.outBinds as any).cursor;
+      const rows = (await rs.getRows()) || [];
+      await rs.close();
+
+      return rows
+        .map((row: any) =>
+          String(row.CODIGO_TECNICO || row.codigo_tecnico || "").trim(),
+        )
+        .filter((code: string) => !!code);
+    } finally {
+      await connection.close();
+    }
+  }
+
+  /**
    * @function    getPoliticasRaiz
    * @author      Gerardo Paiva G.
    * @description Obtiene los nodos raíz de tipo política.
-   * @returns {Promise<AccNodo[]>} Lista de nodos raíz tipo política.
+   * @returns     {Promise<AccNodo[]>} Lista de nodos raíz tipo política.
    */
   static async getPoliticasRaiz(): Promise<AccNodo[]> {
     const connection = await getDbConnection();
@@ -834,11 +1191,87 @@ export class NgacAdminService {
     }
   }
 
+  static async getCarpetasRaiz(id: number): Promise<any> {
+    console.log(`getCarpetasRaiz (Memoria) - ID de política seleccionado: ${id}`);
+    try {
+      const graph = NgacGraphManager.getInstance();
+      await graph.initialize();
+
+      const roots = graph.policyMenuRoots.get(id);
+      if (!roots) return [];
+
+      const result: any[] = [];
+      for (const menuNodeId of roots) {
+        const mn = graph.menuNodes.get(menuNodeId);
+        if (mn && mn.active) {
+          const parents = graph.menuChildToParents.get(menuNodeId);
+          if (!parents || parents.size === 0) {
+            const children = graph.menuParentToChildren.get(menuNodeId);
+            const hasChildren = !!children && children.size > 0;
+
+            result.push({
+              id: mn.idNode,
+              nombre: mn.label,
+              descripcion: mn.description,
+              tieneHijos: hasChildren,
+              displayOrder: mn.displayOrder
+            });
+          }
+        }
+      }
+
+      result.sort((a, b) => a.displayOrder - b.displayOrder);
+      return result.map(({ id, nombre, descripcion, tieneHijos }) => ({ id, nombre, descripcion, tieneHijos }));
+    } catch (error) {
+      console.error("Error en getCarpetasRaiz (Memoria):", error);
+      return null;
+    }
+  }
+
+  static async getCarpetasRaizSinHijos(id: number): Promise<any> {
+    console.log(`getCarpetasRaizSinHijos (Memoria) - ID de política seleccionado: ${id}`);
+    try {
+      const graph = NgacGraphManager.getInstance();
+      await graph.initialize();
+
+      const roots = graph.policyMenuRoots.get(id);
+      if (!roots) return [];
+
+      const result: any[] = [];
+      for (const menuNodeId of roots) {
+        const mn = graph.menuNodes.get(menuNodeId);
+        if (mn && mn.active) {
+          const parents = graph.menuChildToParents.get(menuNodeId);
+          if (!parents || parents.size === 0) {
+            const children = graph.menuParentToChildren.get(menuNodeId);
+            const hasChildren = !!children && children.size > 0;
+
+            if (!hasChildren) {
+              result.push({
+                id: mn.idNode,
+                nombre: mn.label,
+                descripcion: mn.description,
+                tieneHijos: false,
+                displayOrder: mn.displayOrder
+              });
+            }
+          }
+        }
+      }
+
+      result.sort((a, b) => a.displayOrder - b.displayOrder);
+      return result.map(({ id, nombre, descripcion, tieneHijos }) => ({ id, nombre, descripcion, tieneHijos }));
+    } catch (error) {
+      console.error("Error en getCarpetasRaizSinHijos (Memoria):", error);
+      return null;
+    }
+  }
+
   /**
    * @function    getRoles
    * @author      Gerardo Paiva G.
    * @description Obtiene la lista de roles registrados en el sistema.
-   * @returns {Promise<AccRol[]>} Lista de roles.
+   * @returns     {Promise<AccRol[]>} Lista de roles.
    */
   static async getRoles(): Promise<AccRol[]> {
     const connection = await getDbConnection();
@@ -851,12 +1284,21 @@ export class NgacAdminService {
       const rs = (result.outBinds as any).cursor;
       const rows = await rs.getRows();
       await rs.close();
-      return (rows || []).map((row: any) => ({
+      const roles = (rows || []).map((row: any) => ({
         id_rol: row.ID_ROL || row.id_rol,
+        id_nodo: row.ID_NODO || row.id_nodo,
         codigo: row.CODIGO || row.codigo,
         nombre: row.NOMBRE || row.nombre,
         descripcion: row.DESCRIPCION || row.descripcion,
+        id_tipo_nodo: row.ID_TIPO_NODO || row.id_tipo_nodo,
+        url_ruta: row.URL_RUTA || row.url_ruta,
+        slug: row.SLUG || row.slug,
+        icono: row.ICONO || row.icono,
+        orden_visual: row.ORDEN_VISUAL || row.orden_visual,
+        activo: row.ACTIVO || row.activo || "S",
       }));
+
+      return roles;
     } finally {
       await connection.close();
     }
@@ -866,21 +1308,36 @@ export class NgacAdminService {
    * @function    upsertRol
    * @author      Gerardo Paiva G.
    * @description Inserta o actualiza un rol en el sistema.
-   * @param {AccRol} rol - Datos del rol a insertar o actualizar.
-   * @returns {Promise<void>}
+   * @param       {AccRol} rol - Datos del rol a insertar o actualizar.
+   * @returns     {Promise<void>}
    */
   static async upsertRol(rol: AccRol) {
     const connection = await getDbConnection();
     try {
-      const technicalCode = rol.codigo.startsWith("ROL_")
-        ? rol.codigo
-        : `ROL_${rol.codigo.toUpperCase()}`;
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_upsert_rol(:codigo, :nombre, :descripcion); END;`,
+        `BEGIN
+           pkg_seguridad_admin.p_upsert_rol(
+             :id_rol,
+             :codigo,
+             :nombre,
+             :descripcion,
+             :url_ruta,
+             :slug,
+             :icono,
+             :orden_visual,
+             :activo
+           );
+         END;`,
         {
-          codigo: technicalCode,
+          id_rol: rol.id_nodo ?? rol.id_rol ?? null,
+          codigo: rol.codigo,
           nombre: rol.nombre,
-          descripcion: rol.descripcion || null,
+          descripcion: rol.descripcion ?? null,
+          url_ruta: rol.url_ruta ?? null,
+          slug: rol.slug ?? null,
+          icono: rol.icono ?? null,
+          orden_visual: rol.orden_visual ?? null,
+          activo: rol.activo ?? "S",
         },
         { autoCommit: true },
       );
@@ -893,8 +1350,8 @@ export class NgacAdminService {
    * @function    deleteRol
    * @author      Gerardo Paiva G.
    * @description Elimina un rol del sistema por su ID.
-   * @param {number} id_rol - ID del rol a eliminar.
-   * @returns {Promise<void>}
+   * @param       {number} id_rol - ID del rol a eliminar.
+   * @returns     {Promise<void>}
    */
   static async deleteRol(id_rol: number) {
     const connection = await getDbConnection();
@@ -913,7 +1370,7 @@ export class NgacAdminService {
    * @function    getLogs
    * @author      Gerardo Paiva G.
    * @description Obtiene los logs de seguridad registrados en el sistema.
-   * @returns {Promise<any[]>} Lista de logs.
+   * @returns     {Promise<any[]>} Lista de logs.
    */
   static async getLogs() {
     const connection = await getDbConnection();
@@ -936,7 +1393,7 @@ export class NgacAdminService {
    * @function    clearLogs
    * @author      Gerardo Paiva G.
    * @description Elimina todos los logs de seguridad del sistema.
-   * @returns {Promise<void>}
+   * @returns     {Promise<void>}
    */
   static async clearLogs() {
     const connection = await getDbConnection();
@@ -955,7 +1412,7 @@ export class NgacAdminService {
    * @function    getProhibiciones
    * @author      Gerardo Paiva G.
    * @description Obtiene la lista de prohibiciones activas en el sistema.
-   * @returns {Promise<any[]>} Lista de prohibiciones.
+   * @returns     {Promise<any[]>} Lista de prohibiciones.
    */
   static async getProhibiciones(): Promise<any[]> {
     const connection = await getDbConnection();
@@ -985,8 +1442,8 @@ export class NgacAdminService {
    * @function    revocarProhibicion
    * @author      Gerardo Paiva G.
    * @description Revoca una prohibición por su ID.
-   * @param {number} id - ID de la prohibición a revocar.
-   * @returns {Promise<void>}
+   * @param       {number} id - ID de la prohibición a revocar.
+   * @returns     {Promise<void>}
    */
   static async revocarProhibicion(id: number) {
     const connection = await getDbConnection();
@@ -1032,6 +1489,9 @@ export class NgacAdminService {
       await rs.close();
       return (rows || []).map((row: any) => ({
         id: row.ID !== undefined ? row.ID : row.id,
+        rut_numero:
+          row.RUT_NUMERO !== undefined ? row.RUT_NUMERO : row.rut_numero,
+        rut_dv: row.RUT_DV !== undefined ? row.RUT_DV : row.rut_dv,
         nombre: row.NOMBRE !== undefined ? row.NOMBRE : row.nombre,
         email: row.EMAIL !== undefined ? row.EMAIL : row.email,
         estado: row.ESTADO !== undefined ? row.ESTADO : row.estado,
@@ -1052,12 +1512,24 @@ export class NgacAdminService {
    * @throws      Error en la conexión o consulta a la base de datos.
    */
   static async upsertUsuario(dto: SafiUsuario): Promise<void> {
+    // Validar rut_numero y rut_dv
+    if (!dto.rut_numero || !dto.rut_dv) {
+      throw new Error("RUT incompleto");
+    }
+    if (!/^[0-9]{7,8}$/.test(dto.rut_numero)) {
+      throw new Error("El número de RUT debe tener 7 u 8 dígitos");
+    }
+    if (!/^\d|k|K$/.test(dto.rut_dv)) {
+      throw new Error("Dígito verificador inválido");
+    }
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_safi_admin.p_upsert_safi_usuario(:id, :nombre, :email, :estado); END;`,
+        `BEGIN pkg_safi_admin.p_upsert_safi_usuario(:id, :rut_numero, :rut_dv, :nombre, :email, :estado); END;`,
         {
           id: dto.id,
+          rut_numero: dto.rut_numero,
+          rut_dv: dto.rut_dv.toUpperCase(),
           nombre: dto.nombre,
           email: dto.email,
           estado: dto.estado || 1,
@@ -1114,6 +1586,7 @@ export class NgacAdminService {
       await rs.close();
       return (rows || []).map((row: any) => ({
         id: row.ID !== undefined ? row.ID : row.id,
+        codigo: row.CODIGO !== undefined ? row.CODIGO : row.codigo,
         nombre: row.NOMBRE !== undefined ? row.NOMBRE : row.nombre,
         slug: row.SLUG !== undefined ? row.SLUG : row.slug,
         desc:
@@ -1122,7 +1595,7 @@ export class NgacAdminService {
             : row.DESCRIPCION !== undefined
               ? row.DESCRIPCION
               : row.desc,
-        estado: row.ESTADO !== undefined ? row.ESTADO : row.estado,
+        activo: row.ACTIVO !== undefined ? row.ACTIVO : row.activo,
       }));
     } finally {
       await connection.close();
@@ -1143,13 +1616,13 @@ export class NgacAdminService {
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_safi_admin.p_upsert_safi_entidad(:id, :nombre, :slug, :desc, :estado); END;`,
+        `BEGIN pkg_safi_admin.p_upsert_safi_entidad(:id, :codigo, :nombre, :slug, :desc); END;`,
         {
           id: dto.id,
+          codigo: dto.codigo,
           nombre: dto.nombre,
           slug: dto.slug,
           desc: dto.desc || null,
-          estado: dto.estado || 1,
         },
         { autoCommit: true },
       );
@@ -1203,6 +1676,7 @@ export class NgacAdminService {
       await rs.close();
       return (rows || []).map((row: any) => ({
         id: row.ID !== undefined ? row.ID : row.id,
+        codigo: row.CODIGO !== undefined ? row.CODIGO : row.codigo,
         nombre: row.NOMBRE !== undefined ? row.NOMBRE : row.nombre,
         slug: row.SLUG !== undefined ? row.SLUG : row.slug,
         desc:
@@ -1211,7 +1685,7 @@ export class NgacAdminService {
             : row.DESCRIPCION !== undefined
               ? row.DESCRIPCION
               : row.desc,
-        estado: row.ESTADO !== undefined ? row.ESTADO : row.estado,
+        activo: row.ACTIVO !== undefined ? row.ACTIVO : row.activo,
       }));
     } finally {
       await connection.close();
@@ -1232,13 +1706,13 @@ export class NgacAdminService {
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_safi_admin.p_upsert_safi_unidad(:id, :nombre, :slug, :desc, :estado); END;`,
+        `BEGIN pkg_safi_admin.p_upsert_safi_unidad(:id, :codigo, :nombre, :slug, :desc); END;`,
         {
           id: dto.id,
+          codigo: dto.codigo,
           nombre: dto.nombre,
           slug: dto.slug,
           desc: dto.desc || null,
-          estado: dto.estado || 1,
         },
         { autoCommit: true },
       );
@@ -1283,10 +1757,11 @@ export class NgacAdminService {
     const connection = await getDbConnection();
     try {
       const result = await connection.execute(
-        `BEGIN pkg_safi_admin.crear_usuario(:slug, :rut, :nombres, :apellidos, :email, :out_id); END;`,
+        `BEGIN pkg_safi_admin.crear_usuario(:slug_usuario, :rut_numero, :rut_dv, :nombres, :apellidos, :email, :out_id); END;`,
         {
-          slug: dto.slug_usuario,
-          rut: dto.rut,
+          slug_usuario: dto.slug_usuario,
+          rut_numero: Number(dto.rut_numero),
+          rut_dv: dto.rut_dv,
           nombres: dto.nombres,
           apellidos: dto.apellidos,
           email: dto.email,
@@ -1335,8 +1810,9 @@ export class NgacAdminService {
     const connection = await getDbConnection();
     try {
       const result = await connection.execute(
-        `BEGIN pkg_safi_admin.crear_unidad(:slug, :nombre, :descripcion, :out_id); END;`,
+        `BEGIN pkg_safi_admin.crear_unidad(:codigo, :slug, :nombre, :descripcion, :out_id); END;`,
         {
+          codigo: dto.codigo,
           slug: dto.slug_unidad,
           nombre: dto.nombre_unidad,
           descripcion: dto.descripcion,
@@ -1363,8 +1839,9 @@ export class NgacAdminService {
     const connection = await getDbConnection();
     try {
       const result = await connection.execute(
-        `BEGIN pkg_safi_admin.crear_entidad(:slug, :nombre, :tipo, :out_id); END;`,
+        `BEGIN pkg_safi_admin.crear_entidad(:codigo, :slug, :nombre, :tipo, :out_id); END;`,
         {
+          codigo: dto.codigo,
           slug: dto.slug_entidad,
           nombre: dto.nombre_entidad,
           tipo: dto.tipo_entidad,
@@ -1512,19 +1989,39 @@ export class NgacAdminService {
         `BEGIN :cursor := pkg_seguridad_admin.fn_get_roles_de_usuario(:userId); END;`,
         {
           userId,
-          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
         },
-        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const cursor = (result.outBinds as any).cursor;
       const rows = await cursor.getRows(100);
       await cursor.close();
 
       return rows.map((row: any) => ({
-        id_rol: row.ID_ROL !== undefined ? row.ID_ROL : (row.id_rol !== undefined ? row.id_rol : null),
-        codigo: row.CODIGO !== undefined ? row.CODIGO : (row.codigo !== undefined ? row.codigo : null),
-        nombre: row.NOMBRE !== undefined ? row.NOMBRE : (row.nombre !== undefined ? row.nombre : null),
-        descripcion: row.DESCRIPCION !== undefined ? row.DESCRIPCION : (row.descripcion !== undefined ? row.descripcion : null),
+        id_rol:
+          row.ID_ROL !== undefined
+            ? row.ID_ROL
+            : row.id_rol !== undefined
+              ? row.id_rol
+              : null,
+        codigo:
+          row.CODIGO !== undefined
+            ? row.CODIGO
+            : row.codigo !== undefined
+              ? row.codigo
+              : null,
+        nombre:
+          row.NOMBRE !== undefined
+            ? row.NOMBRE
+            : row.nombre !== undefined
+              ? row.nombre
+              : null,
+        descripcion:
+          row.DESCRIPCION !== undefined
+            ? row.DESCRIPCION
+            : row.descripcion !== undefined
+              ? row.descripcion
+              : null,
       }));
     } finally {
       await connection.close();
@@ -1537,19 +2034,19 @@ export class NgacAdminService {
    * @date        18/05/2026
    * @description Asigna un rol a un usuario NGAC.
    * @param       {number} userId - ID del usuario.
-   * @param       {string} codigoRol - Código técnico del rol.
+   * @param       {number} idRol - ID del rol.
    * @returns     {Promise<void>}
    */
   static async asignarRolAUsuario(
     userId: number,
-    codigoRol: string,
+    idRol: number,
   ): Promise<void> {
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_asignar_rol_a_usuario(:userId, :codigoRol); END;`,
-        { userId, codigoRol },
-        { autoCommit: true }
+        `BEGIN pkg_seguridad_admin.p_asignar_rol_a_usuario(:userId, :idRol); END;`,
+        { userId, idRol },
+        { autoCommit: true },
       );
     } finally {
       await connection.close();
@@ -1583,20 +2080,20 @@ export class NgacAdminService {
   /**
    * @function    revocarRolDeUsuario
    * @description Revoca la asignación de un rol específico a un usuario en el sistema.
-   * @param {number} userId - ID del usuario.
-   * @param {string} codigoRol - Código técnico del rol a revocar.
-   * @returns {Promise<void>}
+   * @param       {number} userId - ID del usuario.
+   * @param       {number} idRol - ID del rol a revocar.
+   * @returns     {Promise<void>}
    */
   static async revocarRolDeUsuario(
     userId: number,
-    codigoRol: string,
+    idRol: number,
   ): Promise<void> {
     const connection = await getDbConnection();
     try {
       await connection.execute(
-        `BEGIN pkg_seguridad_admin.p_revocar_rol_de_usuario(:userId, :codigoRol); END;`,
-        { userId, codigoRol },
-        { autoCommit: true }
+        `BEGIN pkg_seguridad_admin.p_revocar_rol_de_usuario(:userId, :idRol); END;`,
+        { userId, idRol },
+        { autoCommit: true },
       );
     } finally {
       await connection.close();
@@ -1606,8 +2103,8 @@ export class NgacAdminService {
   /**
    * @function    getUsuarioVinculos
    * @description Obtiene los IDs de las entidades y unidades asociadas a un usuario específico.
-   * @param {number} userId - ID del usuario.
-   * @returns {Promise<{ entidadIds: number[]; unidadIds: number[] }>} Listas de IDs de entidades y unidades.
+   * @param       {number} userId - ID del usuario.
+   * @returns     {Promise<{ entidadIds: number[]; unidadIds: number[] }>} Listas de IDs de entidades y unidades.
    */
   static async getUsuarioVinculos(
     userId: number,
@@ -1618,9 +2115,9 @@ export class NgacAdminService {
         `BEGIN :cursor := pkg_safi_admin.fn_get_entidades_usuario(:userId); END;`,
         {
           userId,
-          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
         },
-        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const entCursor = (entResult.outBinds as any).cursor;
       const entRows = await entCursor.getRows(100);
@@ -1630,9 +2127,9 @@ export class NgacAdminService {
         `BEGIN :cursor := pkg_safi_admin.fn_get_unidades_usuario(:userId); END;`,
         {
           userId,
-          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
         },
-        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const uniCursor = (uniResult.outBinds as any).cursor;
       const uniRows = await uniCursor.getRows(100);
@@ -1650,8 +2147,8 @@ export class NgacAdminService {
   /**
    * @function    getUnidadesDeEntidad
    * @description Obtiene la lista de unidades organizacionales vinculadas a una entidad específica.
-   * @param {number} entidadId - ID de la entidad.
-   * @returns {Promise<any[]>} Lista de unidades vinculadas.
+   * @param       {number} entidadId - ID de la entidad.
+   * @returns     {Promise<any[]>} Lista de unidades vinculadas.
    */
   static async getUnidadesDeEntidad(entidadId: number): Promise<any[]> {
     const connection = await getDbConnection();
@@ -1660,9 +2157,9 @@ export class NgacAdminService {
         `BEGIN :cursor := pkg_safi_admin.fn_get_unidades_de_entidad(:entidadId); END;`,
         {
           entidadId,
-          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
         },
-        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const cursor = (result.outBinds as any).cursor;
       const rows = await cursor.getRows(100);
@@ -1683,7 +2180,7 @@ export class NgacAdminService {
   /**
    * @function    getUnidadEntidadVinculos
    * @description Obtiene todos los vínculos de relación existentes entre unidades y entidades.
-   * @returns {Promise<any[]>} Lista de vínculos unidad-entidad.
+   * @returns     {Promise<any[]>} Lista de vínculos unidad-entidad.
    */
   static async getUnidadEntidadVinculos(): Promise<any[]> {
     const connection = await getDbConnection();
@@ -1691,9 +2188,9 @@ export class NgacAdminService {
       const result = await connection.execute(
         `BEGIN :cursor := pkg_safi_admin.fn_get_unidad_entidad_vinculos(); END;`,
         {
-          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+          cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT },
         },
-        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        { outFormat: oracledb.OUT_FORMAT_OBJECT },
       );
       const cursor = (result.outBinds as any).cursor;
       const rows = await cursor.getRows(100);
@@ -1701,7 +2198,8 @@ export class NgacAdminService {
 
       return rows.map((row: any) => ({
         id_unidad: row.ID_UNIDAD !== undefined ? row.ID_UNIDAD : row.id_unidad,
-        id_entidad: row.ID_ENTIDAD !== undefined ? row.ID_ENTIDAD : row.id_entidad,
+        id_entidad:
+          row.ID_ENTIDAD !== undefined ? row.ID_ENTIDAD : row.id_entidad,
       }));
     } finally {
       await connection.close();
@@ -1719,8 +2217,8 @@ export class NgacAdminService {
   /**
    * @function    resolveNodeId
    * @description Resuelve el identificador de un nodo, obteniendo su ID numérico a partir de su código técnico si es necesario.
-   * @param {string | number} identifier - Código técnico o ID numérico del nodo.
-   * @returns {Promise<number>} ID numérico del nodo resuelto.
+   * @param       {string | number} identifier - Código técnico o ID numérico del nodo.
+   * @returns     {Promise<number>} ID numérico del nodo resuelto.
    */
   private static async resolveNodeId(
     identifier: string | number,
@@ -1735,10 +2233,254 @@ export class NgacAdminService {
         `BEGIN :id := pkg_seguridad_admin.fn_resolve_node_id(:code); END;`,
         {
           code: String(identifier).trim().toUpperCase(),
-          id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
-        }
+          id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+        },
       );
       return (result.outBinds as any).id || 0;
+    } finally {
+      await connection.close();
+    }
+  }
+
+  private static async resolveNodeCode(
+    identifier: string | number,
+  ): Promise<string> {
+    if (!identifier) return "";
+
+    const num = Number(identifier);
+    if (isNaN(num)) {
+      return String(identifier).trim().toUpperCase();
+    }
+
+    const connection = await getDbConnection();
+    try {
+      const result = await connection.execute(
+        `BEGIN :code := pkg_seguridad_admin.fn_resolve_node_code(:id); END;`,
+        {
+          id: num,
+          code: { type: oracledb.STRING, dir: oracledb.BIND_OUT },
+        },
+      );
+
+      return String((result.outBinds as any).code || "")
+        .trim()
+        .toUpperCase();
+    } finally {
+      await connection.close();
+    }
+  }
+
+  private static async resolveTypeId(
+    identifier: string | number,
+  ): Promise<number> {
+    if (!identifier) return 0;
+
+    const num = Number(identifier);
+    if (!isNaN(num)) return num;
+
+    const connection = await getDbConnection();
+    try {
+      const result = await connection.execute(
+        `BEGIN :id := pkg_seguridad_admin.fn_resolve_tipo_nodo_id(:codigo); END;`,
+        {
+          codigo: String(identifier).trim().toUpperCase(),
+          id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+        },
+      );
+      const id = (result.outBinds as any).id || 0;
+      if (!id) {
+        throw new Error(`Tipo de nodo inexistente: ${identifier}`);
+      }
+      return id;
+    } finally {
+      await connection.close();
+    }
+  }
+
+  private static async resolveOperationId(
+    identifier: string | number,
+  ): Promise<number> {
+    if (!identifier) return 0;
+
+    const num = Number(identifier);
+    if (!isNaN(num)) return num;
+
+    const connection = await getDbConnection();
+    try {
+      const result = await connection.execute(
+        `BEGIN :id := pkg_seguridad_admin.fn_resolve_operacion_id(:nombre); END;`,
+        {
+          nombre: String(identifier).trim().toUpperCase(),
+          id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT },
+        },
+      );
+      const id = (result.outBinds as any).id || 0;
+      if (!id) {
+        throw new Error(`Operacion inexistente: ${identifier}`);
+      }
+      return id;
+    } finally {
+      await connection.close();
+    }
+  }
+
+  // --- SAFI MODULOS METHODS ---
+  static async getSafiModulos(): Promise<SafiModulo[]> {
+    const connection = await getDbConnection();
+    try {
+      const res = await connection.execute(
+        `SELECT id_modulo, codigo, nombre, descripcion, activo 
+         FROM safi_modulos 
+         WHERE activo = 'S' 
+         ORDER BY nombre`,
+        [],
+        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+      );
+      const modulos = (res.rows || []) as any[];
+
+      for (let mod of modulos) {
+        const nodesRes = await connection.execute(
+          `SELECT n.id_nodo, n.codigo_tecnico, n.etiqueta, tn.codigo_tipo as tipo_nodo,
+                  n.url_ruta, n.slug, n.icono, n.descripcion, n.orden_visual, n.activo
+           FROM safi_modulo_nodos smn 
+           JOIN acc_nodos n ON smn.id_nodo = n.id_nodo 
+           JOIN acc_tipos_nodo tn ON n.id_tipo_nodo = tn.id_tipo_nodo 
+           WHERE smn.id_modulo = :id_modulo 
+             AND smn.activo = 'S' 
+             AND n.activo = 'S'`,
+          { id_modulo: mod.ID_MODULO || mod.id_modulo },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+        mod.nodos = (nodesRes.rows || []).map((row: any) => ({
+          id_nodo: row.ID_NODO !== undefined ? row.ID_NODO : row.id_nodo,
+          codigo_tecnico: row.CODIGO_TECNICO !== undefined ? row.CODIGO_TECNICO : row.codigo_tecnico,
+          etiqueta: row.ETIQUETA !== undefined ? row.ETIQUETA : row.etiqueta,
+          tipo_nodo: row.TIPO_NODO !== undefined ? row.TIPO_NODO : row.tipo_nodo,
+          url_ruta: row.URL_RUTA !== undefined ? row.URL_RUTA : row.url_ruta,
+          slug: row.SLUG !== undefined ? row.SLUG : row.slug,
+          icono: row.ICONO !== undefined ? row.ICONO : row.icono,
+          descripcion: row.DESCRIPCION !== undefined ? row.DESCRIPCION : row.descripcion,
+          orden_visual: row.ORDEN_VISUAL !== undefined ? row.ORDEN_VISUAL : row.orden_visual,
+          activo: row.ACTIVO !== undefined ? row.ACTIVO : row.activo,
+        }));
+      }
+
+      return modulos.map((mod: any) => ({
+        id_modulo: mod.ID_MODULO !== undefined ? mod.ID_MODULO : mod.id_modulo,
+        codigo: mod.CODIGO !== undefined ? mod.CODIGO : mod.codigo,
+        nombre: mod.NOMBRE !== undefined ? mod.NOMBRE : mod.nombre,
+        descripcion: mod.DESCRIPCION !== undefined ? mod.DESCRIPCION : mod.descripcion,
+        activo: mod.ACTIVO !== undefined ? mod.ACTIVO : mod.activo,
+        nodos: mod.nodos,
+      }));
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async upsertSafiModulo(dto: SafiModulo): Promise<void> {
+    const connection = await getDbConnection();
+    try {
+      if (dto.id_modulo) {
+        await connection.execute(
+          `UPDATE safi_modulos 
+           SET codigo = :codigo, nombre = :nombre, descripcion = :descripcion, activo = :activo,
+               fecha_modificacion = SYSDATE, modificado_por = USER 
+           WHERE id_modulo = :id_modulo`,
+          {
+            id_modulo: dto.id_modulo,
+            codigo: dto.codigo.trim().toUpperCase(),
+            nombre: dto.nombre,
+            descripcion: dto.descripcion || null,
+            activo: dto.activo || 'S',
+          }
+        );
+      } else {
+        await connection.execute(
+          `INSERT INTO safi_modulos (codigo, nombre, descripcion, activo) 
+           VALUES (:codigo, :nombre, :descripcion, :activo)`,
+          {
+            codigo: dto.codigo.trim().toUpperCase(),
+            nombre: dto.nombre,
+            descripcion: dto.descripcion || null,
+            activo: dto.activo || 'S',
+          }
+        );
+      }
+      await connection.commit();
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async deleteSafiModulo(idModulo: number): Promise<void> {
+    const connection = await getDbConnection();
+    try {
+      await connection.execute(
+        `UPDATE safi_modulos 
+         SET activo = 'N', fecha_eliminacion = SYSDATE, eliminado_por = USER 
+         WHERE id_modulo = :id_modulo`,
+        { id_modulo: idModulo }
+      );
+      await connection.commit();
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async vincularModuloNodo(idModulo: number, idNodo: number): Promise<void> {
+    const connection = await getDbConnection();
+    try {
+      // Validar que el nodo sea de tipo OBJETO o OBJ_ATTR y que sea nodo raíz (sin padres de tipo OBJETO o OBJ_ATTR)
+      const checkResult = await connection.execute(
+        `SELECT 1
+         FROM acc_nodos n
+         JOIN acc_tipos_nodo tn ON n.id_tipo_nodo = tn.id_tipo_nodo
+         WHERE n.id_nodo = :idNodo
+           AND tn.codigo_tipo IN ('OBJ_ATTR', 'OBJETO')
+           AND n.activo = 'S'
+           AND NOT EXISTS (
+             SELECT 1 
+             FROM acc_asignaciones a
+             JOIN acc_nodos p ON a.id_padre = p.id_nodo
+             JOIN acc_tipos_nodo tp ON p.id_tipo_nodo = tp.id_tipo_nodo
+             WHERE a.id_hijo = n.id_nodo
+               AND a.activo = 'S'
+               AND tp.codigo_tipo IN ('OBJ_ATTR', 'OBJETO')
+           )`,
+        { idNodo }
+      );
+
+      if (!checkResult.rows || checkResult.rows.length === 0) {
+        throw new Error("El nodo seleccionado no es un nodo raíz válido de tipo OBJETO o OBJ_ATTR.");
+      }
+
+      await connection.execute(
+        `MERGE INTO safi_modulo_nodos dest
+         USING (SELECT :idModulo AS id_modulo, :idNodo AS id_nodo FROM DUAL) src
+         ON (dest.id_modulo = src.id_modulo AND dest.id_nodo = src.id_nodo)
+         WHEN MATCHED THEN
+           UPDATE SET dest.activo = 'S', dest.fecha_modificacion = SYSDATE, dest.modificado_por = USER
+         WHEN NOT MATCHED THEN
+           INSERT (id_modulo, id_nodo, activo) VALUES (src.id_modulo, src.id_nodo, 'S')`,
+        { idModulo, idNodo }
+      );
+      await connection.commit();
+    } finally {
+      await connection.close();
+    }
+  }
+
+  static async desvincularModuloNodo(idModulo: number, idNodo: number): Promise<void> {
+    const connection = await getDbConnection();
+    try {
+      await connection.execute(
+        `UPDATE safi_modulo_nodos 
+         SET activo = 'N', fecha_modificacion = SYSDATE, modificado_por = USER 
+         WHERE id_modulo = :idModulo AND id_nodo = :idNodo`,
+        { idModulo, idNodo }
+      );
+      await connection.commit();
     } finally {
       await connection.close();
     }

@@ -11,7 +11,14 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-diseno',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, MatIconModule, CommonModule, BarraLateralComponent, FormsModule],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatIconModule,
+    CommonModule,
+    BarraLateralComponent,
+    FormsModule,
+  ],
   templateUrl: './diseno.component.html',
 })
 export class DisenoComponent {
@@ -24,7 +31,7 @@ export class DisenoComponent {
 
   contexts = [
     { label: 'Portal Corporativo', policy: 'POLICY_MENU', appId: 'SAFI_APP' },
-    { label: 'Portal Hospital', policy: 'POLICY_HOSP', appId: 'HOSP_APP' },
+    { label: 'Portal Hospital', policy: 'POLITICA_HOSPITAL', appId: 'PRESUPUESTO_HOSP' },
     { label: 'Portal Finanzas', policy: 'POLICY_FIN', appId: 'FIN_APP' },
   ];
 
@@ -42,7 +49,9 @@ export class DisenoComponent {
 
     // Sincronizar el dropdown con el estado inicial
     const active = this.contextStateSvc.getContext();
-    const idx = this.contexts.findIndex(c => c.policy === active.politicaActiva && c.appId === active.appIdActiva);
+    const idx = this.contexts.findIndex(
+      (c) => c.policy === active.politicaActiva && c.appId === active.appIdActiva,
+    );
     if (idx !== -1) {
       this.selectedContextIndex = idx;
     }
@@ -52,12 +61,56 @@ export class DisenoComponent {
     const numericIndex = Number(index);
     this.selectedContextIndex = numericIndex;
     const ctx = this.contexts[numericIndex];
-    
+
     // Actualizar estado del contexto
     this.contextStateSvc.setContext(ctx.policy, ctx.appId);
-    
-    // Recargar menú
-    this.accesosSvc.recargarMenu();
+
+    const currentSimulation = this.accesosSvc.getContextoSimulacion();
+    this.accesosSvc.getModulosPorPoliticas([ctx.policy]).subscribe({
+      next: (modules) => {
+        const allowedModules = Array.from(
+          new Set(
+            (modules || [])
+              .map((moduleCode) =>
+                String(moduleCode || '')
+                  .trim()
+                  .toUpperCase(),
+              )
+              .filter((moduleCode) => !!moduleCode),
+          ),
+        );
+
+        const nextSimulation = {
+          ...currentSimulation,
+          sujeto: {
+            usuario_id:
+              currentSimulation?.sujeto?.usuario_id || this.contextStateSvc.getContext().usuarioId,
+            roles: currentSimulation?.sujeto?.roles ||
+              this.contextStateSvc.getContext().roles || ['ROL_DEV'],
+            ...(currentSimulation?.sujeto?.division
+              ? { division: currentSimulation.sujeto.division }
+              : {}),
+          },
+          contexto: {
+            politicas: [ctx.policy],
+          },
+          solicitud: {
+            ...currentSimulation?.solicitud,
+            app_id: ctx.appId,
+            modulos: allowedModules.length > 0 ? allowedModules : [ctx.appId],
+          },
+          atributos: currentSimulation?.atributos || [],
+        };
+
+        console.info('[Diseno] Contexto sincronizado para sidebar', nextSimulation);
+        this.accesosSvc.setContextoSimulacion(nextSimulation);
+        this.accesosSvc.recargarMenu();
+      },
+      error: (err) => {
+        console.error('[Diseno] Error resolviendo módulos por política', err);
+        this.accesosSvc.recargarMenu();
+      },
+    });
   }
 
   private buildBreadcrumbs(

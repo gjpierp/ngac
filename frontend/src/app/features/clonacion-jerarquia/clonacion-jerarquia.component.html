@@ -1,0 +1,234 @@
+<div class="flex flex-col h-[calc(100vh-120px)] animate-in fade-in duration-500 font-sans gap-3">
+  <!-- Encabezado -->
+  <div class="flex items-start justify-between gap-3">
+    <div>
+      <h1 class="text-xl font-black text-slate-800 tracking-tight">Clonación del Árbol</h1>
+      <p class="text-[10px] text-slate-500 font-medium">
+        Selecciona política y raíces para clonar una rama entre políticas.
+      </p>
+    </div>
+    <button
+      (click)="goBack()"
+      class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 text-[9px] font-black uppercase tracking-widest hover:border-slate-300 transition-colors"
+    >
+      <mat-icon class="!text-sm !w-4 !h-4">arrow_back</mat-icon>
+      Volver a jerarquía
+    </button>
+  </div>
+
+  <!-- CARD 1: Políticas de Origen -->
+  <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-4">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
+        <mat-icon class="text-emerald-600 !text-lg">library_books</mat-icon>
+      </div>
+      <div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0">
+          Políticas de Origen
+        </p>
+        <p class="text-[9px] text-slate-400 font-semibold mt-0">
+          Selecciona la política de la que quieres clonar.
+        </p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+      <button
+        *ngFor="let pol of allPolicies()"
+        (click)="selectCloneSource(pol.codigo_tecnico)"
+        [class.bg-emerald-600]="cloneSourcePolicyCode() === pol.codigo_tecnico"
+        [class.text-white]="cloneSourcePolicyCode() === pol.codigo_tecnico"
+        [class.border-emerald-600]="cloneSourcePolicyCode() === pol.codigo_tecnico"
+        [class.bg-white]="cloneSourcePolicyCode() !== pol.codigo_tecnico"
+        [class.text-slate-700]="cloneSourcePolicyCode() !== pol.codigo_tecnico"
+        [class.border-slate-200]="cloneSourcePolicyCode() !== pol.codigo_tecnico"
+        class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+      >
+        <mat-icon
+          class="!text-sm !w-4 !h-4 shrink-0"
+          [class.text-white]="cloneSourcePolicyCode() === pol.codigo_tecnico"
+          [class.text-emerald-400]="cloneSourcePolicyCode() !== pol.codigo_tecnico"
+        >
+          library_books
+        </mat-icon>
+        <div class="flex flex-col min-w-0">
+          <span class="text-[10px] font-black truncate leading-tight">
+            {{ pol.etiqueta || pol.codigo_tecnico }}
+          </span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- CARD 2: Políticas de Destino -->
+  <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-4">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+        <mat-icon class="text-indigo-600 !text-lg">shield</mat-icon>
+      </div>
+      <div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0">
+          Políticas de Destino
+        </p>
+        <p class="text-[9px] text-slate-400 font-semibold mt-0">
+          Selecciona la política destino para clonar la rama.
+        </p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+      <button
+        *ngFor="let pol of allPolicies()"
+        (click)="selectPolicy(pol.codigo_tecnico)"
+        [class.bg-indigo-600]="selectedPolicyCode() === pol.codigo_tecnico"
+        [class.text-white]="selectedPolicyCode() === pol.codigo_tecnico"
+        [class.border-indigo-600]="selectedPolicyCode() === pol.codigo_tecnico"
+        [class.bg-white]="selectedPolicyCode() !== pol.codigo_tecnico"
+        [class.text-slate-700]="selectedPolicyCode() !== pol.codigo_tecnico"
+        [class.border-slate-200]="selectedPolicyCode() !== pol.codigo_tecnico"
+        class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+      >
+        <mat-icon
+          class="!text-sm !w-4 !h-4 shrink-0"
+          [class.text-white]="selectedPolicyCode() === pol.codigo_tecnico"
+          [class.text-indigo-400]="selectedPolicyCode() !== pol.codigo_tecnico"
+        >
+          shield
+        </mat-icon>
+        <div class="flex flex-col min-w-0">
+          <span class="text-[10px] font-black truncate leading-tight">
+            {{ pol.etiqueta || pol.codigo_tecnico }}
+          </span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- CARD 3: Carpetas Asociadas a Origen y Destino -->
+  <ng-container *ngIf="cloneSourcePolicyCode() || selectedPolicyCode()">
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Lista de Carpetas de Origen -->
+        <div *ngIf="cloneSourcePolicyCode()">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <mat-icon class="text-emerald-600 !text-lg">folder</mat-icon>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0">
+                Carpetas Raíz de Origen
+              </p>
+              <p class="text-[9px] text-slate-400 font-semibold mt-0">
+                Selecciona la carpeta a clonar.
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-2">
+            <button
+              *ngFor="let carpeta of sourceFolders()"
+              (click)="selectCloneRoot(carpeta.id)"
+              [class.bg-emerald-500]="cloneRootNodeCode() === carpeta.id"
+              [class.text-white]="cloneRootNodeCode() === carpeta.id"
+              [class.border-emerald-500]="cloneRootNodeCode() === carpeta.id"
+              [class.bg-white]="cloneRootNodeCode() !== carpeta.id"
+              [class.border-slate-200]="cloneRootNodeCode() !== carpeta.id"
+              class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+            >
+              <mat-icon
+                class="!text-sm !w-4 !h-4 shrink-0"
+                [class.text-white]="cloneRootNodeCode() === carpeta.id"
+                [class.text-emerald-500]="cloneRootNodeCode() !== carpeta.id"
+              >
+                folder
+              </mat-icon>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="text-[10px] font-black truncate leading-tight">{{
+                  carpeta.nombre
+                }}</span>
+                <span class="text-[8px] font-bold truncate leading-tight opacity-70"
+                  >ID: {{ carpeta.id }}</span
+                >
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de Carpetas de Destino -->
+        <div *ngIf="selectedPolicyCode()">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+              <mat-icon class="text-indigo-600 !text-lg">drive_file_move</mat-icon>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0">
+                Carpetas Raíz de Destino
+              </p>
+              <p class="text-[9px] text-slate-400 font-semibold mt-0">
+                Selecciona destino de clonación.
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-2">
+            <button
+              *ngFor="let carpeta of destinationFolders()"
+              (click)="selectCloneDestination(carpeta.id)"
+              [class.bg-indigo-500]="cloneDestinationRootCode() === carpeta.id"
+              [class.text-white]="cloneDestinationRootCode() === carpeta.id"
+              [class.border-indigo-500]="cloneDestinationRootCode() === carpeta.id"
+              [class.bg-white]="cloneDestinationRootCode() !== carpeta.id"
+              [class.border-slate-200]="cloneDestinationRootCode() !== carpeta.id"
+              class="flex items-center gap-2 px-3 py-2 rounded-xl border text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+            >
+              <mat-icon
+                class="!text-sm !w-4 !h-4 shrink-0"
+                [class.text-white]="cloneDestinationRootCode() === carpeta.id"
+                [class.text-indigo-500]="cloneDestinationRootCode() !== carpeta.id"
+              >
+                drive_file_move
+              </mat-icon>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="text-[10px] font-black truncate leading-tight">{{
+                  carpeta.nombre
+                }}</span>
+                <span class="text-[8px] font-bold truncate leading-tight opacity-70"
+                  >ID: {{ carpeta.id }}</span
+                >
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- CARD 4: Confirmación y Ejecución de Clonación -->
+  <div *ngIf="cloneRootNodeCode() && cloneDestinationRootCode()" class="bg-gradient-to-r from-emerald-500 to-teal-600 border border-emerald-500/20 rounded-2xl shadow-lg p-5 text-white animate-in slide-in-from-bottom duration-300">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-inner animate-pulse">
+          <mat-icon class="text-white !text-xl">content_copy</mat-icon>
+        </div>
+        <div>
+          <h3 class="text-xs font-black uppercase tracking-widest text-emerald-100">Confirmación de Clonación</h3>
+          <p class="text-[10px] text-emerald-50/90 font-medium">
+            Se duplicarán las carpetas padre y se reutilizarán las hojas del último eslabón de la rama.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          (click)="clearCloneSelection()"
+          class="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[9px] font-black uppercase tracking-widest hover:bg-white/20 transition-all duration-200"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="applyCloneSelection()"
+          class="px-6 py-2 rounded-xl bg-white text-emerald-700 text-[9px] font-black uppercase tracking-widest hover:bg-emerald-50 hover:scale-105 active:scale-95 transition-all duration-200 shadow-md flex items-center gap-2"
+        >
+          <mat-icon class="!text-sm !w-4 !h-4">play_arrow</mat-icon>
+          Iniciar Clonación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

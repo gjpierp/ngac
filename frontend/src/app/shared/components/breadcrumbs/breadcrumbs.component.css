@@ -1,0 +1,10 @@
+.breadcrumbs {
+  padding: 0.5rem 0;
+}
+.breadcrumbs button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+}

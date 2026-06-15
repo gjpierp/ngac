@@ -1,0 +1,25 @@
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+::ng-deep .custom-field-mini .mat-mdc-text-field-wrapper {
+  height: 38px !important;
+  background-color: #f8fafc !important;
+  border-radius: 12px !important;
+  padding: 0 10px !important;
+}
+::ng-deep .custom-field-mini .mat-mdc-form-field-flex {
+  height: 38px !important;
+  align-items: center !important;
+}
+::ng-deep .custom-field-mini .mat-mdc-form-field-infix {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  min-height: 38px !important;
+}
+::ng-deep .custom-field-mini .mat-mdc-form-field-label-wrapper {
+  top: -14px !important;
+}

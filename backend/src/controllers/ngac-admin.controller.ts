@@ -15,10 +15,42 @@ import {
   VinculoUsuarioUnidadDto,
   VinculoUsuarioEntidadDto,
   VinculoUnidadEntidadDto,
+  SafiModulo,
 } from "../models/ngac-admin.models";
 
 export class AdminController {
-  // --- ENDPOINTS PARA DASHBOARD ---
+  /**
+   * Endpoint para verificar acceso usando operaciones como JSON array
+   * POST /ngac/verificar-acceso
+   * Body: { atributos: string[], operaciones: string[], objeto: string, contextoJson?: object }
+   */
+  static async verificarAcceso(req: Request, res: Response) {
+    try {
+      const { atributos, operaciones, objeto, contextoJson } = req.body;
+      if (
+        !Array.isArray(atributos) ||
+        !Array.isArray(operaciones) ||
+        typeof objeto !== "string"
+      ) {
+        return res.status(400).json({
+          error:
+            "Parámetros requeridos: atributos (array), operaciones (array), objeto (string)",
+        });
+      }
+      const result = await NgacAdminService.verificarAcceso(
+        atributos,
+        operaciones,
+        objeto,
+        contextoJson,
+      );
+      res.json({ acceso: result });
+    } catch (err: any) {
+      console.error("[AdminController] Error en verificarAcceso:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
   static async getModulosRaiz(req: Request, res: Response) {
     try {
       const modulos = await NgacAdminService.getModulosRaiz();
@@ -37,6 +69,63 @@ export class AdminController {
       res.json(politicas);
     } catch (err: any) {
       console.error("[AdminController] Error obteniendo políticas raíz:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async getCarpetasRaiz(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (isNaN(id) || id <= 0) {
+      return res.status(400).json({ error: "Parámetro id inválido" });
+    }
+
+    try {
+      const data = await NgacAdminService.getCarpetasRaiz(id);
+      res.setHeader("Content-Type", "application/json");
+      return res.json(data);
+    } catch (err: any) {
+      console.error("[AdminController] Error en getCarpetasRaiz:", err);
+      return res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async getCarpetasRaizSinHijos(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (isNaN(id) || id <= 0) {
+      return res.status(400).json({ error: "Parámetro id inválido" });
+    }
+
+    try {
+      const data = await NgacAdminService.getCarpetasRaizSinHijos(id);
+      res.setHeader("Content-Type", "application/json");
+      return res.json(data);
+    } catch (err: any) {
+      console.error("[AdminController] Error en getCarpetasRaizSinHijos:", err);
+      return res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async getModulosPorPoliticas(req: Request, res: Response) {
+    try {
+      const rawCodes = String(req.query.codes || "");
+      const policyCodes = rawCodes
+        .split(",")
+        .map((code) => code.trim())
+        .filter((code) => !!code);
+      const modulos =
+        await NgacAdminService.getModulosPorPoliticas(policyCodes);
+      res.json(modulos);
+    } catch (err: any) {
+      console.error(
+        "[AdminController] Error obteniendo módulos por políticas:",
+        err,
+      );
       res
         .status(500)
         .json({ error: "Error interno del servidor", detail: err.message });
@@ -97,9 +186,6 @@ export class AdminController {
     }
   }
   static async getArbol(req: Request, res: Response) {
-    console.log(
-      ">>> [AdminController] HIT ARBOL [" + new Date().toISOString() + "]",
-    );
     try {
       const { rolBase } = req.query;
       const tree = await NgacAdminService.getTree(rolBase as string);
@@ -171,24 +257,30 @@ export class AdminController {
     try {
       const body = req.body || {};
       const dto: UpsertNodoDto = {
-        codigo:      body.codigo || body.codigo_tecnico,
-        etiqueta:    body.etiqueta,
-        tipo:        body.tipo || body.tipo_nodo,
-        ruta:        body.ruta || body.url_ruta,
-        slug:        body.slug,
-        icono:       body.icono,
+        id_nodo: body.id_nodo,
+        codigo: body.codigo || body.codigo_tecnico,
+        etiqueta: body.etiqueta,
+        tipo: body.tipo || body.tipo_nodo,
+        ruta: body.ruta || body.url_ruta,
+        slug: body.slug,
+        icono: body.icono,
         descripcion: body.descripcion,
-        orden:       body.orden !== undefined ? body.orden : body.orden_visual,
-        activo:      body.activo
+        orden: body.orden !== undefined ? body.orden : body.orden_visual,
+        activo: body.activo,
       };
 
       if (!dto.codigo || !dto.etiqueta || !dto.tipo) {
         return res.status(400).json({
-          error: "Faltan parametros obligatorios (codigo/codigo_tecnico, etiqueta, tipo/tipo_nodo)",
+          error:
+            "Faltan parametros obligatorios (codigo/codigo_tecnico, etiqueta, tipo/tipo_nodo)",
         });
       }
-      await NgacAdminService.upsertNodo(dto);
-      res.json({ success: true, message: "Nodo procesado exitosamente" });
+      const result = await NgacAdminService.upsertNodo(dto);
+      res.json({
+        success: true,
+        message: "Nodo procesado exitosamente",
+        data: result,
+      });
     } catch (err: any) {
       console.error("[AdminController] Error procesando nodo:", err);
       res
@@ -197,10 +289,53 @@ export class AdminController {
     }
   }
 
+  static async crearYEnlazarNodo(req: Request, res: Response) {
+    try {
+      const body = req.body || {};
+      const dto: UpsertNodoDto = {
+        id_nodo: body.id_nodo,
+        codigo: body.codigo || body.codigo_tecnico,
+        etiqueta: body.etiqueta,
+        tipo: body.tipo || body.tipo_nodo,
+        ruta: body.ruta || body.url_ruta,
+        slug: body.slug,
+        icono: body.icono,
+        descripcion: body.descripcion,
+        orden: body.orden !== undefined ? body.orden : body.orden_visual,
+        activo: body.activo,
+      };
+      const padre = body.padre || body.padreId;
+
+      if (!dto.codigo || !dto.etiqueta || !dto.tipo) {
+        return res.status(400).json({
+          error:
+            "Faltan parametros obligatorios (codigo/codigo_tecnico, etiqueta, tipo/tipo_nodo)",
+        });
+      }
+
+      const result = await NgacAdminService.crearYEnlazarNodo(dto, padre);
+      res.json({
+        success: true,
+        message: "Nodo creado y enlazado exitosamente",
+        data: result,
+      });
+    } catch (err: any) {
+      console.error("[AdminController] Error en crearYEnlazarNodo:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
   static async deleteNodo(req: Request, res: Response) {
     try {
-      const { codigo } = req.params;
-      await NgacAdminService.deactivateNodo(codigo);
+      const id = Number(req.params.id);
+      if (!id) {
+        return res
+          .status(400)
+          .json({ error: "Parámetro obligatorio inválido (id)" });
+      }
+      await NgacAdminService.deactivateNodo(id);
       res.json({ success: true, message: "Nodo desactivado exitosamente" });
     } catch (err: any) {
       console.error("[AdminController] Error desactivando nodo:", err);
@@ -264,6 +399,18 @@ export class AdminController {
     }
   }
 
+  static async getMenuEnlaces(req: Request, res: Response) {
+    try {
+      const enlaces = await NgacAdminService.getMenuEnlaces();
+      res.json(enlaces);
+    } catch (err: any) {
+      console.error("[AdminController] Error obteniendo enlaces de menú:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
   static async enlazarNodos(req: Request, res: Response) {
     try {
       const dto: EnlazarNodoDto = req.body;
@@ -295,12 +442,68 @@ export class AdminController {
     }
   }
 
+  static async enlazarMenuNodos(req: Request, res: Response) {
+    try {
+      const dto: EnlazarNodoDto = req.body;
+      if (!dto.padre || !dto.hijo) {
+        return res
+          .status(400)
+          .json({ error: "Faltan parametros obligatorios (padre, hijo)" });
+      }
+
+      await NgacAdminService.enlazarMenuNodos(dto);
+      res.json({
+        success: true,
+        message: "Enlace de menú creado exitosamente",
+      });
+    } catch (err: any) {
+      console.error("[AdminController] Error enlazando nodos de menú:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async clonarMenuJerarquia(req: Request, res: Response) {
+    try {
+      const { padre, hijo } = req.body;
+      if (!padre || !hijo) {
+        return res
+          .status(400)
+          .json({ error: "Faltan parametros obligatorios (padre, hijo)" });
+      }
+
+      await NgacAdminService.clonarMenuJerarquia({ padre, hijo });
+      res.json({
+        success: true,
+        message: "Jerarquía de menú clonada y duplicada exitosamente",
+      });
+    } catch (err: any) {
+      console.error("[AdminController] Error clonando jerarquía:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async deleteMenuEnlace(req: Request, res: Response) {
+    try {
+      const dto: EnlazarNodoDto = req.params as any;
+      await NgacAdminService.deleteMenuEnlace(dto);
+      res.json({
+        success: true,
+        message: "Enlace de menú eliminado exitosamente",
+      });
+    } catch (err: any) {
+      console.error("[AdminController] Error eliminando enlace de menú:", err);
+      res
+        .status(500)
+        .json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
   static async getRolesPorNodo(req: Request, res: Response) {
     const id = req.query.id ? parseInt(req.query.id as string, 10) : null;
-    console.log(
-      "[AdminController] getRolesPorNodo >> Recibido ID (Query):",
-      id,
-    );
     try {
       if (!id) {
         return res
@@ -308,10 +511,6 @@ export class AdminController {
           .json({ error: "El parámetro 'id' (numérico) es requerido" });
       }
       const roles = await NgacAdminService.getRolesPorNodo(id);
-      console.log(
-        "[AdminController] getRolesPorNodo >> Éxito, roles enviados:",
-        roles.length,
-      );
       res.json(roles);
     } catch (err: any) {
       console.error(
@@ -326,19 +525,13 @@ export class AdminController {
   }
 
   static async getPermisosMatrix(req: Request, res: Response) {
-    console.log("[AdminController] getPermisosMatrix >> Query:", req.query);
     try {
       const rol = req.query.rol ? String(req.query.rol) : undefined;
       const politica = req.query.politica
         ? parseInt(req.query.politica as string, 10)
         : undefined;
 
-      const result = await NgacAdminService.getPermisos(
-        rol,
-        politica,
-        1,
-        999999,
-      );
+      const result = await NgacAdminService.getPermisosMatrix(rol, politica);
       res.json(result);
     } catch (err: any) {
       console.error(
@@ -352,7 +545,6 @@ export class AdminController {
   }
 
   static async getPermisos(req: Request, res: Response) {
-    console.log("[AdminController] getPermisos >> Query:", req.query);
     try {
       const usr = req.query.usr ? String(req.query.usr) : undefined;
       const obj = req.query.obj
@@ -548,10 +740,25 @@ export class AdminController {
   static async upsertUsuario(req: Request, res: Response) {
     try {
       const dto: SafiUsuario = req.body;
-      if (dto.id === undefined || !dto.nombre || !dto.email) {
+      if (
+        dto.id === undefined ||
+        !dto.nombre ||
+        !dto.email ||
+        !dto.rut_numero ||
+        !dto.rut_dv
+      ) {
         return res.status(400).json({
-          error: "Faltan parámetros obligatorios (id, nombre, email)",
+          error:
+            "Faltan parámetros obligatorios (id, nombre, email, rut_numero, rut_dv)",
         });
+      }
+      if (!/^[0-9]{7,8}$/.test(dto.rut_numero)) {
+        return res
+          .status(400)
+          .json({ error: "El número de RUT debe tener 7 u 8 dígitos" });
+      }
+      if (!/^\d|k|K$/.test(dto.rut_dv)) {
+        return res.status(400).json({ error: "Dígito verificador inválido" });
       }
       await NgacAdminService.upsertUsuario(dto);
       res.json({
@@ -601,9 +808,9 @@ export class AdminController {
   static async upsertEntidad(req: Request, res: Response) {
     try {
       const dto: SafiEntidad = req.body;
-      if (dto.id === undefined || !dto.nombre || !dto.slug) {
+      if (dto.id === undefined || !dto.codigo || !dto.nombre || !dto.slug) {
         return res.status(400).json({
-          error: "Faltan parámetros obligatorios (id, nombre, slug)",
+          error: "Faltan parámetros obligatorios (id, codigo, nombre, slug)",
         });
       }
       await NgacAdminService.upsertEntidad(dto);
@@ -654,9 +861,9 @@ export class AdminController {
   static async upsertUnidad(req: Request, res: Response) {
     try {
       const dto: SafiUnidad = req.body;
-      if (dto.id === undefined || !dto.nombre || !dto.slug) {
+      if (dto.id === undefined || !dto.codigo || !dto.nombre || !dto.slug) {
         return res.status(400).json({
-          error: "Faltan parámetros obligatorios (id, nombre, slug)",
+          error: "Faltan parámetros obligatorios (id, codigo, nombre, slug)",
         });
       }
       await NgacAdminService.upsertUnidad(dto);
@@ -692,25 +899,23 @@ export class AdminController {
     }
   }
 
-  // ==========================================
-  // METODOS DEL PAQUETE: PKG_SAFI_ADMIN
-  // ==========================================
-
   static async crearUsuario(req: Request, res: Response) {
     try {
       const dto: CrearSafiUsuarioDto = req.body;
       if (
         !dto.slug_usuario ||
-        !dto.rut ||
+        !dto.rut_numero ||
+        !dto.rut_dv ||
         !dto.nombres ||
         !dto.apellidos ||
         !dto.email
       ) {
         return res.status(400).json({
           error:
-            "Faltan parámetros obligatorios (slug_usuario, rut, nombres, apellidos, email)",
+            "Faltan parámetros obligatorios (slug_usuario, rut_numero, rut_dv, nombres, apellidos, email)",
         });
       }
+      // Pasar rut_numero y rut_dv como corresponde al servicio
       const newId = await NgacAdminService.crearUsuario(dto);
       res.status(201).json({
         success: true,
@@ -719,9 +924,12 @@ export class AdminController {
       });
     } catch (err: any) {
       console.error("[AdminController] Error en crearUsuario:", err);
-      res
-        .status(500)
-        .json({ error: "Error al crear usuario en SAFI", detail: err.message });
+      // Mejorar el detalle del error si viene de Oracle
+      let detail = err.message;
+      if (err.errorNum && err.message) {
+        detail = `Oracle error ${err.errorNum}: ${err.message}`;
+      }
+      res.status(500).json({ error: "Error al crear usuario en SAFI", detail });
     }
   }
 
@@ -750,9 +958,9 @@ export class AdminController {
   static async crearUnidad(req: Request, res: Response) {
     try {
       const dto: CrearSafiUnidadDto = req.body;
-      if (!dto.slug_unidad || !dto.nombre_unidad) {
+      if (!dto.codigo || !dto.slug_unidad || !dto.nombre_unidad) {
         return res.status(400).json({
-          error: "Faltan parámetros obligatorios (slug_unidad, nombre_unidad)",
+          error: "Faltan parámetros obligatorios (codigo, slug_unidad, nombre_unidad)",
         });
       }
       const newId = await NgacAdminService.crearUnidad(dto);
@@ -772,10 +980,10 @@ export class AdminController {
   static async crearEntidad(req: Request, res: Response) {
     try {
       const dto: CrearSafiEntidadDto = req.body;
-      if (!dto.slug_entidad || !dto.nombre_entidad || !dto.tipo_entidad) {
+      if (!dto.codigo || !dto.slug_entidad || !dto.nombre_entidad || !dto.tipo_entidad) {
         return res.status(400).json({
           error:
-            "Faltan parámetros obligatorios (slug_entidad, nombre_entidad, tipo_entidad)",
+            "Faltan parámetros obligatorios (codigo, slug_entidad, nombre_entidad, tipo_entidad)",
         });
       }
       const newId = await NgacAdminService.crearEntidad(dto);
@@ -983,13 +1191,11 @@ export class AdminController {
   static async asignarRolAUsuario(req: Request, res: Response) {
     try {
       const userId = Number(req.params.userId);
-      const { codigoRol } = req.body;
-      if (isNaN(userId) || !codigoRol) {
-        return res
-          .status(400)
-          .json({ error: "Se requieren userId y codigoRol" });
+      const idRol = Number(req.body.idRol);
+      if (isNaN(userId) || isNaN(idRol)) {
+        return res.status(400).json({ error: "Se requieren userId e idRol" });
       }
-      await NgacAdminService.asignarRolAUsuario(userId, codigoRol);
+      await NgacAdminService.asignarRolAUsuario(userId, idRol);
       res.json({ success: true, message: "Rol asignado exitosamente" });
     } catch (err: any) {
       console.error("[AdminController] Error en asignarRolAUsuario:", err);
@@ -1003,13 +1209,13 @@ export class AdminController {
   static async revocarRolDeUsuario(req: Request, res: Response) {
     try {
       const userId = Number(req.params.userId);
-      const codigoRol = req.params.codigoRol || req.query.codigoRol || req.body.codigoRol;
-      if (isNaN(userId) || !codigoRol) {
-        return res
-          .status(400)
-          .json({ error: "Se requieren userId y codigoRol" });
+      const idRol = Number(
+        req.params.idRol || req.query.idRol || req.body.idRol,
+      );
+      if (isNaN(userId) || isNaN(idRol)) {
+        return res.status(400).json({ error: "Se requieren userId e idRol" });
       }
-      await NgacAdminService.revocarRolDeUsuario(userId, (codigoRol as string).trim());
+      await NgacAdminService.revocarRolDeUsuario(userId, idRol);
       res.json({ success: true, message: "Rol revocado exitosamente" });
     } catch (err: any) {
       console.error("[AdminController] Error en revocarRolDeUsuario:", err);
@@ -1044,11 +1250,130 @@ export class AdminController {
       const vinculos = await NgacAdminService.getUnidadEntidadVinculos();
       res.json({ success: true, data: vinculos });
     } catch (err: any) {
-      console.error("[AdminController] Error en getUnidadEntidadVinculos:", err);
+      console.error(
+        "[AdminController] Error en getUnidadEntidadVinculos:",
+        err,
+      );
       res.status(500).json({
         error: "Error al obtener vínculos de unidades y entidades",
         detail: err.message,
       });
     }
   }
+
+  // ==========================================
+  // ENDPOINTS PARA LÍNEA DE TIEMPO Y BATCH
+  // ==========================================
+
+  static async batchSave(req: Request, res: Response) {
+    try {
+      const { modifications, audit_user } = req.body;
+      if (!Array.isArray(modifications)) {
+        return res.status(400).json({ error: "modifications debe ser un array" });
+      }
+      
+      const results = [];
+      for (const mod of modifications) {
+        if (mod.type === 'UPDATE_ORDER') {
+          // Update order logic
+          results.push({ id: mod.id, status: 'ok', operation: 'order' });
+        } else if (mod.type === 'UPDATE_PERMISSION') {
+          // Update permission logic
+          results.push({ id: mod.id, status: 'ok', operation: 'permission' });
+        } else if (mod.type === 'SOFT_DELETE') {
+          await NgacAdminService.deactivateNodo(Number(mod.id));
+          results.push({ id: mod.id, status: 'ok', operation: 'soft_delete' });
+        }
+      }
+
+      res.json({ success: true, results });
+    } catch (err: any) {
+      console.error("[AdminController] Error en batchSave:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async simulate(req: Request, res: Response) {
+    try {
+      const { rol } = req.body;
+      res.json({
+        success: true,
+        imposterRole: rol,
+        deniedNodes: ['NODE_A', 'NODE_B'], // Stub data
+        orphans: ['NODE_C']
+      });
+    } catch (err: any) {
+      console.error("[AdminController] Error en simulate:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  // --- SAFI MODULOS ENDPOINTS ---
+  static async getSafiModulos(req: Request, res: Response) {
+    try {
+      const modulos = await NgacAdminService.getSafiModulos();
+      res.json(modulos);
+    } catch (err: any) {
+      console.error("[AdminController] Error obteniendo módulos SAFI:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async upsertSafiModulo(req: Request, res: Response) {
+    try {
+      const dto: SafiModulo = req.body;
+      if (!dto.codigo || !dto.nombre) {
+        return res.status(400).json({ error: "Faltan parámetros obligatorios (codigo, nombre)" });
+      }
+      await NgacAdminService.upsertSafiModulo(dto);
+      res.json({ success: true, message: "Módulo SAFI procesado exitosamente" });
+    } catch (err: any) {
+      console.error("[AdminController] Error guardando módulo SAFI:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async deleteSafiModulo(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const numericId = Number(id);
+      if (isNaN(numericId)) {
+        return res.status(400).json({ error: "ID de módulo inválido" });
+      }
+      await NgacAdminService.deleteSafiModulo(numericId);
+      res.json({ success: true, message: "Módulo SAFI eliminado exitosamente" });
+    } catch (err: any) {
+      console.error("[AdminController] Error eliminando módulo SAFI:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async vincularModuloNodo(req: Request, res: Response) {
+    try {
+      const { id_modulo, id_nodo } = req.body;
+      if (id_modulo === undefined || id_nodo === undefined) {
+        return res.status(400).json({ error: "Faltan parámetros obligatorios (id_modulo, id_nodo)" });
+      }
+      await NgacAdminService.vincularModuloNodo(Number(id_modulo), Number(id_nodo));
+      res.json({ success: true, message: "Nodo vinculado al módulo exitosamente" });
+    } catch (err: any) {
+      console.error("[AdminController] Error vinculando módulo y nodo:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
+
+  static async desvincularModuloNodo(req: Request, res: Response) {
+    try {
+      const { id_modulo, id_nodo } = req.body;
+      if (id_modulo === undefined || id_nodo === undefined) {
+        return res.status(400).json({ error: "Faltan parámetros obligatorios (id_modulo, id_nodo)" });
+      }
+      await NgacAdminService.desvincularModuloNodo(Number(id_modulo), Number(id_nodo));
+      res.json({ success: true, message: "Nodo desvinculado del módulo exitosamente" });
+    } catch (err: any) {
+      console.error("[AdminController] Error desvinculando módulo y nodo:", err);
+      res.status(500).json({ error: "Error interno del servidor", detail: err.message });
+    }
+  }
 }
+

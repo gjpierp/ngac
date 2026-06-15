@@ -1,6 +1,10 @@
 import { Component, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatrizPermisosComponent, MatrixRow, MatrixCell } from '../../shared/components/matriz-permisos/matriz-permisos.component';
+import {
+  MatrizPermisosComponent,
+  MatrixRow,
+  MatrixCell,
+} from '../../shared/components/matriz-permisos/matriz-permisos.component';
 import { AccesosService } from '../../core/services/accesos.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NGAC_OPERATIONS } from '../../core/models/ngac-admin.models';
@@ -10,23 +14,34 @@ import { NGAC_OPERATIONS } from '../../core/models/ngac-admin.models';
   standalone: true,
   imports: [CommonModule, MatrizPermisosComponent, MatSnackBarModule],
   template: `
-    <div class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div
+      class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
+    >
       <!-- CABECERA PRINCIPAL PREMIUM -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6"
+      >
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">
-              Matriz de <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Permisos</span>
+              Matriz de
+              <span
+                class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+                >Permisos</span
+              >
             </h1>
           </div>
           <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-            Visualización interactiva y asignación rápida de operaciones permitidas sobre objetos por cada rol
+            Visualización interactiva y asignación rápida de operaciones permitidas sobre objetos
+            por cada rol
           </p>
         </div>
       </div>
 
-      <div class="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden p-8">
+      <div
+        class="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden p-8"
+      >
         <app-matriz-permisos
           [columns]="columns()"
           [rows]="rows()"
@@ -49,8 +64,8 @@ export class PaginaMatrizPermisos implements OnInit {
   roles = signal<any[]>([]);
   politicas = signal<any[]>([]);
   operaciones = signal<string[]>([]);
-  selectedRole = signal('');
-  selectedPolicy = signal('');
+  selectedRole = signal<string | number>('');
+  selectedPolicy = signal<string | number>('');
 
   constructor(
     private accesosSvc: AccesosService,
@@ -155,7 +170,7 @@ export class PaginaMatrizPermisos implements OnInit {
     });
   }
 
-  onFilterChange(event: { role: string; policy: string }) {
+  onFilterChange(event: { role: string | number; policy: string | number }) {
     this.selectedRole.set(event.role);
     this.selectedPolicy.set(event.policy);
     this.loadMatrix();

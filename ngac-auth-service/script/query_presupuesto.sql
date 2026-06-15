@@ -1,0 +1,6 @@
+ALTER SESSION SET CURRENT_SCHEMA = NGAC_USER;
+SET LINESIZE 200;
+SELECT id_nodo, codigo_tecnico, etiqueta 
+FROM acc_nodos 
+WHERE codigo_tecnico IN ('PRESUPUESTO', 'PRESUPUESTO_HOSP');
+EXIT;

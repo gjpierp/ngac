@@ -11,6 +11,20 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
+      <div class="premium-select-container">
+        <mat-icon>policy</mat-icon>
+        <mat-form-field appearance="outline" class="w-full dense-form-field !mb-0 policy-select">
+          <mat-select
+            [ngModel]="selectedPolicy()" 
+            (ngModelChange)="onPolicyChange($event)"
+            panelClass="custom-select-panel"
+            disableOptionCentering
+          >
+            <mat-option value="ALL">Permisos Globales</mat-option>
+            <mat-option *ngFor="let p of politicas()" [value]="p.id_nodo">{{ p.etiqueta }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <button mat-stroked-button (click)="loadAssignments(role()!.codigo)" [disabled]="loading()" class="!rounded-full !px-4 !h-8 bg-white border-gray-100 shadow-sm group">
         <mat-icon [class.animate-spin]="loading()" class="group-hover:text-indigo-500 !text-sm">refresh</mat-icon>
         <span class="text-[9px] font-black text-gray-500 group-hover:text-indigo-600">Refrescar</span>
@@ -64,22 +78,25 @@
           </div>
 
           <!-- Barra de Acciones Masivas (Flotante en el Explorador) -->
-          <div *ngIf="selectedNodes.size > 0" 
-               class="absolute bottom-4 left-4 right-4 bg-indigo-900 text-white p-3 rounded-xl shadow-2xl flex items-center justify-between animate-in slide-in-from-bottom-4 duration-300 z-50">
+          <div *ngIf="selectedNodes().size > 0" 
+               class="absolute bottom-4 left-4 right-4 bg-white p-3 rounded-xl shadow-2xl border border-indigo-100 flex items-center justify-between animate-in slide-in-from-bottom-4 duration-300 z-50">
             <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center font-black text-[10px]">
-                {{ selectedNodes.size }}
-              </div>
-              <span class="text-[10px] font-bold uppercase tracking-tight">En Lote</span>
+              <span class="text-[10px] font-black text-indigo-700 uppercase tracking-widest flex items-center gap-1.5">
+                <mat-icon class="!text-[12px] !w-3 !h-3">check_circle</mat-icon>
+                Seleccionados: 
+                <span class="bg-indigo-600 text-white px-1.5 py-0.5 rounded-md">
+                  {{ selectedNodes().size }}
+                </span>
+              </span>
             </div>
             <div class="flex gap-1">
-              <button (click)="bulkVincular()" class="bg-indigo-500 hover:bg-indigo-400 px-3 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors">
+              <button (click)="bulkVincular()" class="bg-indigo-500 text-white hover:bg-indigo-400 px-3 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors">
                 <mat-icon class="!text-xs !w-3 !h-3">add_link</mat-icon> Vincular
               </button>
               <button (click)="bulkDesvincular()" class="bg-red-500/20 hover:bg-red-500/40 border border-red-500/50 px-3 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors">
                 <mat-icon class="!text-xs !w-3 !h-3">link_off</mat-icon> Quitar
               </button>
-              <button (click)="selectedNodes.clear()" class="text-white/40 hover:text-white ml-1">
+              <button mat-icon-button (click)="clearSelection()" class="text-gray-400 hover:text-red-500" matTooltip="Limpiar Selección">
                 <mat-icon class="!text-sm">close</mat-icon>
               </button>
             </div>
@@ -224,11 +241,11 @@
 
             <!-- Checkbox de Selección Múltiple -->
             <div (click)="toggleNodeSelection(n); $event.stopPropagation()" 
-                 class="w-3.5 h-3.5 rounded border flex items-center justify-center transition-all cursor-pointer z-20 mr-1"
-                 [class.bg-indigo-500]="selectedNodes.has(n.codigo_tecnico)"
-                 [class.border-indigo-500]="selectedNodes.has(n.codigo_tecnico)"
-                 [class.border-gray-300]="!selectedNodes.has(n.codigo_tecnico)">
-              <mat-icon *ngIf="selectedNodes.has(n.codigo_tecnico)" class="!text-white !text-[6px] !w-2 !h-2">check</mat-icon>
+                 class="absolute -left-[45px] top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded border transition-all cursor-pointer z-10"
+                 [class.bg-indigo-500]="selectedNodes().has(n.codigo_tecnico)"
+                 [class.border-indigo-500]="selectedNodes().has(n.codigo_tecnico)"
+                 [class.border-gray-300]="!selectedNodes().has(n.codigo_tecnico)">
+              <mat-icon *ngIf="selectedNodes().has(n.codigo_tecnico)" class="!text-[14px] text-white !w-[14px] !h-[14px]">check</mat-icon>
             </div>
 
             <!-- Iconos por Tipo -->

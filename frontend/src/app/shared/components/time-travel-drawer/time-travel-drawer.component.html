@@ -1,0 +1,65 @@
+<div
+  class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col border-l border-gray-200"
+  [class.translate-x-full]="!isOpen"
+  [class.translate-x-0]="isOpen"
+>
+  <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-slate-50">
+    <div class="flex items-center gap-2">
+      <mat-icon class="text-indigo-600">history</mat-icon>
+      <h2 class="text-lg font-bold text-slate-800 m-0">Línea de Tiempo</h2>
+    </div>
+    <button mat-icon-button (click)="closeDrawer.emit()" class="text-gray-400 hover:text-gray-600">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="hasRecentChanges()" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mx-4 mt-4 rounded-r shadow-sm">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <mat-icon class="text-yellow-400 text-sm h-5 w-5">warning</mat-icon>
+      </div>
+      <div class="ml-3">
+        <p class="text-xs text-yellow-700 font-medium">
+          Este nodo ha sufrido alteraciones en las últimas 24 horas.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="relative wrap overflow-hidden h-full">
+      <div class="border-2-2 absolute border-opacity-20 border-gray-300 h-full border left-5 top-2"></div>
+      
+      <!-- Timeline Items -->
+      <div *ngFor="let record of auditHistory(); let i = index" class="mb-6 flex justify-between items-center w-full relative">
+        <div class="z-20 flex items-center shadow shadow-sm {{ getActionColor(record.action) }} w-10 h-10 rounded-full justify-center">
+          <mat-icon class="text-sm">{{ getActionIcon(record.action) }}</mat-icon>
+        </div>
+        <div class="w-10/12 px-2">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
+            <span class="text-xs font-bold tracking-wide text-gray-500 uppercase">{{ record.action }}</span>
+            <p class="text-sm text-gray-800 font-medium mt-1">{{ record.details }}</p>
+            <div class="mt-2 flex items-center gap-2 text-xs text-gray-400">
+              <mat-icon class="text-[14px] w-[14px] h-[14px]">account_circle</mat-icon>
+              <span>{{ record.user }}</span>
+              <span>&bull;</span>
+              <span>{{ record.timestamp | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="auditHistory().length === 0" class="text-center text-gray-400 mt-10">
+        <mat-icon class="text-4xl opacity-50 mb-2">history_toggle_off</mat-icon>
+        <p class="text-sm">No hay registros de auditoría para este nodo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-gray-900 bg-opacity-25 transition-opacity z-40"
+  (click)="closeDrawer.emit()"
+></div>

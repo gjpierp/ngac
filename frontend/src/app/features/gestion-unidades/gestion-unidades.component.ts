@@ -37,7 +37,7 @@ export class GestionUnidadesComponent implements OnInit {
   unidadesFiltradas = computed(() => {
     const q = this.filtroUnidad().toLowerCase().trim();
     return this.unidades().filter(u =>
-      u.estado !== 0 && (
+      u.activo !== 'N' && (
         u.nombre.toLowerCase().includes(q) ||
         u.slug.toLowerCase().includes(q) ||
         (u.desc || '').toLowerCase().includes(q)
@@ -78,6 +78,7 @@ export class GestionUnidadesComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dto: ICrearSafiUnidadDto = {
+          codigo: result.codigo,
           slug_unidad: result.slug_unidad,
           nombre_unidad: result.nombre_unidad,
           descripcion: result.descripcion
@@ -103,10 +104,11 @@ export class GestionUnidadesComponent implements OnInit {
       if (result) {
         const payload: ISafiUnidad = {
           id: unidad.id,
+          codigo: unidad.codigo,
           nombre: result.nombre_unidad,
           slug: unidad.slug,
           desc: result.descripcion,
-          estado: unidad.estado
+          activo: unidad.activo
         };
         this.safiSvc.upsertUnidad(payload).subscribe({
           next: () => {

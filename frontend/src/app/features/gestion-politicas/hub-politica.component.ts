@@ -52,7 +52,7 @@ export class HubPoliticaComponent implements OnInit {
   nodeSearchQuery = signal('');
   userSearchQuery = signal('');
 
-  // Conjuntos de códigos vinculados
+  // Conjuntos de IDs de nodo vinculados
   linkedNodes = signal<Set<string>>(new Set());
   linkedUsers = signal<Set<string>>(new Set());
 
@@ -63,6 +63,22 @@ export class HubPoliticaComponent implements OnInit {
     }
   }
 
+  private getNodeKey(nodeOrId: any): string | null {
+    if (nodeOrId === undefined || nodeOrId === null || nodeOrId === '') {
+      return null;
+    }
+
+    if (
+      typeof nodeOrId === 'object' &&
+      nodeOrId.id_nodo !== undefined &&
+      nodeOrId.id_nodo !== null
+    ) {
+      return String(nodeOrId.id_nodo).trim();
+    }
+
+    return String(nodeOrId).trim();
+  }
+
   loadAllData(polId: string) {
     this.loading.set(true);
 
@@ -70,19 +86,22 @@ export class HubPoliticaComponent implements OnInit {
       politicas: this.accesosSvc.getPoliticasRaiz(),
       nodos: this.accesosSvc.getNodos(),
       enlaces: this.accesosSvc.getEnlaces(),
-      usuarios: this.safiSvc.getUsuarios()
+      usuarios: this.safiSvc.getUsuarios(),
     }).subscribe({
       next: (res) => {
         // 1. Identificar la política
         const polCode = polId.trim().toUpperCase();
-        const found = (res.politicas || []).find((p: any) => 
-          (p.codigo_tecnico || p.codigo || '').toUpperCase() === polCode
+        const found = (res.politicas || []).find(
+          (p: any) => (p.codigo_tecnico || p.codigo || '').toUpperCase() === polCode,
         );
 
         if (found) {
           const normalized: any = {};
-          Object.keys(found).forEach((key) => (normalized[key.toLowerCase()] = (found as any)[key]));
-          normalized.codigo_tecnico = normalized.codigo_tecnico || normalized.codigo || found.codigo_tecnico;
+          Object.keys(found).forEach(
+            (key) => (normalized[key.toLowerCase()] = (found as any)[key]),
+          );
+          normalized.codigo_tecnico =
+            normalized.codigo_tecnico || normalized.codigo || found.codigo_tecnico;
           this.politica.set(normalized as INodo);
         } else {
           this.snackBar.open('No se encontró la política solicitada', 'Cerrar', { duration: 4000 });
@@ -98,9 +117,9 @@ export class HubPoliticaComponent implements OnInit {
           obj.codigo_tecnico = obj.codigo_tecnico || obj.codigo || n.codigo_tecnico;
           return obj as INodo;
         });
-        
+
         // Filtrar para no mostrar políticas en la lista de nodos asociables
-        this.allNodes.set(mappedNodos.filter(n => n.tipo_nodo !== 'POLICY'));
+        this.allNodes.set(mappedNodos.filter((n) => n.tipo_nodo !== 'POLICY'));
         this.allUsers.set(res.usuarios || []);
         this.enlaces.set(res.enlaces || []);
 
@@ -108,22 +127,25 @@ export class HubPoliticaComponent implements OnInit {
         const nodesSet = new Set<string>();
         const usersSet = new Set<string>();
 
-        const polKey = (this.politica()?.codigo_tecnico || '').trim().toUpperCase();
-        
+        const policyId = this.politica()?.id_nodo ? Number(this.politica()!.id_nodo) : null;
+
         res.enlaces.forEach((e: any) => {
-          if ((e.padre || '').trim().toUpperCase() === polKey) {
-            const childCode = (e.hijo || '').trim().toUpperCase();
-            
+          if (policyId && Number(e.id_padre) === policyId) {
+            const childKey = this.getNodeKey(e.id_hijo);
+            if (!childKey) {
+              return;
+            }
+
             // Determinar si es un usuario
             const isUser = (res.usuarios || []).some((u: any) => {
-              const uCode = this.getUserNodeCodeInternal(u, mappedNodos).toUpperCase();
-              return uCode === childCode;
+              const userNodeId = this.getUserNodeIdFromList(u, mappedNodos);
+              return userNodeId !== null && String(userNodeId) === childKey;
             });
 
             if (isUser) {
-              usersSet.add(childCode);
+              usersSet.add(childKey);
             } else {
-              nodesSet.add(childCode);
+              nodesSet.add(childKey);
             }
           }
         });
@@ -133,9 +155,11 @@ export class HubPoliticaComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.snackBar.open('Error al cargar datos del Hub: ' + err.message, 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Error al cargar datos del Hub: ' + err.message, 'Cerrar', {
+          duration: 4000,
+        });
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -144,14 +168,16 @@ export class HubPoliticaComponent implements OnInit {
     const email = (user.email || '').trim().toUpperCase();
     const slugName = this.normalizeText(user.nombre).toUpperCase();
     const idStr = String(user.id);
-    
-    const found = nodesList.find(n => {
+
+    const found = nodesList.find((n) => {
       const c = (n.codigo_tecnico || '').trim().toUpperCase();
       const e = (n.etiqueta || '').trim().toUpperCase();
-      return c === email || c === slugName || e === user.nombre.trim().toUpperCase() || c.includes(idStr);
+      return (
+        c === email || c === slugName || e === user.nombre.trim().toUpperCase() || c.includes(idStr)
+      );
     });
-    
-    return found ? found.codigo_tecnico : (user.email || user.nombre);
+
+    return found ? found.codigo_tecnico : user.email || user.nombre;
   }
 
   // Helper público de mapeo a códigos de nodo de usuario
@@ -159,8 +185,19 @@ export class HubPoliticaComponent implements OnInit {
     return this.getUserNodeCodeInternal(user, this.allNodes());
   }
 
-  // --- CÓMPUTOS PARA LISTAS ASIGNADAS Y NO ASIGNADAS ---
+  private getUserNodeIdFromList(user: any, nodesList: INodo[]): number | null {
+    const code = this.getUserNodeCodeInternal(user, nodesList).trim().toUpperCase();
+    const node = nodesList.find(
+      (item) => (item.codigo_tecnico || '').trim().toUpperCase() === code,
+    );
+    return node?.id_nodo ? Number(node.id_nodo) : null;
+  }
 
+  private getUserNodeId(user: any): number | null {
+    return this.getUserNodeIdFromList(user, this.allNodes());
+  }
+
+  // --- CÓMPUTOS PARA LISTAS ASIGNADAS Y NO ASIGNADAS ---
 
   isResourceType(type: string | undefined): boolean {
     if (!type) return false;
@@ -172,57 +209,57 @@ export class HubPoliticaComponent implements OnInit {
   modulesTree = computed(() => {
     const nodes = this.allNodes();
     const links = this.enlaces();
-    const linked = this.linkedNodes(); // Set of uppercase codes linked to policy
-    
+    const linked = this.linkedNodes();
+
     // 1. Mapear nodos planos (recursos únicamente)
     const nodeMap = new Map<string, any>();
-    nodes.forEach(n => {
-      const code = (n.codigo_tecnico || '').trim().toUpperCase();
-      if (code && this.isResourceType(n.tipo_nodo)) {
-        nodeMap.set(code, { 
-          ...n, 
-          children: [], 
-          isLinked: linked.has(code),
+    nodes.forEach((n) => {
+      const nodeKey = this.getNodeKey(n);
+      if (nodeKey && this.isResourceType(n.tipo_nodo)) {
+        nodeMap.set(nodeKey, {
+          ...n,
+          children: [],
+          isLinked: linked.has(nodeKey),
           isInherited: false,
-          isActive: false
+          isActive: false,
         });
       }
     });
-    
+
     // 2. Construir jerarquía
-    const childCodes = new Set<string>();
-    links.forEach(e => {
-      const pCode = (e.padre || '').trim().toUpperCase();
-      const hCode = (e.hijo || '').trim().toUpperCase();
-      const p = nodeMap.get(pCode);
-      const h = nodeMap.get(hCode);
+    const childIds = new Set<string>();
+    links.forEach((e) => {
+      const pKey = this.getNodeKey(e.id_padre);
+      const hKey = this.getNodeKey(e.id_hijo);
+      const p = pKey ? nodeMap.get(pKey) : null;
+      const h = hKey ? nodeMap.get(hKey) : null;
       if (p && h) {
         p.children.push(h);
-        childCodes.add(hCode);
+        childIds.add(hKey!);
       }
     });
-    
+
     // 3. Ordenar y calcular herencia
     const sortAndInherit = (node: any, parentActive: boolean) => {
       const active = node.isLinked || parentActive;
       node.isInherited = parentActive;
       node.isActive = active;
-      
+
       if (node.children && node.children.length > 0) {
         node.children.sort((a: any, b: any) => (a.orden_visual || 0) - (b.orden_visual || 0));
         node.children.forEach((child: any) => sortAndInherit(child, active));
       }
     };
-    
+
     // 4. Obtener raíces de recursos
     const roots = Array.from(nodeMap.values())
-      .filter(n => {
-        const code = (n.codigo_tecnico || '').trim().toUpperCase();
-        return !childCodes.has(code);
+      .filter((n) => {
+        const nodeKey = this.getNodeKey(n);
+        return !nodeKey || !childIds.has(nodeKey);
       })
       .sort((a, b) => (a.orden_visual || 0) - (b.orden_visual || 0));
-      
-    roots.forEach(root => sortAndInherit(root, false));
+
+    roots.forEach((root) => sortAndInherit(root, false));
     return roots;
   });
 
@@ -235,8 +272,9 @@ export class HubPoliticaComponent implements OnInit {
       return nodes
         .map((n: any) => ({ ...n }))
         .filter((n: any) => {
-          const matches = (n.etiqueta || '').toUpperCase().includes(term) || 
-                          (n.codigo_tecnico || '').toUpperCase().includes(term);
+          const matches =
+            (n.etiqueta || '').toUpperCase().includes(term) ||
+            (n.codigo_tecnico || '').toUpperCase().includes(term);
           if (n.children) {
             n.children = filterNode(n.children);
           }
@@ -250,47 +288,58 @@ export class HubPoliticaComponent implements OnInit {
   // USUARIOS
   assignedUsersFiltered = computed(() => {
     const query = this.userSearchQuery().toLowerCase().trim();
-    const list = this.allUsers().filter(u => {
-      const code = this.getUserNodeCode(u).toUpperCase();
-      return this.linkedUsers().has(code);
+    const list = this.allUsers().filter((u) => {
+      const userNodeId = this.getUserNodeId(u);
+      return userNodeId !== null && this.linkedUsers().has(String(userNodeId));
     });
     if (!query) return list;
-    return list.filter(u => 
-      (u.nombre || '').toLowerCase().includes(query) ||
-      (u.email || '').toLowerCase().includes(query)
+    return list.filter(
+      (u) =>
+        (u.nombre || '').toLowerCase().includes(query) ||
+        (u.email || '').toLowerCase().includes(query),
     );
   });
 
   unassignedUsersFiltered = computed(() => {
     const query = this.userSearchQuery().toLowerCase().trim();
-    const list = this.allUsers().filter(u => {
-      const code = this.getUserNodeCode(u).toUpperCase();
-      return !this.linkedUsers().has(code);
+    const list = this.allUsers().filter((u) => {
+      const userNodeId = this.getUserNodeId(u);
+      return userNodeId === null || !this.linkedUsers().has(String(userNodeId));
     });
     if (!query) return list;
-    return list.filter(u => 
-      (u.nombre || '').toLowerCase().includes(query) ||
-      (u.email || '').toLowerCase().includes(query)
+    return list.filter(
+      (u) =>
+        (u.nombre || '').toLowerCase().includes(query) ||
+        (u.email || '').toLowerCase().includes(query),
     );
   });
 
-
   // Métodos de Vinculación / Desvinculación de Nodos (Módulos/Objetos)
-  toggleNodeAssociation(nodeCodigo: string) {
+  toggleNodeAssociation(node: INodo) {
     if (!this.politica()) return;
 
+    const policyId = this.politica()!.id_nodo;
     const polCode = this.politica()!.codigo_tecnico;
-    const isLinked = this.linkedNodes().has(nodeCodigo.toUpperCase());
+    const nodeId = node.id_nodo;
+    const nodeKey = this.getNodeKey(node);
+    const isLinked = !!nodeKey && this.linkedNodes().has(nodeKey);
+
+    if (!policyId || !nodeId) {
+      this.snackBar.open('No se pudo resolver el ID del vínculo', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
     this.loading.set(true);
 
-    const action$ = isLinked 
-      ? this.accesosSvc.deleteEnlace(polCode, nodeCodigo)
-      : this.accesosSvc.enlazarNodos(polCode, nodeCodigo);
+    const action$ = isLinked
+      ? this.accesosSvc.deleteEnlace(policyId, nodeId)
+      : this.accesosSvc.enlazarNodos(policyId, nodeId);
 
     action$.subscribe({
       next: () => {
-        const text = isLinked ? 'Módulo/Objeto desvinculado de la política' : 'Módulo/Objeto vinculado a la política';
+        const text = isLinked
+          ? 'Módulo/Objeto desvinculado de la política'
+          : 'Módulo/Objeto vinculado a la política';
         this.snackBar.open(text, 'Cerrar', { duration: 2500 });
         this.loadAllData(polCode);
       },
@@ -298,7 +347,7 @@ export class HubPoliticaComponent implements OnInit {
         const msg = err.error?.detail || err.error?.error || err.message || 'Error desconocido';
         this.snackBar.open(`Error en vinculación: ${msg}`, 'Cerrar', { duration: 4000 });
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -306,19 +355,27 @@ export class HubPoliticaComponent implements OnInit {
   toggleUserAssociation(user: any) {
     if (!this.politica()) return;
 
+    const policyId = this.politica()!.id_nodo;
     const polCode = this.politica()!.codigo_tecnico;
-    const userCode = this.getUserNodeCode(user);
-    const isLinked = this.linkedUsers().has(userCode.toUpperCase());
+    const userId = this.getUserNodeId(user);
+    const isLinked = userId !== null && this.linkedUsers().has(String(userId));
+
+    if (!policyId || !userId) {
+      this.snackBar.open('No se pudo resolver el ID del vínculo', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
     this.loading.set(true);
 
-    const action$ = isLinked 
-      ? this.accesosSvc.deleteEnlace(polCode, userCode)
-      : this.accesosSvc.enlazarNodos(polCode, userCode);
+    const action$ = isLinked
+      ? this.accesosSvc.deleteEnlace(policyId, userId)
+      : this.accesosSvc.enlazarNodos(policyId, userId);
 
     action$.subscribe({
       next: () => {
-        const text = isLinked ? 'Usuario desvinculado de la política' : 'Usuario vinculado a la política';
+        const text = isLinked
+          ? 'Usuario desvinculado de la política'
+          : 'Usuario vinculado a la política';
         this.snackBar.open(text, 'Cerrar', { duration: 2500 });
         this.loadAllData(polCode);
       },
@@ -326,7 +383,7 @@ export class HubPoliticaComponent implements OnInit {
         const msg = err.error?.detail || err.error?.error || err.message || 'Error desconocido';
         this.snackBar.open(`Error en vinculación: ${msg}`, 'Cerrar', { duration: 4000 });
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -335,8 +392,8 @@ export class HubPoliticaComponent implements OnInit {
       .toUpperCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '') // Eliminar tildes
-      .replace(/\s+/g, '_')           // Espacios por guiones bajos
-      .replace(/[^A-Z0-9_]/g, '');    // Solo letras, números y guiones bajos
+      .replace(/\s+/g, '_') // Espacios por guiones bajos
+      .replace(/[^a-z0-9-]/g, ''); // Solo letras, números y guiones bajos
   }
 
   goBack() {

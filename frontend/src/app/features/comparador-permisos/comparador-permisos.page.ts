@@ -40,7 +40,7 @@ export interface ComparisonRow {
     MatTooltipModule,
   ],
   templateUrl: './comparador-permisos.page.html',
-  styleUrls: ['./comparador-permisos.page.css']
+  styleUrls: ['./comparador-permisos.page.css'],
 })
 export class PaginaComparadorPermisos implements OnInit {
   private accesosSvc = inject(AccesosService);
@@ -55,7 +55,7 @@ export class PaginaComparadorPermisos implements OnInit {
   links = signal<any[]>([]);
 
   // Filtros y Selección
-  selectedRoles = signal<string[]>([]);
+  selectedRoles = signal<Array<string | number>>([]);
   selectedPolicies = signal<string[]>([]);
   selectedRootNodes = signal<string[]>([]);
   searchQuery = signal<string>('');
@@ -80,9 +80,10 @@ export class PaginaComparadorPermisos implements OnInit {
     const roles = this.roles();
     const query = this.roleSearchQuery.toLowerCase().trim();
     if (!query) return roles;
-    return roles.filter(r => 
-      (r.nombre && r.nombre.toLowerCase().includes(query)) ||
-      (r.codigo && r.codigo.toLowerCase().includes(query))
+    return roles.filter(
+      (r) =>
+        (r.nombre && r.nombre.toLowerCase().includes(query)) ||
+        (r.codigo && r.codigo.toLowerCase().includes(query)),
     );
   });
 
@@ -100,14 +101,14 @@ export class PaginaComparadorPermisos implements OnInit {
       if (descendants.has(nodeCode)) return;
       descendants.add(nodeCode);
 
-      allLinks.forEach(link => {
+      allLinks.forEach((link) => {
         if (String(link.padre) === nodeCode) {
           collect(String(link.hijo));
         }
       });
     };
 
-    selectedRoots.forEach(root => {
+    selectedRoots.forEach((root) => {
       collect(String(root));
     });
 
@@ -124,23 +125,24 @@ export class PaginaComparadorPermisos implements OnInit {
 
     // Filtro por Nodos Raíz (ramas jerárquicas)
     if (allowedObjs) {
-      rows = rows.filter(r => allowedObjs.has(String(r.objId)));
+      rows = rows.filter((r) => allowedObjs.has(String(r.objId)));
     }
 
     // Filtro por búsqueda de texto — coerce a string para evitar TypeError con IDs numéricos
     if (query) {
-      rows = rows.filter(r => 
-        String(r.objId).toLowerCase().includes(query) || 
-        String(r.objLabel).toLowerCase().includes(query) || 
-        String(r.op).toLowerCase().includes(query)
+      rows = rows.filter(
+        (r) =>
+          String(r.objId).toLowerCase().includes(query) ||
+          String(r.objLabel).toLowerCase().includes(query) ||
+          String(r.op).toLowerCase().includes(query),
       );
     }
 
     // Filtro por diferencias de accesos entre roles
     if (onlyDiffs && activeRoles.length > 1) {
-      rows = rows.filter(r => {
+      rows = rows.filter((r) => {
         const firstState = r.rolesState[activeRoles[0]];
-        return activeRoles.some(role => r.rolesState[role] !== firstState);
+        return activeRoles.some((role) => r.rolesState[role] !== firstState);
       });
     }
 
@@ -150,14 +152,14 @@ export class PaginaComparadorPermisos implements OnInit {
   loadRoles() {
     this.accesosSvc.getRoles().subscribe({
       next: (data) => this.roles.set(data),
-      error: () => this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 4000 })
+      error: () => this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 4000 }),
     });
   }
 
   loadPoliticas() {
     this.accesosSvc.getPoliticasRaiz().subscribe({
       next: (data) => this.politicas.set(data),
-      error: () => this.snackBar.open('Error al cargar políticas', 'Cerrar', { duration: 4000 })
+      error: () => this.snackBar.open('Error al cargar políticas', 'Cerrar', { duration: 4000 }),
     });
   }
 
@@ -167,59 +169,61 @@ export class PaginaComparadorPermisos implements OnInit {
         const opNames = (ops || []).map((op: any) => op.nombre_op || op);
         this.operaciones.set(opNames);
       },
-      error: () => this.snackBar.open('Error al cargar operaciones', 'Cerrar', { duration: 4000 })
+      error: () => this.snackBar.open('Error al cargar operaciones', 'Cerrar', { duration: 4000 }),
     });
   }
 
   loadNodos() {
     this.accesosSvc.getNodos().subscribe({
       next: (data) => this.nodos.set(data),
-      error: () => this.snackBar.open('Error al cargar información de módulos', 'Cerrar', { duration: 4000 })
+      error: () =>
+        this.snackBar.open('Error al cargar información de módulos', 'Cerrar', { duration: 4000 }),
     });
   }
 
   loadModulosRaiz() {
     this.accesosSvc.getModulosRaiz().subscribe({
       next: (data) => this.nodosRaiz.set(data),
-      error: () => this.snackBar.open('Error al cargar módulos raíz', 'Cerrar', { duration: 4000 })
+      error: () => this.snackBar.open('Error al cargar módulos raíz', 'Cerrar', { duration: 4000 }),
     });
   }
 
   loadEnlaces() {
     this.accesosSvc.getEnlaces().subscribe({
       next: (data) => this.links.set(data),
-      error: () => this.snackBar.open('Error al cargar jerarquías de enlaces', 'Cerrar', { duration: 4000 })
+      error: () =>
+        this.snackBar.open('Error al cargar jerarquías de enlaces', 'Cerrar', { duration: 4000 }),
     });
   }
 
-  isRoleSelected(roleCodigo: string): boolean {
-    return this.selectedRoles().includes(roleCodigo);
+  isRoleSelected(roleId: string | number): boolean {
+    return this.selectedRoles().includes(roleId);
   }
 
-  toggleRoleSelection(roleCodigo: string) {
+  toggleRoleSelection(roleId: string | number) {
     const current = [...this.selectedRoles()];
-    const index = current.indexOf(roleCodigo);
+    const index = current.indexOf(roleId);
     if (index > -1) {
       current.splice(index, 1);
     } else {
-      current.push(roleCodigo);
+      current.push(roleId);
     }
     this.selectedRoles.set(current);
-    this.loadComparisonData();
   }
 
   onPoliciesChange(values: string[]) {
     this.selectedPolicies.set(values);
-    this.loadComparisonData();
   }
 
   onRootNodesChange(values: string[]) {
     this.selectedRootNodes.set(values);
   }
 
-  getRoleName(codigo: string): string {
-    const r = this.roles().find(role => role.codigo === codigo);
-    return r ? r.nombre : codigo;
+  getRoleName(roleId: string | number): string {
+    const r = this.roles().find(
+      (role) => String(role.id_nodo || role.id_rol || role.codigo) === String(roleId),
+    );
+    return r ? r.nombre : String(roleId);
   }
 
   loadComparisonData() {
@@ -237,21 +241,21 @@ export class PaginaComparadorPermisos implements OnInit {
     const requests: Observable<any>[] = [];
 
     if (activePols.length === 0) {
-      activeRoles.forEach(rol => {
+      activeRoles.forEach((rol) => {
         requests.push(
-          this.accesosSvc.getPermissionMatrix(rol, '').pipe(
-            catchError(() => of({ success: false, data: [] }))
-          )
+          this.accesosSvc
+            .getPermissionMatrix(rol, '')
+            .pipe(catchError(() => of({ success: false, data: [] }))),
         );
       });
     } else {
       // Combinar roles y políticas
-      activeRoles.forEach(rol => {
-        activePols.forEach(pol => {
+      activeRoles.forEach((rol) => {
+        activePols.forEach((pol) => {
           requests.push(
-            this.accesosSvc.getPermissionMatrix(rol, pol).pipe(
-              catchError(() => of({ success: false, data: [] }))
-            )
+            this.accesosSvc
+              .getPermissionMatrix(rol, pol)
+              .pipe(catchError(() => of({ success: false, data: [] }))),
           );
         });
       });
@@ -266,14 +270,14 @@ export class PaginaComparadorPermisos implements OnInit {
           const perms = resp?.data || [];
           perms.forEach((p: any) => {
             const objStr = String(p.obj ?? '');
-            const opStr  = String(p.op  ?? '');
+            const opStr = String(p.op ?? '');
             const key = `${objStr}||${opStr}`;
             if (!uniqueKeys.has(key)) {
-              const n = this.nodos().find(node => node.codigo_tecnico === objStr);
+              const n = this.nodos().find((node) => node.codigo_tecnico === objStr);
               uniqueKeys.set(key, {
-                objId:    objStr,
+                objId: objStr,
                 objLabel: n ? n.etiqueta : String(p.obj_etiqueta ?? objStr),
-                op:       opStr
+                op: opStr,
               });
             }
           });
@@ -292,19 +296,20 @@ export class PaginaComparadorPermisos implements OnInit {
             if (activePols.length === 0) {
               // 1 respuesta por rol
               const perms = responses[rIdx]?.data || [];
-              hasPerm = perms.some((p: any) => 
-                p.obj === meta.objId && 
-                p.op.toUpperCase() === meta.op.toUpperCase()
+              hasPerm = perms.some(
+                (p: any) => p.obj === meta.objId && p.op.toUpperCase() === meta.op.toUpperCase(),
               );
             } else {
               // Varias respuestas por rol (una para cada política seleccionada)
               const startIdx = rIdx * activePols.length;
               for (let pIdx = 0; pIdx < activePols.length; pIdx++) {
                 const perms = responses[startIdx + pIdx]?.data || [];
-                if (perms.some((p: any) => 
-                  p.obj === meta.objId && 
-                  p.op.toUpperCase() === meta.op.toUpperCase()
-                )) {
+                if (
+                  perms.some(
+                    (p: any) =>
+                      p.obj === meta.objId && p.op.toUpperCase() === meta.op.toUpperCase(),
+                  )
+                ) {
                   hasPerm = true;
                   break;
                 }
@@ -319,7 +324,7 @@ export class PaginaComparadorPermisos implements OnInit {
             objLabel: meta.objLabel,
             op: meta.op,
             rolesState,
-            rolesLoading
+            rolesLoading,
           });
         });
 
@@ -330,20 +335,22 @@ export class PaginaComparadorPermisos implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.snackBar.open('Error al procesar la comparación de permisos', 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Error al procesar la comparación de permisos', 'Cerrar', {
+          duration: 4000,
+        });
         this.loading.set(false);
-      }
+      },
     });
   }
 
-  toggleCellPermission(row: ComparisonRow, role: string) {
+  toggleCellPermission(row: ComparisonRow, role: string | number) {
     const isAllowed = row.rolesState[role];
-    
+
     // Activar loader en la celda
     row.rolesLoading[role] = true;
-    
+
     // Disparar acción correspondiente
-    const action$ = isAllowed 
+    const action$ = isAllowed
       ? this.accesosSvc.revocarPermiso(role, row.objId, row.op)
       : this.accesosSvc.otorgarPermiso(role, row.objId, role === 'ADMINISTRACION' ? 'VER' : row.op);
 
@@ -352,9 +359,9 @@ export class PaginaComparadorPermisos implements OnInit {
         row.rolesState[role] = !isAllowed;
         row.rolesLoading[role] = false;
         this.snackBar.open(
-          `Permiso ${isAllowed ? 'revocado' : 'otorgado'} con éxito para ${role}`, 
-          'Cerrar', 
-          { duration: 2500 }
+          `Permiso ${isAllowed ? 'revocado' : 'otorgado'} con éxito para ${role}`,
+          'Cerrar',
+          { duration: 2500 },
         );
         // Forzar actualización del signal de filas
         this.comparisonRows.set([...this.comparisonRows()]);
@@ -363,7 +370,7 @@ export class PaginaComparadorPermisos implements OnInit {
         row.rolesLoading[role] = false;
         const msg = err.error?.detail || err.error?.error || err.message || 'Error desconocido';
         this.snackBar.open(`Error al cambiar permiso: ${msg}`, 'Cerrar', { duration: 4000 });
-      }
+      },
     });
   }
 }

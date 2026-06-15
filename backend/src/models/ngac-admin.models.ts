@@ -37,6 +37,7 @@ export interface AccNodo {
 // --- 4. TABLA: ACC_ASIGNACIONES ---
 export interface AccAsignacion {
   id_asignacion?: number;
+  id_menu_asignacion?: number;
   id_padre: number;
   id_hijo: number;
 }
@@ -82,6 +83,8 @@ export interface AccLogError {
 // --- 8. TABLA: SAFI_USUARIOS ---
 export interface SafiUsuario {
   id: number;
+  rut_numero: string;
+  rut_dv: string;
   nombre: string;
   email: string;
   estado?: number; // 1 = Activo, 0 = Inactivo
@@ -90,19 +93,21 @@ export interface SafiUsuario {
 // --- 9. TABLA: SAFI_ENTIDADES ---
 export interface SafiEntidad {
   id: number;
+  codigo: string;
   nombre: string;
   slug: string;
   desc?: string;
-  estado?: number; // 1 = Activo, 0 = Inactivo
+  activo?: string;
 }
 
 // --- 10. TABLA: SAFI_UNIDADES ---
 export interface SafiUnidad {
   id: number;
+  codigo: string;
   nombre: string;
   slug: string;
   desc?: string;
-  estado?: number; // 1 = Activo, 0 = Inactivo
+  activo?: string;
 }
 
 // ==========================================
@@ -111,6 +116,7 @@ export interface SafiUnidad {
 
 export interface AccRol {
   id_rol?: number;
+  id_nodo?: number;
   codigo: string;
   nombre: string;
   descripcion?: string;
@@ -123,6 +129,8 @@ export interface AccRol {
 }
 
 export interface UpsertNodoDto {
+  id_nodo?: number;
+  id_tipo_nodo?: number;
   codigo: string;
   etiqueta: string;
   tipo: string;
@@ -135,13 +143,13 @@ export interface UpsertNodoDto {
 }
 
 export interface EnlazarNodoDto {
-  padre: string;
-  hijo: string;
+  padre: string | number;
+  hijo: string | number;
 }
 
 export interface OtorgarPermisoDto {
-  usr: string;
-  obj: string;
+  usr: string | number;
+  obj: string | number;
   op: string;
   condicion_js?: string;
 }
@@ -154,19 +162,22 @@ export interface UpsertTipoNodoDto {
 // --- DTOS PARA LOS NUEVOS PROCEDIMIENTOS SAFI ADMIN ---
 export interface CrearSafiUsuarioDto {
   slug_usuario: string;
-  rut: string;
+  rut_numero: string;
+  rut_dv: string;
   nombres: string;
   apellidos: string;
   email: string;
 }
 
 export interface CrearSafiUnidadDto {
+  codigo: string;
   slug_unidad: string;
   nombre_unidad: string;
   descripcion: string;
 }
 
 export interface CrearSafiEntidadDto {
+  codigo: string;
   slug_entidad: string;
   nombre_entidad: string;
   tipo_entidad: string;
@@ -200,4 +211,22 @@ export interface INgacRequest {
     app_id: string;
     operaciones: string[];
   };
+}
+
+// --- 11. TABLA: SAFI_MODULOS ---
+export interface SafiModulo {
+  id_modulo?: number;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  activo?: string;
+  nodos?: AccNodo[];
+}
+
+// --- 12. TABLA: SAFI_MODULO_NODOS ---
+export interface SafiModuloNodo {
+  id_modulo_nodo?: number;
+  id_modulo: number;
+  id_nodo: number;
+  activo?: string;
 }

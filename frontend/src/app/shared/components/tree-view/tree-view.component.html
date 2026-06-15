@@ -1,0 +1,21 @@
+<ul class="pl-2">
+  <li *ngIf="node" [class.font-bold]="selected === node.codigo_tecnico">
+    <span
+      (click)="selectNode.emit(node.codigo_tecnico)"
+      [class.text-emerald-600]="selected === node.codigo_tecnico"
+      class="cursor-pointer hover:underline"
+    >
+      <mat-icon *ngIf="node.children?.length" class="!text-xs align-middle">folder</mat-icon>
+      <mat-icon *ngIf="!node.children?.length" class="!text-xs align-middle"
+        >insert_drive_file</mat-icon
+      >
+      {{ node.etiqueta }}
+    </span>
+    <app-tree-view
+      *ngFor="let child of node.children"
+      [node]="child"
+      [selected]="selected"
+      (selectNode)="selectNode.emit($event)"
+    ></app-tree-view>
+  </li>
+</ul>

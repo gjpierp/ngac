@@ -186,3 +186,45 @@ html, body {
     padding: 0 !important;
   }
 }
+
+
+// GLOBAL PREMIUM SELECT
+.premium-select-container {
+  @apply bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 flex items-center w-full;
+  mat-icon {
+    @apply text-indigo-500 mr-2;
+  }
+}
+
+.dense-form-field {
+  &.mat-mdc-form-field {
+    margin-bottom: 0 !important;
+  }
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-shape: 8px;
+    --mdc-outlined-text-field-outline-color: transparent !important;
+    --mdc-outlined-text-field-focus-outline-color: transparent !important;
+    --mdc-outlined-text-field-hover-outline-color: transparent !important;
+  }
+  .mat-mdc-form-field-flex {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+  .mat-mdc-form-field-infix {
+    padding: 0 !important;
+    min-height: auto !important;
+  }
+  .mat-mdc-select-value-text {
+    color: #3730a3 !important;
+    font-weight: 700 !important;
+    font-size: 0.875rem !important;
+  }
+  .mat-mdc-select-arrow {
+    color: #6366f1 !important;
+  }
+}
+
+.custom-select-panel {
+  border-radius: 12px !important;
+  margin-top: 8px;
+}

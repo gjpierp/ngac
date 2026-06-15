@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -30,6 +31,8 @@ import { AccesosService } from '../../core/services/accesos.service';
 })
 export class GestionPermisosComponent implements OnInit {
   permisos = signal<any[]>([]);
+  roles = signal<any[]>([]);
+  nodos = signal<any[]>([]);
   total = signal(0);
   page = signal(1);
   pageSize = signal(5);
@@ -37,7 +40,6 @@ export class GestionPermisosComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   editMode = signal(false);
   form: FormGroup;
-
 
   // Filtrar solo permisos (no asignaciones) al cargar
   private filtrarSoloPermisos(data: any[]): any[] {
@@ -61,7 +63,49 @@ export class GestionPermisosComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadCatalogs();
     this.loadPermisos();
+  }
+
+  private loadCatalogs() {
+    forkJoin({ roles: this.accesosSvc.getRoles(), nodos: this.accesosSvc.getNodos() }).subscribe({
+      next: ({ roles, nodos }) => {
+        this.roles.set(roles || []);
+        this.nodos.set(nodos || []);
+      },
+    });
+  }
+
+  private resolveRoleNodeId(value: string | number): number | null {
+    const numeric = Number(value);
+    if (!Number.isNaN(numeric) && numeric > 0) return numeric;
+    const normalized = String(value || '')
+      .trim()
+      .toUpperCase();
+    const role = this.roles().find(
+      (item) =>
+        String(item.id_nodo || item.id_rol || '') === normalized ||
+        String(item.codigo || '')
+          .trim()
+          .toUpperCase() === normalized,
+    );
+    return role?.id_nodo ? Number(role.id_nodo) : role?.id_rol ? Number(role.id_rol) : null;
+  }
+
+  private resolveNodeId(value: string | number): number | null {
+    const numeric = Number(value);
+    if (!Number.isNaN(numeric) && numeric > 0) return numeric;
+    const normalized = String(value || '')
+      .trim()
+      .toUpperCase();
+    const node = this.nodos().find(
+      (item) =>
+        String(item.id_nodo || '') === normalized ||
+        String(item.codigo_tecnico || '')
+          .trim()
+          .toUpperCase() === normalized,
+    );
+    return node?.id_nodo ? Number(node.id_nodo) : null;
   }
 
   loadPermisos() {
@@ -101,7 +145,13 @@ export class GestionPermisosComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((confirm) => {
       if (!confirm) return;
-      this.accesosSvc.revocarPermiso(permiso.rol, permiso.nodo, permiso.operacion).subscribe({
+      const roleId = this.resolveRoleNodeId(permiso.usr || permiso.rol);
+      const nodeId = this.resolveNodeId(permiso.obj || permiso.nodo);
+      if (!roleId || !nodeId) {
+        this.snackBar.open('No se pudo resolver el ID del permiso', 'Cerrar', { duration: 4000 });
+        return;
+      }
+      this.accesosSvc.revocarPermiso(roleId, nodeId, permiso.op || permiso.operacion).subscribe({
         next: () => {
           this.snackBar.open('Permiso revocado', 'Cerrar', { duration: 3000 });
           this.loadPermisos();
@@ -117,13 +167,16 @@ export class GestionPermisosComponent implements OnInit {
 
   save() {
     if (this.form.invalid) return;
+    const roleId = this.resolveRoleNodeId(this.form.value.rol);
+    const nodeId = this.resolveNodeId(this.form.value.nodo);
+    if (!roleId || !nodeId) {
+      this.snackBar.open('Usa un ID válido o un valor resoluble para rol y nodo', 'Cerrar', {
+        duration: 4000,
+      });
+      return;
+    }
     this.accesosSvc
-      .otorgarPermiso(
-        this.form.value.rol,
-        this.form.value.nodo,
-        this.form.value.operacion,
-        this.form.value.condicion,
-      )
+      .otorgarPermiso(roleId, nodeId, this.form.value.operacion, this.form.value.condicion)
       .subscribe({
         next: () => {
           this.snackBar.open('Permiso guardado', 'Cerrar', { duration: 3000 });

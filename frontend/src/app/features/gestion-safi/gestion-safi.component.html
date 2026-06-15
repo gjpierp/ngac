@@ -1,84 +1,117 @@
-<div class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-  
-  <!-- CABECERA PRINCIPAL PREMIUM -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6">
+<div
+  class="animate-in fade-in duration-1000 flex flex-col h-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
+>
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-100 pb-6"
+  >
     <div class="space-y-1">
       <div class="flex items-center gap-2">
         <h1 class="text-3xl font-black text-slate-800 tracking-tight">
-          {{ isUsuariosPage() ? (selectedUsuario() ? 'Ficha de' : 'Administración de') : 'Configuración de' }}
+          {{
+            isUsuariosPage()
+              ? selectedUsuario()
+                ? 'Ficha de'
+                : 'Administración de'
+              : 'Configuración de'
+          }}
           <span class="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-            {{ isUsuariosPage() ? (selectedUsuario() ? selectedUsuario()?.nombre : 'Usuarios') : 'SAFI' }}
+            {{
+              isUsuariosPage()
+                ? selectedUsuario()
+                  ? selectedUsuario()?.nombre
+                  : 'Usuarios'
+                : 'SAFI'
+            }}
           </span>
         </h1>
-        <span *ngIf="isUsuariosPage() && !selectedUsuario()" class="bg-indigo-100/80 text-indigo-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-indigo-200">
+        <span
+          *ngIf="isUsuariosPage() && !selectedUsuario()"
+          class="bg-indigo-100/80 text-indigo-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-indigo-200"
+        >
           {{ usuariosFiltrados().length }} Activos
         </span>
       </div>
       <p class="text-slate-500 text-xs font-medium flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-        {{ isUsuariosPage() 
-            ? (selectedUsuario() ? 'Edición de privilegios, roles comerciales y unidades operacionales del usuario.' : 'Gestión integral de usuarios de la plataforma, consulta de estado y control de permisos de acceso.') 
-            : 'Configuración centralizada de Roles de Seguridad, Entidades Comerciales y Unidades Organizacionales.' }}
+        {{
+          isUsuariosPage()
+            ? selectedUsuario()
+              ? 'Edición de privilegios, roles comerciales y unidades operacionales del usuario.'
+              : 'Gestión integral de usuarios de la plataforma, consulta de estado y control de permisos de acceso.'
+            : 'Configuración centralizada de Roles de Seguridad, Entidades Comerciales y Unidades Organizacionales.'
+        }}
       </p>
     </div>
-    
+
     <div class="flex items-center gap-3">
-      <!-- BOTÓN RECARGAR -->
-      <button *ngIf="!selectedUsuario()" (click)="cargarDatos()" 
-              class="w-11 h-11 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-600 hover:text-amber-700 border border-amber-200/50 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm"
-              matTooltip="Sincronizar y Recargar">
+      <button
+        *ngIf="!selectedUsuario()"
+        (click)="cargarDatos()"
+        class="w-11 h-11 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-600 hover:text-amber-700 border border-amber-200/50 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm"
+        matTooltip="Sincronizar y Recargar"
+      >
         <mat-icon class="!w-5 !h-5 !text-xl">sync</mat-icon>
       </button>
 
-      <!-- BOTÓN VOLVER (si usuario seleccionado) -->
-      <button *ngIf="selectedUsuario()" (click)="volverAlListado()" 
-              class="h-11 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-750 border border-slate-200/60 flex items-center gap-2 font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
-              matTooltip="Volver al Listado">
+      <button
+        *ngIf="selectedUsuario()"
+        (click)="volverAlListado()"
+        class="h-11 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-750 border border-slate-200/60 flex items-center gap-2 font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
+        matTooltip="Volver al Listado"
+      >
         <mat-icon class="!w-5 !h-5 !text-xl">arrow_back</mat-icon>
         <span>Volver</span>
       </button>
     </div>
   </div>
 
-  <!-- VISTA 1: SÓLO USUARIOS (Página /usuarios) -->
   <div *ngIf="isUsuariosPage()" class="animate-in fade-in duration-300">
-    
-    <!-- SUB-VISTA A: LISTADO GENERAL DE USUARIOS -->
     <div *ngIf="!selectedUsuario()" class="grid grid-cols-12 gap-8">
-      <div class="col-span-12 flex flex-col bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden p-8">
+      <div
+        class="col-span-12 flex flex-col bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden p-8"
+      >
         <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-50">
           <div class="space-y-0.5">
             <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
               <mat-icon class="text-indigo-500">people</mat-icon>
               Listado de Usuarios SAFI
             </h2>
-            <p class="text-slate-400 text-xs font-medium">Haga clic en cualquier usuario para abrir su ficha de vinculaciones de roles, entidades y unidades.</p>
+            <p class="text-slate-400 text-xs font-medium">
+              Haga clic en cualquier usuario para abrir su ficha de vinculaciones de roles,
+              entidades y unidades.
+            </p>
           </div>
         </div>
-        
-        <!-- Barra de acciones y filtros -->
+
         <div class="flex gap-4 justify-between items-center mb-6">
           <div class="relative flex-1 max-w-lg group">
-            <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors">search</mat-icon>
-            <input type="text" 
-                   [ngModel]="filtroUsuario()" 
-                   (ngModelChange)="filtroUsuario.set($event)"
-                   placeholder="Buscar usuario por Nombre, Email, RUT o ID..." 
-                   class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/80 focus:bg-white transition-all shadow-inner">
+            <mat-icon
+              class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
+              >search</mat-icon
+            >
+            <input
+              type="text"
+              [ngModel]="filtroUsuario()"
+              (ngModelChange)="filtroUsuario.set($event)"
+              placeholder="Buscar usuario por RUT, nombre o email..."
+              class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/80 focus:bg-white transition-all shadow-inner"
+            />
           </div>
-          <button (click)="abrirDialogoCrearUsuario()"
-                  class="h-12 px-6 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/60 flex items-center gap-2 font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 shadow-sm">
+          <button
+            (click)="abrirDialogoCrearUsuario()"
+            class="h-12 px-6 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/60 flex items-center gap-2 font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
+          >
             <mat-icon class="!text-xl">person_add</mat-icon>
-            <span>Crear Nuevo Usuario</span>
           </button>
         </div>
 
-        <!-- Tabla de Usuarios -->
         <div class="overflow-x-auto rounded-2xl border border-slate-100 flex-1 min-h-[480px]">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50/70 border-b border-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-wider">
-                <th class="py-4 px-6">ID</th>
+              <tr
+                class="bg-slate-50/70 border-b border-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-wider"
+              >
+                <th class="py-4 px-6">RUT</th>
                 <th class="py-4 px-6">Nombre Completo</th>
                 <th class="py-4 px-6">Email Institucional</th>
                 <th class="py-4 px-6">Estado</th>
@@ -86,40 +119,68 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
-              <tr *ngFor="let u of usuariosFiltrados()" 
-                  (click)="selectUsuario(u)"
-                  class="hover:bg-slate-50/20 transition-all cursor-pointer group">
-                <td class="py-4 px-6 font-mono font-bold text-indigo-600">{{ u.id }}</td>
-                <td class="py-4 px-6 font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{{ u.nombre }}</td>
+              <tr
+                *ngFor="let u of usuariosFiltrados()"
+                (click)="selectUsuario(u)"
+                class="hover:bg-slate-50/20 transition-all cursor-pointer group"
+              >
+                <td class="py-4 px-6 font-mono font-bold text-indigo-600">
+                  {{ u.rut_numero && u.rut_dv ? u.rut_numero + '-' + u.rut_dv : '-' }}
+                </td>
+                <td
+                  class="py-4 px-6 font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
+                >
+                  {{ u.nombre }}
+                </td>
                 <td class="py-4 px-6 text-gray-500">{{ u.email }}</td>
                 <td class="py-4 px-6">
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase"
-                        [ngClass]="u.estado !== 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'">
-                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="u.estado !== 0 ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                  <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase"
+                    [ngClass]="
+                      u.estado !== 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                    "
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full"
+                      [ngClass]="u.estado !== 0 ? 'bg-emerald-500' : 'bg-red-500'"
+                    ></span>
                     {{ u.estado !== 0 ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
-                <td class="py-4 px-6 text-center flex items-center justify-center gap-2" (click)="$event.stopPropagation()">
-                  <button mat-icon-button color="primary" 
-                          (click)="abrirDialogoEditarUsuario(u, $event)"
-                          matTooltip="Editar Datos de Usuario"
-                          class="hover:scale-110 transition-transform">
+                <td
+                  class="py-4 px-6 text-center flex items-center justify-center gap-2"
+                  (click)="$event.stopPropagation()"
+                >
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="abrirDialogoEditarUsuario(u, $event)"
+                    matTooltip="Editar Datos de Usuario"
+                    class="hover:scale-110 transition-transform"
+                  >
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" 
-                          *ngIf="u.estado !== 0"
-                          (click)="desactivarUsuarioSafi(u.id, $event)"
-                          matTooltip="Desactivar Cuenta"
-                          class="hover:scale-110 transition-transform">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    *ngIf="u.estado !== 0"
+                    (click)="desactivarUsuarioSafi(u.id, $event)"
+                    matTooltip="Desactivar Cuenta"
+                    class="hover:scale-110 transition-transform"
+                  >
                     <mat-icon>block</mat-icon>
                   </button>
                 </td>
               </tr>
               <tr *ngIf="usuariosFiltrados().length === 0">
                 <td colspan="5" class="py-16 text-center text-gray-400">
-                  <mat-icon class="!w-16 !h-16 !text-6xl text-gray-200 mb-2">person_search</mat-icon>
+                  <mat-icon class="!w-16 !h-16 !text-6xl text-gray-200 mb-2"
+                    >person_search</mat-icon
+                  >
                   <p class="font-black text-sm">No se encontraron usuarios activos</p>
-                  <p class="text-xs text-gray-400 mt-1">Pruebe modificando su término de búsqueda.</p>
+                  <p class="text-xs text-gray-400 mt-1">
+                    Pruebe modificando su término de búsqueda.
+                  </p>
                 </td>
               </tr>
             </tbody>
@@ -128,28 +189,39 @@
       </div>
     </div>
 
-    <!-- SUB-VISTA B: FICHA GESTORA DEL USUARIO SELECCIONADO (3 PESTAÑAS) -->
-    <div *ngIf="selectedUsuario()" class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden p-6 animate-in zoom-in-95 duration-200">
-      
-      <!-- Mini Cabecera del Usuario -->
-      <div class="p-6 bg-slate-900 text-white rounded-2xl relative flex justify-between items-start mb-6 overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-slate-900 to-indigo-950 opacity-95 z-0"></div>
+    <div
+      *ngIf="selectedUsuario()"
+      class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden p-6 animate-in zoom-in-95 duration-200"
+    >
+      <div
+        class="p-6 bg-slate-900 text-white rounded-2xl relative flex justify-between items-start mb-6 overflow-hidden"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-slate-900 to-indigo-950 opacity-95 z-0"
+        ></div>
         <div class="relative z-10">
-          <span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-indigo-500/25 border border-indigo-400/30 rounded-md text-indigo-300">
+          <span
+            class="text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-indigo-500/25 border border-indigo-400/30 rounded-md text-indigo-300"
+          >
             ID SAFI: {{ selectedUsuario()?.id }}
           </span>
-          <h3 class="text-2xl font-extrabold mt-2 tracking-tight text-white">{{ selectedUsuario()?.nombre }}</h3>
+          <h3 class="text-2xl font-extrabold mt-2 tracking-tight text-white">
+            {{ selectedUsuario()?.nombre }}
+          </h3>
           <p class="text-slate-300 text-xs mt-1.5 flex items-center gap-1.5 font-medium">
             <mat-icon class="!w-4 !h-4 !text-sm text-slate-400">email</mat-icon>
             {{ selectedUsuario()?.email }}
           </p>
         </div>
-        <button mat-stroked-button (click)="volverAlListado()" class="relative z-10 !border-slate-700 !text-slate-200 hover:!bg-slate-800 transition-all">
+        <button
+          mat-stroked-button
+          (click)="volverAlListado()"
+          class="relative z-10 !border-slate-700 !text-slate-200 hover:!bg-slate-800 transition-all"
+        >
           <mat-icon>arrow_back</mat-icon> Volver
         </button>
       </div>
 
-      <!-- Tab Group con las 3 Pestañas Requeridas para Vincular al Usuario -->
       <mat-tab-group animationDuration="250ms" class="modern-tabs">
         <mat-tab>
           <ng-template mat-tab-label>
@@ -157,495 +229,655 @@
           </ng-template>
           <div class="py-6 space-y-6">
             <div class="grid grid-cols-12 gap-4 items-stretch">
-              
-              <!-- LISTA DE LA IZQUIERDA: DISPONIBLES (NO ASIGNADOS) -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
                     <mat-icon class="!text-sm !w-4 !h-4 text-slate-450">shield</mat-icon>
                     Roles Disponibles ({{ availableRoles().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="availableRolesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="availableRolesSelected().size > 0"
+                  >
                     {{ availableRolesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
-                     id="available-list"
-                     cdkDropList
-                     [cdkDropListData]="availableRoles()"
-                     [cdkDropListConnectedTo]="['assigned-list']"
-                     (cdkDropListDropped)="onRoleDrop($event)">
-                  
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                  id="available-list"
+                  cdkDropList
+                  [cdkDropListData]="availableRoles()"
+                  [cdkDropListConnectedTo]="['assigned-list']"
+                  (cdkDropListDropped)="onRoleDrop($event)"
+                >
                   <div class="space-y-2">
-                    <div *ngFor="let rol of availableRoles()"
-                         cdkDrag
-                         [cdkDragData]="rol"
-                         (click)="toggleAvailableRoleSelection(rol.id)"
-                         class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
-                         [ngClass]="availableRolesSelected().has(rol.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                      
+                    <div
+                      *ngFor="let rol of availableRoles()"
+                      cdkDrag
+                      [cdkDragData]="rol"
+                      (click)="toggleAvailableRoleSelection(rol.id)"
+                      class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                      [ngClass]="
+                        availableRolesSelected().has(rol.id)
+                          ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                          : ''
+                      "
+                    >
                       <!-- Selector visual -->
-                      <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all"
-                           [ngClass]="availableRolesSelected().has(rol.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                      <div
+                        class="w-5 h-5 rounded-md border flex items-center justify-center transition-all"
+                        [ngClass]="
+                          availableRolesSelected().has(rol.id)
+                            ? 'bg-indigo-600 border-indigo-650 text-white'
+                            : 'border-gray-250 text-transparent'
+                        "
+                      >
                         <mat-icon class="!text-xs !w-3 !h-3">check</mat-icon>
                       </div>
 
-                      <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550">
+                      <div
+                        class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550"
+                      >
                         <mat-icon class="!text-lg !w-5 !h-5">admin_panel_settings</mat-icon>
                       </div>
-                      
+
                       <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-slate-800 truncate">{{ rol.label }}</h5>
-                        <span class="text-[9px] font-mono text-gray-400 block truncate">{{ rol.id }}</span>
+                        <span class="text-[9px] font-mono text-gray-400 block truncate">{{
+                          rol.id
+                        }}</span>
                       </div>
-                      
-                      <mat-icon class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">drag_indicator</mat-icon>
+
+                      <mat-icon
+                        class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab"
+                        >drag_indicator</mat-icon
+                      >
                     </div>
                   </div>
 
-                  <div *ngIf="availableRoles().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="availableRoles().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-300 mb-2">verified_user</mat-icon>
                     <p class="text-xs font-bold text-slate-600">Sin roles disponibles</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Todos los roles han sido asignados.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Todos los roles han sido asignados.
+                    </p>
                   </div>
-
                 </div>
               </div>
 
-              <!-- BOTONES DEL MEDIO PARA TRANSICIÓN -->
-              <div class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4">
-                
-                <button mat-flat-button color="primary" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-indigo-100" 
-                        (click)="moveAllToAssigned()"
-                        [disabled]="availableRoles().length === 0"
-                        matTooltip="Asignar todos los roles">
+              <div
+                class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4"
+              >
+                <button
+                  mat-flat-button
+                  color="primary"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-indigo-100"
+                  (click)="moveAllToAssigned()"
+                  [disabled]="loadingVinculos() || availableRoles().length === 0"
+                  matTooltip="Asignar todos los roles"
+                >
                   <mat-icon>keyboard_double_arrow_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="accent" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-indigo-50" 
-                        (click)="moveSelectedToAssigned()"
-                        [disabled]="availableRolesSelected().size === 0"
-                        matTooltip="Asignar seleccionados">
+                <button
+                  mat-flat-button
+                  color="accent"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-indigo-50"
+                  (click)="moveSelectedToAssigned()"
+                  [disabled]="loadingVinculos() || availableRolesSelected().size === 0"
+                  matTooltip="Asignar seleccionados"
+                >
                   <mat-icon>chevron_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-red-100" 
-                        (click)="moveSelectedToAvailable()"
-                        [disabled]="assignedRolesSelected().size === 0"
-                        matTooltip="Revocar seleccionados">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md shadow-red-100"
+                  (click)="moveSelectedToAvailable()"
+                  [disabled]="loadingVinculos() || assignedRolesSelected().size === 0"
+                  matTooltip="Revocar seleccionados"
+                >
                   <mat-icon>chevron_left</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveAllToAvailable()"
-                        [disabled]="assignedRoles().length === 0"
-                        matTooltip="Revocar todos los roles">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllToAvailable()"
+                  [disabled]="loadingVinculos() || assignedRoles().length === 0"
+                  matTooltip="Revocar todos los roles"
+                >
                   <mat-icon>keyboard_double_arrow_left</mat-icon>
                 </button>
-
               </div>
 
-              <!-- LISTA DE LA DERECHA: ASIGNADOS -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
                     <mat-icon class="!text-sm !w-4 !h-4 text-indigo-500">verified_user</mat-icon>
                     Roles Asignados ({{ assignedRoles().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="assignedRolesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="assignedRolesSelected().size > 0"
+                  >
                     {{ assignedRolesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
-                     id="assigned-list"
-                     cdkDropList
-                     [cdkDropListData]="assignedRoles()"
-                     [cdkDropListConnectedTo]="['available-list']"
-                     (cdkDropListDropped)="onRoleDrop($event)">
-                  
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                  id="assigned-list"
+                  cdkDropList
+                  [cdkDropListData]="assignedRoles()"
+                  [cdkDropListConnectedTo]="['available-list']"
+                  (cdkDropListDropped)="onRoleDrop($event)"
+                >
                   <div class="space-y-2">
-                    <div *ngFor="let rol of assignedRoles()"
-                         cdkDrag
-                         [cdkDragData]="rol"
-                         (click)="toggleAssignedRoleSelection(rol.id)"
-                         class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
-                         [ngClass]="assignedRolesSelected().has(rol.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                      
-                      <!-- Selector visual -->
-                      <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all"
-                           [ngClass]="assignedRolesSelected().has(rol.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                    <div
+                      *ngFor="let rol of assignedRoles()"
+                      cdkDrag
+                      [cdkDragData]="rol"
+                      (click)="toggleAssignedRoleSelection(rol.id)"
+                      class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                      [ngClass]="
+                        assignedRolesSelected().has(rol.id)
+                          ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                          : ''
+                      "
+                    >
+                      <div
+                        class="w-5 h-5 rounded-md border flex items-center justify-center transition-all"
+                        [ngClass]="
+                          assignedRolesSelected().has(rol.id)
+                            ? 'bg-indigo-600 border-indigo-650 text-white'
+                            : 'border-gray-250 text-transparent'
+                        "
+                      >
                         <mat-icon class="!text-xs !w-3 !h-3">check</mat-icon>
                       </div>
 
-                      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+                      <div
+                        class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white"
+                      >
                         <mat-icon class="!text-lg !w-5 !h-5">security</mat-icon>
                       </div>
-                      
+
                       <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-slate-800 truncate">{{ rol.label }}</h5>
-                        <span class="text-[9px] font-mono text-indigo-400 block truncate">{{ rol.id }}</span>
+                        <span class="text-[9px] font-mono text-indigo-400 block truncate">{{
+                          rol.id
+                        }}</span>
                       </div>
-                      
-                      <mat-icon class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">drag_indicator</mat-icon>
+
+                      <mat-icon
+                        class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab"
+                        >drag_indicator</mat-icon
+                      >
                     </div>
                   </div>
 
-                  <div *ngIf="assignedRoles().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="assignedRoles().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-300 mb-2">lock_open</mat-icon>
                     <p class="text-xs font-bold text-slate-650">Ningún rol asignado</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Arrastre roles aquí para conceder privilegios.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Arrastre roles aquí para conceder privilegios.
+                    </p>
                   </div>
-
                 </div>
               </div>
-
             </div>
           </div>
         </mat-tab>
 
-        <!-- PESTAÑA 2: ENTIDADES (SAFI) -->
         <mat-tab>
           <ng-template mat-tab-label>
             <mat-icon class="mr-2">business</mat-icon> 2. Entidades
           </ng-template>
           <div class="py-6 space-y-6">
             <div class="grid grid-cols-12 gap-4 items-stretch">
-              
-              <!-- LISTA DE LA IZQUIERDA: DISPONIBLES (NO ASIGNADAS) -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
                     <mat-icon class="!text-sm !w-4 !h-4 text-slate-450">add_business</mat-icon>
                     Entidades Disponibles ({{ availableEntidades().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="availableEntidadesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="availableEntidadesSelected().size > 0"
+                  >
                     {{ availableEntidadesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto">
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                >
                   <div class="space-y-2">
-                    <div *ngFor="let ent of availableEntidades()"
-                         (click)="toggleAvailableEntidadSelection(ent.id)"
-                         class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
-                         [ngClass]="availableEntidadesSelected().has(ent.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                      
+                    <div
+                      *ngFor="let ent of availableEntidades()"
+                      (click)="toggleAvailableEntidadSelection(ent.id)"
+                      class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                      [ngClass]="
+                        availableEntidadesSelected().has(ent.id)
+                          ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                          : ''
+                      "
+                    >
                       <!-- Selector visual -->
-                      <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0"
-                           [ngClass]="availableEntidadesSelected().has(ent.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                      <div
+                        class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0"
+                        [ngClass]="
+                          availableEntidadesSelected().has(ent.id)
+                            ? 'bg-indigo-600 border-indigo-650 text-white'
+                            : 'border-gray-250 text-transparent'
+                        "
+                      >
                         <mat-icon class="!text-xs !w-3 !h-3">check</mat-icon>
                       </div>
 
-                      <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550 shrink-0">
+                      <div
+                        class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550 shrink-0"
+                      >
                         <mat-icon class="!text-lg !w-5 !h-5">business</mat-icon>
                       </div>
-                      
+
                       <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-slate-800 truncate">{{ ent.nombre }}</h5>
-                        <span class="text-[9px] font-mono text-gray-400 block truncate">{{ ent.slug }}</span>
+                        <span class="text-[9px] font-mono text-gray-400 block truncate">{{
+                          ent.slug
+                        }}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div *ngIf="availableEntidades().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="availableEntidades().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-300 mb-2">business</mat-icon>
                     <p class="text-xs font-bold text-slate-655">Sin entidades disponibles</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Todas las entidades han sido asociadas.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Todas las entidades han sido asociadas.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <!-- BOTONES DEL MEDIO PARA TRANSICIÓN -->
-              <div class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4">
-                <button mat-flat-button color="primary" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveAllEntidadesToAssigned()"
-                        [disabled]="availableEntidades().length === 0"
-                        matTooltip="Asociar todas las entidades">
+              <div
+                class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4"
+              >
+                <button
+                  mat-flat-button
+                  color="primary"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllEntidadesToAssigned()"
+                  [disabled]="loadingVinculos() || availableEntidades().length === 0"
+                  matTooltip="Asociar todas las entidades"
+                >
                   <mat-icon>keyboard_double_arrow_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="accent" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveSelectedEntidadesToAssigned()"
-                        [disabled]="availableEntidadesSelected().size === 0"
-                        matTooltip="Asociar seleccionadas">
+                <button
+                  mat-flat-button
+                  color="accent"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedEntidadesToAssigned()"
+                  [disabled]="loadingVinculos() || availableEntidadesSelected().size === 0"
+                  matTooltip="Asociar seleccionadas"
+                >
                   <mat-icon>chevron_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveSelectedEntidadesToAvailable()"
-                        [disabled]="assignedEntidadesSelected().size === 0"
-                        matTooltip="Desvincular seleccionadas">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedEntidadesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedEntidadesSelected().size === 0"
+                  matTooltip="Desvincular seleccionadas"
+                >
                   <mat-icon>chevron_left</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveAllEntidadesToAvailable()"
-                        [disabled]="assignedEntidades().length === 0"
-                        matTooltip="Desvincular todas las entidades">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllEntidadesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedEntidades().length === 0"
+                  matTooltip="Desvincular todas las entidades"
+                >
                   <mat-icon>keyboard_double_arrow_left</mat-icon>
                 </button>
               </div>
 
-              <!-- LISTA DE LA DERECHA: ASIGNADAS -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
                     <mat-icon class="!text-sm !w-4 !h-4 text-indigo-500">business</mat-icon>
                     Entidades Asignadas ({{ assignedEntidades().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="assignedEntidadesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="assignedEntidadesSelected().size > 0"
+                  >
                     {{ assignedEntidadesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto">
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                >
                   <div class="space-y-2">
-                    <div *ngFor="let ent of assignedEntidades()"
-                         (click)="toggleAssignedEntidadSelection(ent.id)"
-                         class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
-                         [ngClass]="assignedEntidadesSelected().has(ent.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                      
+                    <div
+                      *ngFor="let ent of assignedEntidades()"
+                      (click)="toggleAssignedEntidadSelection(ent.id)"
+                      class="group p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                      [ngClass]="
+                        assignedEntidadesSelected().has(ent.id)
+                          ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                          : ''
+                      "
+                    >
                       <!-- Selector visual -->
-                      <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0"
-                           [ngClass]="assignedEntidadesSelected().has(ent.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                      <div
+                        class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0"
+                        [ngClass]="
+                          assignedEntidadesSelected().has(ent.id)
+                            ? 'bg-indigo-600 border-indigo-650 text-white'
+                            : 'border-gray-250 text-transparent'
+                        "
+                      >
                         <mat-icon class="!text-xs !w-3 !h-3">check</mat-icon>
                       </div>
 
-                      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                      <div
+                        class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0"
+                      >
                         <mat-icon class="!text-lg !w-5 !h-5">business</mat-icon>
                       </div>
-                      
+
                       <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-slate-800 truncate">{{ ent.nombre }}</h5>
-                        <span class="text-[9px] font-mono text-indigo-400 block truncate">{{ ent.slug }}</span>
+                        <span class="text-[9px] font-mono text-indigo-400 block truncate">{{
+                          ent.slug
+                        }}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div *ngIf="assignedEntidades().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="assignedEntidades().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-200 mb-2">business</mat-icon>
                     <p class="text-xs font-bold text-slate-655">Sin entidades asignadas</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Asocie entidades usando la lista de la izquierda.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Asocie entidades usando la lista de la izquierda.
+                    </p>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </mat-tab>
 
-        <!-- PESTAÑA 3: UNIDADES (SAFI) -->
         <mat-tab>
           <ng-template mat-tab-label>
             <mat-icon class="mr-2">lan</mat-icon> 3. Unidades
           </ng-template>
           <div class="py-6 space-y-6">
             <div class="grid grid-cols-12 gap-4 items-stretch">
-              
-              <!-- LISTA DE LA IZQUIERDA: DISPONIBLES (NO ASIGNADAS, AGRUPADAS) -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                    <mat-icon class="!text-sm !w-4 !h-4 text-slate-450">add_circle_outline</mat-icon>
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
+                    <mat-icon class="!text-sm !w-4 !h-4 text-slate-450"
+                      >add_circle_outline</mat-icon
+                    >
                     Unidades Disponibles ({{ unidades().length - assignedUnidadIds().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="availableUnidadesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="availableUnidadesSelected().size > 0"
+                  >
                     {{ availableUnidadesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto">
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                >
                   <div class="space-y-4">
                     <div *ngFor="let group of groupedAvailableUnidades()" class="space-y-2">
                       <!-- Subcabecera de la Entidad -->
-                      <div class="flex items-center gap-1.5 px-1 py-1 border-b border-slate-200/20 text-[9px] font-black uppercase tracking-wider text-slate-500">
+                      <div
+                        class="flex items-center gap-1.5 px-1 py-1 border-b border-slate-200/20 text-[9px] font-black uppercase tracking-wider text-slate-500"
+                      >
                         <mat-icon class="!w-3 h-3 !text-[11px] text-indigo-650">business</mat-icon>
-                        <span>{{ group.entity ? group.entity.nombre : 'Sin Entidad Vinculada' }}</span>
+                        <span>{{
+                          group.entity ? group.entity.nombre : 'Sin Entidad Vinculada'
+                        }}</span>
                       </div>
-                      
-                      <!-- Lista de Unidades del Grupo -->
+
                       <div class="space-y-1.5">
-                        <div *ngFor="let u of group.units"
-                             (click)="toggleAvailableUnidadSelection(u.id)"
-                             class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-sm transition-all select-none relative"
-                             [ngClass]="availableUnidadesSelected().has(u.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                          
-                          <!-- Selector visual -->
-                          <div class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
-                               [ngClass]="availableUnidadesSelected().has(u.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                        <div
+                          *ngFor="let u of group.units"
+                          (click)="toggleAvailableUnidadSelection(u.id)"
+                          class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-sm transition-all select-none relative"
+                          [ngClass]="
+                            availableUnidadesSelected().has(u.id)
+                              ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                              : ''
+                          "
+                        >
+                          <div
+                            class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
+                            [ngClass]="
+                              availableUnidadesSelected().has(u.id)
+                                ? 'bg-indigo-600 border-indigo-650 text-white'
+                                : 'border-gray-250 text-transparent'
+                            "
+                          >
                             <mat-icon class="!text-[10px] !w-2.5 !h-2.5">check</mat-icon>
                           </div>
 
-                          <div class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550 shrink-0">
+                          <div
+                            class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550 shrink-0"
+                          >
                             <mat-icon class="!text-sm !w-4 !h-4">lan</mat-icon>
                           </div>
-                          
+
                           <div class="flex-1 min-w-0">
-                            <h5 class="text-[11px] font-bold text-slate-800 truncate">{{ u.nombre }}</h5>
-                            <span class="text-[8px] font-mono text-gray-400 block truncate">{{ u.slug }}</span>
+                            <h5 class="text-[11px] font-bold text-slate-800 truncate">
+                              {{ u.nombre }}
+                            </h5>
+                            <span class="text-[8px] font-mono text-gray-400 block truncate">{{
+                              u.slug
+                            }}</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div *ngIf="unidades().length - assignedUnidadIds().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="unidades().length - assignedUnidadIds().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-300 mb-2">lan</mat-icon>
                     <p class="text-xs font-bold text-slate-655">Sin unidades disponibles</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Todas las unidades han sido asociadas.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Todas las unidades han sido asociadas.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <!-- BOTONES DEL MEDIO PARA TRANSICIÓN -->
-              <div class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4">
-                <button mat-flat-button color="primary" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveAllUnidadesToAssigned()"
-                        [disabled]="unidades().length - assignedUnidadIds().length === 0"
-                        matTooltip="Asociar todas las unidades">
+              <div
+                class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4"
+              >
+                <button
+                  mat-flat-button
+                  color="primary"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllUnidadesToAssigned()"
+                  [disabled]="loadingVinculos() || (unidades().length - assignedUnidadIds().length === 0)"
+                  matTooltip="Asociar todas las unidades"
+                >
                   <mat-icon>keyboard_double_arrow_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="accent" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveSelectedUnidadesToAssigned()"
-                        [disabled]="availableUnidadesSelected().size === 0"
-                        matTooltip="Asociar seleccionadas">
+                <button
+                  mat-flat-button
+                  color="accent"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedUnidadesToAssigned()"
+                  [disabled]="loadingVinculos() || availableUnidadesSelected().size === 0"
+                  matTooltip="Asociar seleccionadas"
+                >
                   <mat-icon>chevron_right</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveSelectedUnidadesToAvailable()"
-                        [disabled]="assignedUnidadesSelected().size === 0"
-                        matTooltip="Desvincular seleccionadas">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedUnidadesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedUnidadesSelected().size === 0"
+                  matTooltip="Desvincular seleccionadas"
+                >
                   <mat-icon>chevron_left</mat-icon>
                 </button>
 
-                <button mat-flat-button color="warn" 
-                        class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md" 
-                        (click)="moveAllUnidadesToAvailable()"
-                        [disabled]="assignedUnidadIds().length === 0"
-                        matTooltip="Desvincular todas las unidades">
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllUnidadesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedUnidadIds().length === 0"
+                  matTooltip="Desvincular todas las unidades"
+                >
                   <mat-icon>keyboard_double_arrow_left</mat-icon>
                 </button>
               </div>
 
-              <!-- LISTA DE LA DERECHA: ASIGNADAS (AGRUPADAS) -->
               <div class="col-span-12 md:col-span-5 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <h4
+                    class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+                  >
                     <mat-icon class="!text-sm !w-4 !h-4 text-indigo-500">lan</mat-icon>
                     Unidades Asignadas ({{ assignedUnidadIds().length }})
                   </h4>
-                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="assignedUnidadesSelected().size > 0">
+                  <span
+                    class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full"
+                    *ngIf="assignedUnidadesSelected().size > 0"
+                  >
                     {{ assignedUnidadesSelected().size }} selec.
                   </span>
                 </div>
-                
-                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto">
+
+                <div
+                  class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[320px] max-h-[450px] overflow-y-auto"
+                >
                   <div class="space-y-4">
                     <div *ngFor="let group of groupedAssignedUnidades()" class="space-y-2">
-                      <!-- Subcabecera de la Entidad -->
-                      <div class="flex items-center gap-1.5 px-1 py-1 border-b border-slate-200/20 text-[9px] font-black uppercase tracking-wider text-slate-500">
+                      <div
+                        class="flex items-center gap-1.5 px-1 py-1 border-b border-slate-200/20 text-[9px] font-black uppercase tracking-wider text-slate-500"
+                      >
                         <mat-icon class="!w-3 h-3 !text-[11px] text-indigo-650">business</mat-icon>
-                        <span>{{ group.entity ? group.entity.nombre : 'Sin Entidad Vinculada' }}</span>
+                        <span>{{
+                          group.entity ? group.entity.nombre : 'Sin Entidad Vinculada'
+                        }}</span>
                       </div>
-                      
-                      <!-- Lista de Unidades del Grupo -->
+
                       <div class="space-y-1.5">
-                        <div *ngFor="let u of group.units"
-                             (click)="toggleAssignedUnidadSelection(u.id)"
-                             class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
-                             [ngClass]="assignedUnidadesSelected().has(u.id) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''">
-                          
-                          <!-- Selector visual -->
-                          <div class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
-                               [ngClass]="assignedUnidadesSelected().has(u.id) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'">
+                        <div
+                          *ngFor="let u of group.units"
+                          (click)="toggleAssignedUnidadSelection(u.id)"
+                          class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                          [ngClass]="
+                            assignedUnidadesSelected().has(u.id)
+                              ? 'ring-2 ring-indigo-500 bg-indigo-50/10'
+                              : ''
+                          "
+                        >
+                          <div
+                            class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
+                            [ngClass]="
+                              assignedUnidadesSelected().has(u.id)
+                                ? 'bg-indigo-600 border-indigo-650 text-white'
+                                : 'border-gray-250 text-transparent'
+                            "
+                          >
                             <mat-icon class="!text-[10px] !w-2.5 !h-2.5">check</mat-icon>
                           </div>
 
-                          <div class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                          <div
+                            class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0"
+                          >
                             <mat-icon class="!text-sm !w-4 !h-4">lan</mat-icon>
                           </div>
-                          
+
                           <div class="flex-1 min-w-0">
-                            <h5 class="text-[11px] font-bold text-slate-800 truncate">{{ u.nombre }}</h5>
-                            <span class="text-[8px] font-mono text-indigo-400 block truncate">{{ u.slug }}</span>
+                            <h5 class="text-[11px] font-bold text-slate-800 truncate">
+                              {{ u.nombre }}
+                            </h5>
+                            <span class="text-[8px] font-mono text-indigo-400 block truncate">{{
+                              u.slug
+                            }}</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div *ngIf="assignedUnidadIds().length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                  <div
+                    *ngIf="assignedUnidadIds().length === 0"
+                    class="h-full flex flex-col items-center justify-center text-gray-400 py-12"
+                  >
                     <mat-icon class="!text-4xl text-gray-200 mb-2">lan</mat-icon>
                     <p class="text-xs font-bold text-slate-655">Sin unidades asignadas</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Asocie unidades usando la lista de la izquierda.</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">
+                      Asocie unidades usando la lista de la izquierda.
+                    </p>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </mat-tab>
-
       </mat-tab-group>
     </div>
   </div>
 
-  <!-- VISTA 2: ROLES, ENTIDADES Y UNIDADES (Página /safi) -->
-  <div *ngIf="!isUsuariosPage()" class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden p-6 animate-in fade-in duration-300">
+  <div
+    *ngIf="!isUsuariosPage()"
+    class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden p-6 animate-in fade-in duration-300"
+  >
     <mat-tab-group animationDuration="250ms" class="modern-tabs">
-      
-      <!-- PESTAÑA 1: ROLES DE SEGURIDAD -->
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="mr-2">security</mat-icon> Roles de Seguridad
-        </ng-template>
-        <div class="py-6 space-y-6">
-          <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-            <div>
-              <h3 class="text-base font-black text-slate-800">Roles de Seguridad (NGAC)</h3>
-              <p class="text-xs text-gray-450">Roles estructurales y atributos de usuario registrados en el motor de accesos.</p>
-            </div>
-          </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let rol of roles()" class="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between hover:shadow-md transition-all">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                  <mat-icon>admin_panel_settings</mat-icon>
-                </div>
-                <div>
-                  <h4 class="text-xs font-black text-slate-800">{{ rol.nombre }}</h4>
-                  <span class="text-[9px] font-mono text-gray-400 block">{{ rol.codigo }}</span>
-                </div>
-              </div>
-              <span class="text-[8px] font-black uppercase tracking-wider px-2 py-0.5 bg-indigo-50 border border-indigo-100 rounded text-indigo-600">
-                {{ rol.descripcion || 'Rol' }}
-              </span>
-            </div>
-            <div *ngIf="roles().length === 0" class="col-span-full py-12 text-center text-gray-400">
-              <mat-icon class="!text-5xl text-gray-200 mb-2">shield</mat-icon>
-              <p class="font-bold">No hay roles de seguridad definidos en el motor.</p>
-            </div>
-          </div>
-        </div>
-      </mat-tab>
 
-      <!-- PESTAÑA 2: ENTIDADES COMERCIALES -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="mr-2">business</mat-icon> Entidades Comerciales
@@ -654,48 +886,102 @@
           <div class="flex justify-between items-center border-b border-slate-100 pb-4">
             <div>
               <h3 class="text-base font-black text-slate-800">Directorio de Entidades SAFI</h3>
-              <p class="text-xs text-gray-450">Empresas, sucursales y entidades de negocio habilitadas en la base de datos comercial.</p>
+              <p class="text-xs text-gray-450">
+                Empresas, sucursales y entidades de negocio habilitadas en la base de datos
+                comercial.
+              </p>
             </div>
-            <button mat-flat-button color="primary" class="!rounded-xl" (click)="showEntidadForm = !showEntidadForm">
-              <mat-icon>{{ showEntidadForm ? 'close' : 'add_business' }}</mat-icon>
-              {{ showEntidadForm ? 'Cancelar' : 'Nueva Entidad' }}
+            <button
+              mat-flat-button
+              color="primary"
+              class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+              (click)="toggleEntidadForm()"
+              [matTooltip]="showEntidadForm ? 'Cancelar' : (editingEntidad() ? 'Editar Entidad' : 'Nueva Entidad')"
+            >
+              <mat-icon>{{ showEntidadForm ? 'close' : (editingEntidad() ? 'edit' : 'add_business') }}</mat-icon>
             </button>
           </div>
 
-          <!-- Formulario de Creación -->
-          <div *ngIf="showEntidadForm" class="p-5 bg-slate-50 border border-slate-100 rounded-3xl animate-in slide-in-from-top-4 duration-300">
-            <form [formGroup]="entidadForm" (ngSubmit)="crearEntidadSafi()" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div
+            *ngIf="showEntidadForm"
+            class="p-5 bg-slate-50 border border-slate-100 rounded-3xl animate-in slide-in-from-top-4 duration-300"
+          >
+            <h4 class="text-xs font-black text-slate-700 mb-3 uppercase tracking-wider">
+              {{ editingEntidad() ? 'Editar Entidad SAFI' : 'Nueva Entidad SAFI' }}
+            </h4>
+            <form
+              [formGroup]="entidadForm"
+              (ngSubmit)="guardarEntidadSafi()"
+              class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
+            >
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Código Técnico (Slug)</label>
-                <input type="text" formControlName="slug_entidad" placeholder="ENT_SANTIAGO_CENTRO"
-                       class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Código Entidad</label
+                >
+                <input
+                  type="text"
+                  formControlName="codigo"
+                  placeholder="ej. ENT-SGO"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
               </div>
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Nombre Comercial</label>
-                <input type="text" formControlName="nombre_entidad" placeholder="Sucursal Santiago Centro"
-                       class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Código Técnico (Slug)</label
+                >
+                <input
+                  type="text"
+                  formControlName="slug_entidad"
+                  placeholder="ej. SANTIAGO_CENTRO"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
               </div>
-              <button mat-flat-button color="primary" type="submit" [disabled]="entidadForm.invalid" class="!rounded-xl !py-6">
-                <mat-icon>check</mat-icon> Guardar Entidad
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Nombre Comercial</label
+                >
+                <input
+                  type="text"
+                  formControlName="nombre_entidad"
+                  placeholder="Sucursal Santiago Centro"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="entidadForm.invalid"
+                class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                [matTooltip]="editingEntidad() ? 'Actualizar Entidad' : 'Guardar Entidad'"
+              >
+                <mat-icon>check</mat-icon>
               </button>
             </form>
           </div>
 
-          <!-- Filtro de Búsqueda -->
           <div class="relative">
-            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</mat-icon>
-            <input type="text" 
-                   [ngModel]="filtroEntidad()" 
-                   (ngModelChange)="filtroEntidad.set($event)"
-                   placeholder="Filtrar entidades por nombre o código..." 
-                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              >search</mat-icon
+            >
+            <input
+              type="text"
+              [ngModel]="filtroEntidad()"
+              (ngModelChange)="filtroEntidad.set($event)"
+              placeholder="Filtrar entidades por nombre o código..."
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+            />
           </div>
 
-          <!-- Tabla de Entidades -->
           <div class="overflow-x-auto rounded-2xl border border-slate-100">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-50/80 border-b border-slate-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider">
+                <tr
+                  class="bg-slate-50/80 border-b border-slate-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider"
+                >
                   <th class="py-3 px-4">ID</th>
                   <th class="py-3 px-4">Código Técnico</th>
                   <th class="py-3 px-4">Nombre Comercial</th>
@@ -704,23 +990,45 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
-                <tr *ngFor="let e of entidadesFiltrados()" class="hover:bg-slate-50/50 transition-colors">
+                <tr
+                  *ngFor="let e of entidadesFiltrados()"
+                  class="hover:bg-slate-50/50 transition-colors"
+                >
                   <td class="py-3 px-4 font-mono font-bold text-amber-600">{{ e.id }}</td>
                   <td class="py-3 px-4 font-mono text-[10px]">{{ e.slug }}</td>
                   <td class="py-3 px-4 font-bold">{{ e.nombre }}</td>
                   <td class="py-3 px-4">
-                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[9px] font-black uppercase">
+                    <span
+                      class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[9px] font-black uppercase"
+                    >
                       Entidad
                     </span>
                   </td>
                   <td class="py-3 px-4 text-center">
-                    <button mat-icon-button color="warn" (click)="eliminarEntidadSafi(e.id)" matTooltip="Eliminar permanentemente">
-                      <mat-icon>delete_forever</mat-icon>
-                    </button>
+                    <div class="flex items-center justify-center gap-1">
+                      <button
+                        mat-icon-button
+                        color="accent"
+                        (click)="abrirEditarEntidad(e, $event)"
+                        matTooltip="Editar Entidad"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="eliminarEntidadSafi(e.id)"
+                        matTooltip="Eliminar permanentemente"
+                      >
+                        <mat-icon>delete_forever</mat-icon>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr *ngIf="entidadesFiltrados().length === 0">
-                  <td colspan="5" class="py-12 text-center text-gray-400">No se encontraron entidades registradas.</td>
+                  <td colspan="5" class="py-12 text-center text-gray-400">
+                    No se encontraron entidades registradas.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -728,7 +1036,6 @@
         </div>
       </mat-tab>
 
-      <!-- PESTAÑA 3: ÁREAS Y UNIDADES -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="mr-2">lan</mat-icon> Áreas y Unidades
@@ -737,53 +1044,113 @@
           <div class="flex justify-between items-center border-b border-slate-100 pb-4">
             <div>
               <h3 class="text-base font-black text-slate-800">Unidades Organizacionales (SAFI)</h3>
-              <p class="text-xs text-gray-450">Departamentos, áreas and centros de costo operativos dentro de la organización.</p>
+              <p class="text-xs text-gray-450">
+                Departamentos, áreas and centros de costo operativos dentro de la organización.
+              </p>
             </div>
-            <button mat-flat-button color="primary" class="!rounded-xl" (click)="showUnidadForm = !showUnidadForm">
-              <mat-icon>{{ showUnidadForm ? 'close' : 'schema' }}</mat-icon>
-              {{ showUnidadForm ? 'Cancelar' : 'Nueva Unidad' }}
+            <button
+              mat-flat-button
+              color="primary"
+              class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+              (click)="toggleUnidadForm()"
+              [matTooltip]="showUnidadForm ? 'Cancelar' : (editingUnidad() ? 'Editar Unidad' : 'Nueva Unidad')"
+            >
+              <mat-icon>{{ showUnidadForm ? 'close' : (editingUnidad() ? 'edit' : 'schema') }}</mat-icon>
             </button>
           </div>
 
-          <!-- Formulario de Creación -->
-          <div *ngIf="showUnidadForm" class="p-5 bg-slate-50 border border-slate-100 rounded-3xl animate-in slide-in-from-top-4 duration-300">
-            <form [formGroup]="unidadForm" (ngSubmit)="crearUnidadSafi()" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div
+            *ngIf="showUnidadForm"
+            class="p-5 bg-slate-50 border border-slate-100 rounded-3xl animate-in slide-in-from-top-4 duration-300"
+          >
+            <h4 class="text-xs font-black text-slate-700 mb-3 uppercase tracking-wider">
+              {{ editingUnidad() ? 'Editar Unidad SAFI' : 'Nueva Unidad SAFI' }}
+            </h4>
+            <form
+              [formGroup]="unidadForm"
+              (ngSubmit)="guardarUnidadSafi()"
+              class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
+            >
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Código Técnico (Slug)</label>
-                <input type="text" formControlName="slug_unidad" placeholder="UNI_FINANZAS"
-                       class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Código Unidad</label
+                >
+                <input
+                  type="text"
+                  formControlName="codigo"
+                  placeholder="ej. UNI-TES"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
               </div>
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Nombre de Unidad</label>
-                <input type="text" formControlName="nombre_unidad" placeholder="Departamento de Finanzas"
-                       class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Código Técnico (Slug)</label
+                >
+                <input
+                  type="text"
+                  formControlName="slug_unidad"
+                  placeholder="UNI_FINANZAS"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
               </div>
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Descripción Operativa</label>
-                <input type="text" formControlName="descripcion" placeholder="Área contable y de tesorería"
-                       class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Nombre de Unidad</label
+                >
+                <input
+                  type="text"
+                  formControlName="nombre_unidad"
+                  placeholder="Departamento de Finanzas"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
               </div>
-              <button mat-flat-button color="primary" type="submit" [disabled]="unidadForm.invalid" class="!rounded-xl !py-6 col-span-full md:col-span-1">
-                <mat-icon>check</mat-icon> Guardar Unidad
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                  >Descripción Operativa</label
+                >
+                <input
+                  type="text"
+                  formControlName="descripcion"
+                  placeholder="Área contable y de tesorería"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="unidadForm.invalid"
+                class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md col-span-full md:col-span-1"
+                [matTooltip]="editingUnidad() ? 'Actualizar Unidad' : 'Guardar Unidad'"
+              >
+                <mat-icon>check</mat-icon>
               </button>
             </form>
           </div>
 
-          <!-- Filtro de Búsqueda -->
           <div class="relative">
-            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</mat-icon>
-            <input type="text" 
-                   [ngModel]="filtroUnidad()" 
-                   (ngModelChange)="filtroUnidad.set($event)"
-                   placeholder="Filtrar unidades por nombre o código..." 
-                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              >search</mat-icon
+            >
+            <input
+              type="text"
+              [ngModel]="filtroUnidad()"
+              (ngModelChange)="filtroUnidad.set($event)"
+              placeholder="Filtrar unidades por nombre o código..."
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+            />
           </div>
 
-          <!-- Tabla de Unidades -->
           <div class="overflow-x-auto rounded-2xl border border-slate-100">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-50/80 border-b border-slate-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider">
+                <tr
+                  class="bg-slate-50/80 border-b border-slate-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider"
+                >
                   <th class="py-3 px-4">ID</th>
                   <th class="py-3 px-4">Código Técnico</th>
                   <th class="py-3 px-4">Nombre de Unidad</th>
@@ -792,19 +1159,39 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
-                <tr *ngFor="let u of unidadesFiltrados()" class="hover:bg-slate-50/50 transition-colors">
+                <tr
+                  *ngFor="let u of unidadesFiltrados()"
+                  class="hover:bg-slate-50/50 transition-colors"
+                >
                   <td class="py-3 px-4 font-mono font-bold text-emerald-600">{{ u.id }}</td>
                   <td class="py-3 px-4 font-mono text-[10px]">{{ u.slug }}</td>
                   <td class="py-3 px-4 font-bold">{{ u.nombre }}</td>
                   <td class="py-3 px-4 text-gray-500">{{ u.desc || 'Sin descripción' }}</td>
                   <td class="py-3 px-4 text-center">
-                    <button mat-icon-button color="warn" (click)="eliminarUnidadSafi(u.id)" matTooltip="Eliminar permanentemente">
-                      <mat-icon>delete_forever</mat-icon>
-                    </button>
+                    <div class="flex items-center justify-center gap-1">
+                      <button
+                        mat-icon-button
+                        color="accent"
+                        (click)="abrirEditarUnidad(u, $event)"
+                        matTooltip="Editar Unidad"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="eliminarUnidadSafi(u.id)"
+                        matTooltip="Eliminar permanentemente"
+                      >
+                        <mat-icon>delete_forever</mat-icon>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr *ngIf="unidadesFiltrados().length === 0">
-                  <td colspan="5" class="py-12 text-center text-gray-400">No se encontraron unidades registradas.</td>
+                  <td colspan="5" class="py-12 text-center text-gray-400">
+                    No se encontraron unidades registradas.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -812,7 +1199,6 @@
         </div>
       </mat-tab>
 
-      <!-- PESTAÑA 4: VINCULACIONES RELACIONALES -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="mr-2">sync_alt</mat-icon> Vinculaciones
@@ -820,73 +1206,436 @@
         <div class="py-6 space-y-6">
           <div>
             <h3 class="text-base font-black text-slate-800">Motor de Vinculación Relacional</h3>
-            <p class="text-xs text-gray-450">Establecer y romper enlaces directos entre usuarios, entidades y unidades comerciales en lote.</p>
+            <p class="text-xs text-gray-450">
+              Establecer y romper enlaces directos entre usuarios, entidades y unidades comerciales
+              en lote.
+            </p>
           </div>
 
           <div class="p-6 bg-slate-50 border border-slate-100 rounded-3xl max-w-2xl mx-auto">
             <form [formGroup]="vinculoForm" class="space-y-6">
-              
-              <!-- Tipo de Relación -->
               <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo de Vinculación</label>
-                <mat-select formControlName="tipo" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400"
+                  >Tipo de Vinculación</label
+                >
+                <mat-select
+                  formControlName="tipo"
+                  class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none"
+                >
                   <mat-option value="usuario-unidad">👤 Usuario ⎔ Unidad Organizacional</mat-option>
                   <mat-option value="usuario-entidad">👤 Usuario 🏢 Entidad Comercial</mat-option>
                   <mat-option value="unidad-entidad">⎔ Unidad 🏢 Entidad Comercial</mat-option>
                 </mat-select>
               </div>
 
-              <!-- Selectores Dinámicos -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <!-- Selector de Usuario -->
                 <div *ngIf="vinculoForm.value.tipo.startsWith('usuario-')" class="space-y-2">
-                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400">Seleccionar Usuario</label>
-                  <mat-select formControlName="usuario_id" placeholder="Seleccione un usuario..." class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none">
+                  <label
+                    class="block text-[10px] font-black uppercase tracking-widest text-slate-400"
+                    >Seleccionar Usuario</label
+                  >
+                  <mat-select
+                    formControlName="usuario_id"
+                    placeholder="Seleccione un usuario..."
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none"
+                  >
                     <mat-option *ngFor="let u of usuarios()" [value]="u.id">
                       👤 {{ u.nombre }} (ID: {{ u.id }})
                     </mat-option>
                   </mat-select>
                 </div>
 
-                <!-- Selector de Unidad -->
-                <div *ngIf="vinculoForm.value.tipo === 'usuario-unidad' || vinculoForm.value.tipo === 'unidad-entidad'" class="space-y-2">
-                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400">Seleccionar Unidad</label>
-                  <mat-select formControlName="unidad_id" placeholder="Seleccione una unidad..." class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none">
+                <div
+                  *ngIf="
+                    vinculoForm.value.tipo === 'usuario-unidad' ||
+                    vinculoForm.value.tipo === 'unidad-entidad'
+                  "
+                  class="space-y-2"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase tracking-widest text-slate-400"
+                    >Seleccionar Unidad</label
+                  >
+                  <mat-select
+                    formControlName="unidad_id"
+                    placeholder="Seleccione una unidad..."
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none"
+                  >
                     <mat-option *ngFor="let u of unidades()" [value]="u.id">
                       ⎔ {{ u.nombre }} ({{ u.slug }})
                     </mat-option>
                   </mat-select>
                 </div>
 
-                <!-- Selector de Entidad -->
-                <div *ngIf="vinculoForm.value.tipo === 'usuario-entidad' || vinculoForm.value.tipo === 'unidad-entidad'" class="space-y-2 col-span-1 md:col-span-2">
-                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400">Seleccionar Entidad Comercial</label>
-                  <mat-select formControlName="entidad_id" placeholder="Seleccione una entidad..." class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none">
+                <div
+                  *ngIf="
+                    vinculoForm.value.tipo === 'usuario-entidad' ||
+                    vinculoForm.value.tipo === 'unidad-entidad'
+                  "
+                  class="space-y-2 col-span-1 md:col-span-2"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase tracking-widest text-slate-400"
+                    >Seleccionar Entidad Comercial</label
+                  >
+                  <mat-select
+                    formControlName="entidad_id"
+                    placeholder="Seleccione una entidad..."
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs cursor-pointer focus:outline-none"
+                  >
                     <mat-option *ngFor="let e of entidades()" [value]="e.id">
                       🏢 {{ e.nombre }} ({{ e.slug }})
                     </mat-option>
                   </mat-select>
                 </div>
-
               </div>
 
-              <!-- Botones de Acción -->
               <div class="flex gap-4 pt-4">
-                <button type="button" mat-flat-button color="primary" class="flex-1 !rounded-xl !py-6 shadow-md shadow-indigo-100" (click)="procesarVinculo('vincular')">
+                <button
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  class="flex-1 !rounded-xl !py-6 shadow-md shadow-indigo-100"
+                  (click)="procesarVinculo('vincular')"
+                >
                   <mat-icon>link</mat-icon> Crear Vínculo
                 </button>
-                <button type="button" mat-stroked-button color="warn" class="flex-1 !rounded-xl !py-6" (click)="procesarVinculo('desvincular')">
+                <button
+                  type="button"
+                  mat-stroked-button
+                  color="warn"
+                  class="flex-1 !rounded-xl !py-6"
+                  (click)="procesarVinculo('desvincular')"
+                >
                   <mat-icon>link_off</mat-icon> Romper Vínculo
                 </button>
               </div>
-
             </form>
           </div>
         </div>
       </mat-tab>
 
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="mr-2">widgets</mat-icon> Módulos de Negocio
+        </ng-template>
+        <div class="py-6 space-y-6">
+          <!-- SECCIÓN 1: VISTA DE LISTADO O EDICIÓN -->
+          <div *ngIf="!selectedModulo()" class="space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+              <div>
+                <h3 class="text-base font-black text-slate-800">Catálogo de Módulos de Negocio (SAFI)</h3>
+                <p class="text-xs text-gray-450">
+                  Módulos funcionales del sistema SAFI y su vinculación con los nodos de seguridad.
+                </p>
+              </div>
+              <button
+                mat-flat-button
+                color="primary"
+                class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                (click)="toggleModuloForm()"
+                [matTooltip]="showModuloForm ? 'Cancelar' : (editingModulo() ? 'Editar Módulo' : 'Nuevo Módulo')"
+              >
+                <mat-icon>{{ showModuloForm ? 'close' : (editingModulo() ? 'edit' : 'add_box') }}</mat-icon>
+              </button>
+            </div>
+
+            <!-- Formulario de Creación/Edición -->
+            <div
+              *ngIf="showModuloForm"
+              class="p-5 bg-slate-50 border border-slate-100 rounded-3xl animate-in slide-in-from-top-4 duration-300"
+            >
+              <h4 class="text-xs font-black text-slate-700 mb-3 uppercase tracking-wider">
+                {{ editingModulo() ? 'Editar Módulo de Negocio' : 'Nuevo Módulo de Negocio' }}
+              </h4>
+              <form
+                [formGroup]="moduloForm"
+                (ngSubmit)="guardarModulo()"
+                class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
+              >
+                <div>
+                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                    >Código</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="codigo"
+                    placeholder="ej. TESORERIA"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-mono"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                    >Nombre Comercial / Visible</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="nombre"
+                    placeholder="ej. Tesorería General"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5"
+                    >Descripción</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="descripcion"
+                    placeholder="ej. Pagos, Conciliaciones, Cajas"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="moduloForm.invalid"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md col-span-full md:col-span-1"
+                  [matTooltip]="editingModulo() ? 'Actualizar Módulo' : 'Guardar Módulo'"
+                >
+                  <mat-icon>check</mat-icon>
+                </button>
+              </form>
+            </div>
+
+            <!-- Filtro de Búsqueda -->
+            <div class="relative">
+              <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</mat-icon>
+              <input
+                type="text"
+                [ngModel]="filtroModulo()"
+                (ngModelChange)="filtroModulo.set($event)"
+                placeholder="Filtrar módulos de negocio..."
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+              />
+            </div>
+
+            <!-- Tabla de Módulos -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-50/80 border-b border-slate-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">ID</th>
+                    <th class="py-3 px-4">Código</th>
+                    <th class="py-3 px-4">Nombre Módulo</th>
+                    <th class="py-3 px-4">Descripción</th>
+                    <th class="py-3 px-4">Nodos Vinculados</th>
+                    <th class="py-3 px-4 text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+                  <tr
+                    *ngFor="let m of modulosFiltrados()"
+                    (click)="selectModulo(m)"
+                    class="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                  >
+                    <td class="py-3 px-4 font-mono font-bold text-indigo-600">{{ m.id_modulo }}</td>
+                    <td class="py-3 px-4 font-mono text-[10px]">{{ m.codigo }}</td>
+                    <td class="py-3 px-4 font-bold">{{ m.nombre }}</td>
+                    <td class="py-3 px-4 text-gray-500">{{ m.descripcion || 'Sin descripción' }}</td>
+                    <td class="py-3 px-4">
+                      <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-[9px] font-black uppercase">
+                        {{ m.nodos?.length || 0 }} nodos
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                      <div class="flex items-center justify-center gap-1">
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          (click)="abrirEditarModulo(m, $event)"
+                          matTooltip="Editar Módulo"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          (click)="eliminarModulo(m.id_modulo!, $event)"
+                          matTooltip="Eliminar permanentemente"
+                        >
+                          <mat-icon>delete_forever</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="modulosFiltrados().length === 0">
+                    <td colspan="6" class="py-12 text-center text-gray-400">
+                      No se encontraron módulos de negocio registrados.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: VINCULACIÓN DUAL (CUANDO SE SELECCIONA UN MÓDULO) -->
+          <div *ngIf="selectedModulo()" class="space-y-6 animate-in fade-in duration-300">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <button mat-icon-button (click)="deseleccionarModulo()" class="!w-8 !h-8 !min-w-8">
+                    <mat-icon class="text-slate-500">arrow_back</mat-icon>
+                  </button>
+                  <h3 class="text-base font-black text-slate-800 ml-2">
+                    Vinculación de Nodos: {{ selectedModulo()?.nombre }}
+                  </h3>
+                </div>
+                <p class="text-xs text-gray-450 ml-10">
+                  Asocie o desasocie los nodos correspondientes al módulo de negocio de SAFI.
+                </p>
+              </div>
+              <button mat-stroked-button color="primary" class="!rounded-xl" (click)="deseleccionarModulo()">
+                <mat-icon>keyboard_return</mat-icon> Volver al Listado
+              </button>
+            </div>
+
+            <!-- Interfaz Dual List para Vincular Nodos -->
+            <div class="grid grid-cols-12 gap-4 items-stretch">
+              <!-- Nodos Disponibles (Lado Izquierdo) -->
+              <div class="col-span-12 md:col-span-5 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <mat-icon class="!text-sm !w-4 !h-4 text-slate-450">add_circle_outline</mat-icon>
+                    Nodos del Sistema Disponibles ({{ availableNodes().length }})
+                  </h4>
+                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="availableNodesSelected().size > 0">
+                    {{ availableNodesSelected().size }} selec.
+                  </span>
+                </div>
+
+                <!-- Buscador de Nodos en la Lista de Selección -->
+                <div class="relative mb-2">
+                  <mat-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 !text-xs !w-3.5 !h-3.5 text-gray-400">search</mat-icon>
+                  <input
+                    type="text"
+                    [ngModel]="filtroModuloNode()"
+                    (ngModelChange)="filtroModuloNode.set($event)"
+                    placeholder="Buscar nodo..."
+                    class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200/60 rounded-xl text-[10px] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                  />
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[350px] max-h-[480px] overflow-y-auto">
+                  <div class="space-y-1.5">
+                    <div
+                      *ngFor="let n of availableNodes()"
+                      (click)="toggleAvailableNodeSelection(n.id_nodo)"
+                      class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-sm transition-all select-none relative"
+                      [ngClass]="availableNodesSelected().has(n.id_nodo) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''"
+                    >
+                      <div
+                        class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
+                        [ngClass]="availableNodesSelected().has(n.id_nodo) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'"
+                      >
+                        <mat-icon class="!text-[10px] !w-2.5 !h-2.5">check</mat-icon>
+                      </div>
+                      <div class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-550 shrink-0">
+                        <mat-icon class="!text-sm !w-4 !h-4">{{ n.tipo_nodo === 'OBJ_ATTR' ? 'folder' : 'description' }}</mat-icon>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h5 class="text-[11px] font-bold text-slate-800 truncate">{{ n.etiqueta }}</h5>
+                        <span class="text-[8px] font-mono text-gray-400 block truncate">{{ n.codigo_tecnico }} [{{ n.tipo_nodo }}]</span>
+                      </div>
+                    </div>
+                    <div *ngIf="availableNodes().length === 0" class="h-full flex flex-col items-center justify-center text-gray-450 py-12">
+                      <mat-icon class="!text-4xl text-gray-300 mb-2">widgets</mat-icon>
+                      <p class="text-xs font-bold text-slate-500">Sin nodos disponibles</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botonera Intermedia de Acción -->
+              <div class="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center justify-center gap-3 py-4">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllNodesToAssigned()"
+                  [disabled]="loadingVinculos() || availableNodes().length === 0"
+                  matTooltip="Vincular todos los nodos"
+                >
+                  <mat-icon>keyboard_double_arrow_right</mat-icon>
+                </button>
+                <button
+                  mat-flat-button
+                  color="accent"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedNodesToAssigned()"
+                  [disabled]="loadingVinculos() || availableNodesSelected().size === 0"
+                  matTooltip="Vincular seleccionados"
+                >
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveSelectedNodesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedNodesSelected().size === 0"
+                  matTooltip="Desvincular seleccionados"
+                >
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                <button
+                  mat-flat-button
+                  color="warn"
+                  class="!min-w-[44px] !w-11 !h-11 !p-0 !rounded-xl shadow-md"
+                  (click)="moveAllNodesToAvailable()"
+                  [disabled]="loadingVinculos() || assignedNodeIds().length === 0"
+                  matTooltip="Desvincular todos los nodos"
+                >
+                  <mat-icon>keyboard_double_arrow_left</mat-icon>
+                </button>
+              </div>
+
+              <!-- Nodos Asignados (Lado Derecho) -->
+              <div class="col-span-12 md:col-span-5 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <mat-icon class="!text-sm !w-4 !h-4 text-indigo-500">widgets</mat-icon>
+                    Nodos Vinculados ({{ assignedNodes().length }})
+                  </h4>
+                  <span class="text-[9px] font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full" *ngIf="assignedNodesSelected().size > 0">
+                    {{ assignedNodesSelected().size }} selec.
+                  </span>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-3 flex-1 min-h-[350px] max-h-[480px] overflow-y-auto">
+                  <div class="space-y-1.5">
+                    <div
+                      *ngFor="let n of assignedNodes()"
+                      (click)="toggleAssignedNodeSelection(n.id_nodo)"
+                      class="group p-2.5 bg-white border border-slate-100 rounded-xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all select-none relative"
+                      [ngClass]="assignedNodesSelected().has(n.id_nodo) ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : ''"
+                    >
+                      <div
+                        class="w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0"
+                        [ngClass]="assignedNodesSelected().has(n.id_nodo) ? 'bg-indigo-600 border-indigo-650 text-white' : 'border-gray-250 text-transparent'"
+                      >
+                        <mat-icon class="!text-[10px] !w-2.5 !h-2.5">check</mat-icon>
+                      </div>
+                      <div class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                        <mat-icon class="!text-sm !w-4 !h-4">{{ n.tipo_nodo === 'OBJ_ATTR' ? 'folder' : 'description' }}</mat-icon>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h5 class="text-[11px] font-bold text-slate-800 truncate">{{ n.etiqueta }}</h5>
+                        <span class="text-[8px] font-mono text-indigo-400 block truncate">{{ n.codigo_tecnico }} [{{ n.tipo_nodo }}]</span>
+                      </div>
+                    </div>
+                    <div *ngIf="assignedNodes().length === 0" class="h-full flex flex-col items-center justify-center text-gray-450 py-12">
+                      <mat-icon class="!text-4xl text-gray-200 mb-2">widgets</mat-icon>
+                      <p class="text-xs font-bold text-slate-500">Sin nodos vinculados</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
     </mat-tab-group>
   </div>
-
 </div>

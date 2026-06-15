@@ -14,76 +14,154 @@ import { AccesosService } from '../../../core/services/accesos.service';
   selector: 'app-dialogo-nodo',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatDialogModule,
-    MatButtonModule, MatFormFieldModule, MatInputModule, 
-    MatSelectModule, MatIconModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
   ],
-  templateUrl: './dialogo-nodo.component.html'
+  templateUrl: './dialogo-nodo.component.html',
 })
 export class DialogoNodoComponent implements OnInit {
   form: FormGroup;
   tipos = signal<any[]>([]);
+  private autoSyncFromEtiqueta = true;
 
   constructor(
     private fb: FormBuilder,
     private accesosSvc: AccesosService,
     private dialogRef: MatDialogRef<DialogoNodoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { nodo?: INodo, fixedType?: string, allowedTypes?: string[] }
+    @Inject(MAT_DIALOG_DATA)
+    public data: { nodo?: INodo; fixedType?: string; allowedTypes?: string[] },
   ) {
     this.form = this.fb.group({
-      codigo:   ['', [Validators.required, Validators.pattern(/^[A-Z0-9_]+$/)]],
+      codigo_tecnico: ['', [Validators.required, Validators.pattern(/^[A-Z0-9_]+$/)]],
       etiqueta: ['', Validators.required],
-      tipo:     [this.data.fixedType || 'OBJETO', Validators.required],
-      icono:    [''],
-      ruta:     [''],
-      slug:     [''],
-      orden:    [0],
-      activo:   ['S', Validators.required],
-      descripcion: ['']
+      tipo: [this.data.fixedType || 'OBJETO', Validators.required],
+      icono: [''],
+      ruta: [''],
+      slug: [''],
+      orden: [0],
+      activo: ['S', Validators.required],
+      descripcion: [''],
     });
 
     if (this.data.fixedType) {
       this.form.get('tipo')?.disable();
     }
-    
-    this.form.get('etiqueta')?.valueChanges.subscribe(val => {
-      if (val && !this.data.nodo) {
-        const normalized = this.normalizeText(val);
-        this.form.get('codigo')?.setValue(normalized, { emitEvent: false });
+
+    // Solo sincronizar automáticamente al crear un nodo nuevo
+    if (!this.data.nodo) {
+      this.form.get('etiqueta')?.valueChanges.subscribe((val) => {
+        if (val && this.autoSyncFromEtiqueta) {
+          const normalizedCode = this.normalizeCodigoTecnico(val);
+          const normalizedPath = this.normalizePath(val);
+          const normalizedSlug = this.normalizeSlug(val);
+          this.form.patchValue(
+            {
+              codigo_tecnico: normalizedCode,
+              ruta: normalizedPath,
+              slug: normalizedSlug,
+            },
+            { emitEvent: false },
+          );
+        }
+      });
+    }
+
+    this.form.get('codigo_tecnico')?.valueChanges.subscribe((value) => {
+      const normalized = this.normalizeCodigoTecnico(value || '');
+      if (value !== normalized) {
+        this.form.get('codigo_tecnico')?.setValue(normalized, { emitEvent: false });
       }
+      this.updateAutoSyncState();
+    });
+
+    this.form.get('ruta')?.valueChanges.subscribe((value) => {
+      const normalized = this.normalizePath(value || '');
+      if (value !== normalized) {
+        this.form.get('ruta')?.setValue(normalized, { emitEvent: false });
+      }
+      this.updateAutoSyncState();
+    });
+
+    this.form.get('slug')?.valueChanges.subscribe((value) => {
+      const normalized = this.normalizeSlug(value || '');
+      if (value !== normalized) {
+        this.form.get('slug')?.setValue(normalized, { emitEvent: false });
+      }
+      this.updateAutoSyncState();
     });
   }
 
-  private normalizeText(text: string): string {
-    return text
+  private removeAccents(text: string): string {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  private normalizeCodigoTecnico(text: string): string {
+    return this.removeAccents(text || '')
       .toUpperCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Eliminar tildes
-      .replace(/\s+/g, '_')           // Espacios por guiones bajos
-      .replace(/[^A-Z0-9_]/g, '');    // Solo letras, números y guiones bajos
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^A-Z0-9_]/g, '')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
+  private normalizeSlug(text: string): string {
+    return this.removeAccents(text || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s/-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/\/+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  private normalizePath(text: string): string {
+    const slug = this.normalizeSlug(text || '');
+    return slug ? `/${slug}` : '';
+  }
+
+  private updateAutoSyncState(): void {
+    const etiqueta = String(this.form.get('etiqueta')?.value || '');
+    if (!etiqueta) {
+      this.autoSyncFromEtiqueta = true;
+      return;
+    }
+
+    this.autoSyncFromEtiqueta =
+      this.form.get('codigo_tecnico')?.value === this.normalizeCodigoTecnico(etiqueta) &&
+      this.form.get('ruta')?.value === this.normalizePath(etiqueta) &&
+      this.form.get('slug')?.value === this.normalizeSlug(etiqueta);
   }
 
   ngOnInit() {
     this.loadTipos();
     if (this.data.nodo) {
-      this.form.get('codigo')?.disable();
       this.form.patchValue({
-        codigo:   this.data.nodo.codigo_tecnico,
+        codigo_tecnico: this.data.nodo.codigo_tecnico,
         etiqueta: this.data.nodo.etiqueta,
-        tipo:     this.data.nodo.tipo_nodo || 'OBJETO',
-        icono:    this.data.nodo.icono,
-        ruta:     this.data.nodo.url_ruta,
-        slug:     this.data.nodo.slug,
-        orden:    this.data.nodo.orden_visual,
-        activo:   this.data.nodo.activo === 'S' ? 'S' : 'N',
-        descripcion: this.data.nodo.descripcion || ''
+        tipo: this.data.nodo.tipo_nodo || 'OBJETO',
+        icono: this.data.nodo.icono,
+        ruta: this.data.nodo.url_ruta,
+        slug: this.data.nodo.slug,
+        orden: this.data.nodo.orden_visual,
+        activo: this.data.nodo.activo === 'S' ? 'S' : 'N',
+        descripcion: this.data.nodo.descripcion || '',
       });
       if (this.data.fixedType) this.form.get('tipo')?.disable();
     }
+
+    this.updateAutoSyncState();
   }
 
   loadTipos() {
-    this.accesosSvc.getTiposNodo().subscribe(data => {
+    this.accesosSvc.getTiposNodo().subscribe((data) => {
       let filtered = data;
       if (this.data.allowedTypes) {
         filtered = data.filter((t: any) => this.data.allowedTypes!.includes(t.codigo));
@@ -94,7 +172,21 @@ export class DialogoNodoComponent implements OnInit {
 
   onSave() {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.getRawValue());
+      const raw = this.form.getRawValue();
+      const codigo_tecnico = this.normalizeCodigoTecnico(raw.codigo_tecnico || '');
+      const ruta = this.normalizePath(raw.ruta || '');
+      const slug = this.normalizeSlug(raw.slug || '');
+
+      this.dialogRef.close({
+        ...raw,
+        id_nodo: this.data.nodo?.id_nodo,
+        codigo_tecnico,
+        tipo_nodo: raw.tipo,
+        ruta,
+        url_ruta: ruta,
+        slug,
+        orden_visual: raw.orden,
+      });
     }
   }
 
